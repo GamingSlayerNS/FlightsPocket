@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Stays - Flights Pocket</title>
+        <link rel="stylesheet" href="mystyle.css" />
+    </head>
+    <body>
+        <header>
+            <h1>Flights Pocket</h1>
+            <div id="datetime"></div>
+        </header>
+        <nav>
+            <a href="homepage.html">Home</a>
+            <a href="flights.html">Flights</a>
+            <a href="stays.html">Stays</a>
+            <a href="cars.html">Cars</a>
+            <a href="cruises.html">Cruises</a>
+            <a href="contact-us.html">Contact Us</a>
+        </nav>
+        <div class="container">
+            <aside>
+                <h2>Options</h2>
+                <label for="font-size">Font Size:</label>
+                <input type="range" id="font-size" min="10" max="30" value="16" />
+                <label for="bg-color">Background Color:</label>
+                <input type="color" id="bg-color" value="#ffffff" />
+            </aside>
+            <main>
+                <h2>Find a Place to Stay</h2>
+                <form id="stay-form">
+                    <div>
+                        <label for="city">City:</label>
+                        <input type="text" id="city" required />
+                    </div>
+                    <div>
+                        <label for="check-in">Check-in Date:</label>
+                        <input type="date" id="check-in" required />
+                        <label for="check-out">Check-out Date:</label>
+                        <input type="date" id="check-out" required />
+                    </div>
+                    <div>
+                        <label for="adults-stay">Adults:</label>
+                        <input type="number" id="adults-stay" min="1" value="1" />
+                        <label for="children-stay">Children:</label>
+                        <input type="number" id="children-stay" min="0" value="0" />
+                        <label for="infants-stay">Infants:</label>
+                        <input type="number" id="infants-stay" min="0" value="0" />
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                <div id="stay-results"></div>
+            </main>
+        </div>
+        <footer>
+            <p>&copy; 2025 Flights Pocket</p>
+        </footer>
+        <script src="app.js"></script>
+        <script src="stays.js"></script>
+    </body>
+</html>

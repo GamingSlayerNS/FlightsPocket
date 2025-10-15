@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Contact Us - Flights Pocket</title>
+        <link rel="stylesheet" href="mystyle.css" />
+    </head>
+    <body>
+        <header>
+            <h1>Flights Pocket</h1>
+            <div id="datetime"></div>
+        </header>
+        <nav>
+            <a href="homepage.html">Home</a>
+            <a href="flights.html">Flights</a>
+            <a href="stays.html">Stays</a>
+            <a href="cars.html">Cars</a>
+            <a href="cruises.html">Cruises</a>
+            <a href="contact-us.html">Contact Us</a>
+        </nav>
+        <div class="container">
+            <aside>
+                <h2>Options</h2>
+                <label for="font-size">Font Size:</label>
+                <input type="range" id="font-size" min="10" max="30" value="16" />
+                <label for="bg-color">Background Color:</label>
+                <input type="color" id="bg-color" value="#ffffff" />
+            </aside>
+            <main>
+                <h2>Contact Us</h2>
+                <form id="contact-form">
+                    <div>
+                        <label for="first-name">First Name:</label>
+                        <input type="text" id="first-name" required />
+                    </div>
+                    <div>
+                        <label for="last-name">Last Name:</label>
+                        <input type="text" id="last-name" required />
+                    </div>
+                    <div>
+                        <label for="phone">Phone Number:</label>
+                        <input type="tel" id="phone" required />
+                    </div>
+                    <div>
+                        <label>Gender:</label>
+                        <input type="radio" id="male" name="gender" value="male" required />
+                        <label for="male">Male</label>
+                        <input type="radio" id="female" name="gender" value="female" />
+                        <label for="female">Female</label>
+                    </div>
+                    <div>
+                        <label for="email">Email:</label>
+                        <input type="email" id="email" required />
+                    </div>
+                    <div>
+                        <label for="comment">Comment:</label>
+                        <textarea id="comment" rows="4" required></textarea>
+                    </div>
+                    <button type="submit">Submit</button>
+                </form>
+                <div id="contact-errors"></div>
+            </main>
+        </div>
+        <footer>
+            <p>&copy; 2025 Flights Pocket</p>
+        </footer>
+        <script src="app.js"></script>
+        <script src="contact.js"></script>
+    </body>
+</html>

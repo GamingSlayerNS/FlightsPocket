@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Flights - Flights Pocket</title>
+        <link rel="stylesheet" href="mystyle.css" />
+    </head>
+    <body>
+        <header>
+            <h1>Flights Pocket</h1>
+            <div id="datetime"></div>
+        </header>
+        <nav>
+            <a href="homepage.html">Home</a>
+            <a href="flights.html">Flights</a>
+            <a href="stays.html">Stays</a>
+            <a href="cars.html">Cars</a>
+            <a href="cruises.html">Cruises</a>
+            <a href="contact-us.html">Contact Us</a>
+        </nav>
+        <div class="container">
+            <aside>
+                <h2>Options</h2>
+                <label for="font-size">Font Size:</label>
+                <input type="range" id="font-size" min="10" max="30" value="16" />
+                <label for="bg-color">Background Color:</label>
+                <input type="color" id="bg-color" value="#ffffff" />
+            </aside>
+            <main>
+                <h2>Book a Flight</h2>
+                <form id="flight-form">
+                    <div>
+                        <input type="radio" id="one-way" name="trip-type" value="one-way" checked />
+                        <label for="one-way">One Way</label>
+                        <input type="radio" id="round-trip" name="trip-type" value="round-trip" />
+                        <label for="round-trip">Round Trip</label>
+                    </div>
+                    <div>
+                        <label for="origin">Origin:</label>
+                        <input type="text" id="origin" required />
+                        <label for="destination">Destination:</label>
+                        <input type="text" id="destination" required />
+                    </div>
+                    <div>
+                        <label for="departure-date">Departure Date:</label>
+                        <input type="date" id="departure-date" required />
+                    </div>
+                    <div id="arrival-date-container" style="display: none">
+                        <label for="arrival-date">Arrival Date:</label>
+                        <input type="date" id="arrival-date" />
+                    </div>
+                    <div id="passenger-icon">
+                        <img src="passenger-icon.png" alt="Passenger Icon" width="30" />
+                    </div>
+                    <div id="passenger-form" style="display: none">
+                        <label for="adults">Adults:</label>
+                        <input type="number" id="adults" min="0" max="4" value="1" />
+                        <label for="children">Children:</label>
+                        <input type="number" id="children" min="0" max="4" value="0" />
+                        <label for="infants">Infants:</label>
+                        <input type="number" id="infants" min="0" max="4" value="0" />
+                    </div>
+                    <button type="submit">Search</button>
+                </form>
+                <div id="flight-results"></div>
+            </main>
+        </div>
+        <footer>
+            <p>&copy; 2025 Flights Pocket</p>
+        </footer>
+        <script src="app.js"></script>
+        <script src="flights.js"></script>
+    </body>
+</html>
