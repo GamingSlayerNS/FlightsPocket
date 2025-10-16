@@ -5,16 +5,16 @@ $(document).ready(function () {
         let errors = [];
 
         const destination = $("#destination-cruise").val();
-        const departFrom = new Date($("#depart-from").val());
-        const departTo = new Date($("#depart-to").val());
+        const departFrom = new Date($("#depart-from").val() + "T00:00:00");
+        const departTo = new Date($("#depart-to").val() + "T00:00:00");
         const durationMin = parseInt($("#duration-min").val());
         const durationMax = parseInt($("#duration-max").val());
         const adults = parseInt($("#adults-cruise").val());
         const children = parseInt($("#children-cruise").val());
         const infants = parseInt($("#infants-cruise").val());
 
-        const startDate = new Date("2024-09-01");
-        const endDate = new Date("2024-12-01");
+        const startDate = new Date("2024-09-01T00:00:00");
+        const endDate = new Date("2024-12-01T23:59:59");
 
         if (!destination) {
             errors.push("Please select a destination.");
