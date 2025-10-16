@@ -77,11 +77,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const city = cityInput.value;
             const carType = carTypeSelect.value;
-            const checkIn = new Date(checkInInput.value);
-            const checkOut = new Date(checkOutInput.value);
+            const checkIn = new Date(checkInInput.value + "T00:00:00");
+            const checkOut = new Date(checkOutInput.value + "T00:00:00");
 
-            const startDate = new Date("2024-09-01");
-            const endDate = new Date("2024-12-01");
+            const startDate = new Date("2024-09-01T00:00:00");
+            const endDate = new Date("2024-12-01T23:59:59");
 
             if (checkIn < startDate || checkIn > endDate) {
                 errors.push("Check-in date must be between Sep 1, 2024 and Dec 1, 2024.");

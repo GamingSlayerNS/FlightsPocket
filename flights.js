@@ -54,8 +54,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 "San Francisco",
                 "San Jose"
             ];
-            const startDate = new Date("2024-09-01");
-            const endDate = new Date("2024-12-01");
+            const startDate = new Date("2024-09-01T00:00:00");
+            const endDate = new Date("2024-12-01T23:59:59");
             const lowerCaseCities = validCities.map(function (item) {
                 return item.toLowerCase();
             });
