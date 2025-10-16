@@ -1,5 +1,5 @@
 body {
-    font-family: sans-serif;
+    font-family: 'Garamond', serif;
     margin: 0;
 }
 
@@ -8,18 +8,21 @@ header {
     color: white;
     padding: 1rem;
     text-align: center;
+    font-family: 'Garamond', serif;
 }
 
 nav {
     background-color: #444;
-    display: flex;
-    justify-content: center;
+    text-align: center;
+    height: fixed;
 }
 
 nav a {
     color: white;
-    padding: 1rem;
+    padding: 15px 30px;
     text-decoration: none;
+    display: inline-block;
+    align-items: center;
 }
 
 nav a:hover {
