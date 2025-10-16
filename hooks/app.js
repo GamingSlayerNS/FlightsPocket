@@ -1,4 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
+    // Hamburger Menu
+    const hamburgerMenu = document.getElementById("hamburger-menu");
+    const sidebar = document.querySelector("aside");
+    const body = document.body;
+
+    if (hamburgerMenu && sidebar) {
+        hamburgerMenu.addEventListener("click", () => {
+            sidebar.classList.toggle("open");
+            body.classList.toggle("sidebar-open");
+        });
+    }
+
     // Date and Time
     const datetimeDiv = document.getElementById("datetime");
     if (datetimeDiv) {
@@ -14,7 +26,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const fontSizeSlider = document.getElementById("font-size");
     const bgColorPicker = document.getElementById("bg-color");
     const mainContent = document.querySelector("main");
-    const body = document.body;
 
     if (fontSizeSlider && mainContent) {
         fontSizeSlider.addEventListener("input", (e) => {
