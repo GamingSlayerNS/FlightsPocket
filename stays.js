@@ -8,27 +8,36 @@ document.addEventListener("DOMContentLoaded", () => {
             resultsDiv.innerHTML = "";
             let errors = [];
 
-            const city = document.getElementById("city").value;
-            const checkIn = new Date(document.getElementById("check-in").value);
-            const checkOut = new Date(document.getElementById("check-out").value);
+            const city = document.getElementById("city").value.trim();
+            const checkIn = new Date(document.getElementById("check-in").value + "T00:00:00");
+            const checkOut = new Date(document.getElementById("check-out").value + "T00:00:00");
             const adults = parseInt(document.getElementById("adults-stay").value);
             const children = parseInt(document.getElementById("children-stay").value);
             const infants = parseInt(document.getElementById("infants-stay").value);
 
             const validCities = [
                 "Austin",
+                "Corpus Christi",
                 "Dallas",
+                "El Paso",
+                "Fort Worth",
                 "Houston",
                 "San Antonio",
+                "Fresno",
                 "Los Angeles",
+                "Oakland",
+                "Sacramento",
                 "San Diego",
                 "San Francisco",
-                "San Jose",
+                "San Jose"
             ];
-            const startDate = new Date("2024-09-01");
-            const endDate = new Date("2024-12-01");
+            const startDate = new Date("2024-09-01T00:00:00");
+            const endDate = new Date("2024-12-01T23:59:59");
+            const lowerCaseCities = validCities.map(function (item) {
+                return item.toLowerCase();
+            });
 
-            if (!validCities.includes(city)) {
+            if (!lowerCaseCities.includes(city.toLowerCase())) {
                 errors.push("City must be a major city in Texas or California.");
             }
             if (checkIn < startDate || checkIn > endDate) {
