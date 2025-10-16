@@ -41,7 +41,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (errors.length > 0) {
                 errorDiv.innerHTML = errors.join("<br>");
             } else {
-                alert("Form submitted successfully!");
+                alert("Form submitted successfully!\n\nFirst Name: " + firstName + "\nLast Name: " + lastName + "\nPhone Number: " + phone + "\nGender: " + gender.value + "\nEmail: " + email + "\nComment: " + comment);
                 contactForm.reset();
             }
         });

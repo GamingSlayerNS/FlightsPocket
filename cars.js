@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const carTypes = ["Economy", "SUV", "Compact", "Midsize"];
         carTypes.forEach((type) => {
             const option = document.createElement("option");
-            option.value = type.toLowerCase();
+            option.value = type;
             option.textContent = type;
             carTypeSelect.appendChild(option);
         });
