@@ -28,33 +28,42 @@ document.addEventListener("DOMContentLoaded", () => {
             resultsDiv.innerHTML = "";
             let errors = [];
 
-            const origin = document.getElementById("origin").value;
-            const destination = document.getElementById("destination").value;
-            const departureDate = new Date(document.getElementById("departure-date").value);
-            const arrivalDate = document.getElementById("round-trip").checked
-                ? new Date(document.getElementById("arrival-date").value)
-                : null;
+            const origin = document.getElementById("origin").value.trim();
+        	const destination = document.getElementById("destination").value.trim();
+        	const departureDate = new Date(document.getElementById("departure-date").value + "T00:00:00");
+        	const arrivalDate = document.getElementById("round-trip").checked
+            	? new Date(document.getElementById("arrival-date").value + "T00:00:00")
+            	: null;
             const adults = document.getElementById("adults").value;
             const children = document.getElementById("children").value;
             const infants = document.getElementById("infants").value;
 
             const validCities = [
                 "Austin",
+                "Corpus Christi",
                 "Dallas",
+                "El Paso",
+                "Fort Worth",
                 "Houston",
                 "San Antonio",
+                "Fresno",
                 "Los Angeles",
+                "Oakland",
+                "Sacramento",
                 "San Diego",
                 "San Francisco",
-                "San Jose",
+                "San Jose"
             ];
             const startDate = new Date("2024-09-01");
             const endDate = new Date("2024-12-01");
+            const lowerCaseCities = validCities.map(function (item) {
+                return item.toLowerCase();
+            });
 
-            if (!validCities.includes(origin)) {
+            if (!lowerCaseCities.includes(origin.toLowerCase())) {
                 errors.push("Origin must be a major city in Texas or California.");
             }
-            if (!validCities.includes(destination)) {
+            if (!lowerCaseCities.includes(destination.toLowerCase())) {
                 errors.push("Destination must be a major city in Texas or California.");
             }
             if (departureDate < startDate || departureDate > endDate) {
