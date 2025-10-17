@@ -67,23 +67,45 @@
                 />Contact Us</a
             >
         </nav>
-        <aside>
-            <div>
-                <h2>Options</h2>
-                <label for="font-size">Font Size:</label>
-                <input type="range" id="font-size" min="10" max="30" value="16" />
-                <label for="bg-color">Background Color:</label>
-                <input type="color" id="bg-color" value="#ffffff" />
-            </div>
-        </aside>
         <main>
+            <aside class="open">
+                <div>
+                    <h2>Options</h2>
+                    <label for="font-size">Font Size:</label>
+                    <input type="range" id="font-size" min="10" max="30" value="16" />
+                    <label for="bg-color">Background Color:</label>
+                    <input type="color" id="bg-color" value="#ffffff" />
+                </div>
+            </aside>
             <div class="container">
                 <h2>Welcome to Flights Pocket</h2>
                 <p>Your one-stop shop for the best travel deals.</p>
+
+                <div id="stock-game">
+                    <h3>Travel Stock Minigame</h3>
+                    <div id="game-stats">Your Money: $<span id="user-money">10000</span></div>
+                    <canvas id="stock-chart"></canvas>
+                    <div id="investment-form">
+                        <h4>Invest</h4>
+                        <select id="company-select">
+                            <option value="0">FlightCorp</option>
+                            <option value="1">StayStonks</option>
+                            <option value="2">CarGo</option>
+                            <option value="3">CruiseLine</option>
+                        </select>
+                        <input type="number" id="investment-amount" placeholder="Amount" />
+                        <button id="invest-button">Invest</button>
+                        <button id="next-day-button">Next Day</button>
+                        <button id="skip-10-days-button">Skip 10 Days</button>
+                    </div>
+                    <div id="game-message"></div>
+                </div>
             </div>
         </main>
         <footer>
             <p>&copy; 2025 Flights Pocket</p>
         </footer>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script src="hooks/stockgame.js"></script>
     </body>
 </html>

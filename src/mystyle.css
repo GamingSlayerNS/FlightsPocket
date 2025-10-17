@@ -56,20 +56,16 @@ nav a:hover {
 }
 
 aside {
-    position: fixed;
-    top: 0;
-    left: 0; /* Start partially closed */
+    display: flex;
+    flex-direction: column;
     width: 64px;
-    height: 100%;
     padding-top: 60px; /* Space for header */
     padding-left: 4px;
     padding-right: 4px;
     color: white; /* Text color for dark bg */
     background-color: #2c2c2c; /* Dark background */
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    border-radius: 0 16px 16px 0;
     transition: all 0.3s ease-in-out;
-    z-index: 1000;
 }
 
 aside.open {
@@ -89,13 +85,9 @@ aside.open div {
 
 main {
     display: flex;
+    flex-direction: row;
     transition: margin-left 0.3s ease-in-out;
     width: 100%;
-    margin-left: 75px;
-}
-
-body.sidebar-open main {
-    margin-left: 250px;
 }
 
 .container {
@@ -110,7 +102,15 @@ footer {
     color: white;
     text-align: center;
     padding: 1rem;
-    position: fixed;
-    bottom: 0;
-    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+}
+form label {
+    font-weight: bold;
 }

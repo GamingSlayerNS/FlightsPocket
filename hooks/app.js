@@ -2,12 +2,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // Hamburger Menu
     const hamburgerMenu = document.getElementById("hamburger-menu");
     const sidebar = document.querySelector("aside");
-    const body = document.body;
 
     if (hamburgerMenu && sidebar) {
         hamburgerMenu.addEventListener("click", () => {
             sidebar.classList.toggle("open");
-            body.classList.toggle("sidebar-open");
         });
     }
 
