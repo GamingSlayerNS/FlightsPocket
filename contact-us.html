@@ -93,12 +93,18 @@
                         <label for="phone">Phone Number:</label>
                         <input type="tel" id="phone" required />
                     </div>
-                    <div>
+                    <div class="flex-row">
                         <label>Gender:</label>
-                        <input type="radio" id="male" name="gender" value="Male" required />
-                        <label for="male">Male</label>
-                        <input type="radio" id="female" name="gender" value="Female" />
-                        <label for="female">Female</label>
+                        <div class="radio">
+                            <div>
+                                <input type="radio" id="male" name="gender" value="Male" required />
+                                <label for="male">Male</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="female" name="gender" value="Female" />
+                                <label for="female">Female</label>
+                            </div>
+                        </div>
                     </div>
                     <div>
                         <label for="email">Email:</label>

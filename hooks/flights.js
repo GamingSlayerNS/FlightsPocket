@@ -5,6 +5,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const passengerForm = document.getElementById("passenger-form");
     const resultsDiv = document.getElementById("flight-results");
 
+    const originInput = document.getElementById("origin");
+    if (originInput) {
+        originInput.addEventListener("input", (e) => {
+            resetCitiesPopup(originInput);
+        });
+        originInput.addEventListener("blur", (e) => {
+            resetCitiesPopup(originInput);
+        });
+        originInput.addEventListener("focus", (e) => {
+            resetCitiesPopup(originInput);
+        });
+    }
+
+    const destinationInput = document.getElementById("destination");
+    if (destinationInput) {
+        destinationInput.addEventListener("input", (e) => {
+            resetCitiesPopup(destinationInput);
+        });
+        destinationInput.addEventListener("blur", (e) => {
+            resetCitiesPopup(destinationInput);
+        });
+        destinationInput.addEventListener("focus", (e) => {
+            resetCitiesPopup(destinationInput);
+        });
+    }
+
     if (flightForm) {
         const tripTypeRadios = document.querySelectorAll('input[name="trip-type"]');
         tripTypeRadios.forEach((radio) => {
@@ -28,7 +54,7 @@ document.addEventListener("DOMContentLoaded", () => {
             resultsDiv.innerHTML = "";
             let errors = [];
 
-            const origin = document.getElementById("origin").value.trim();
+            const origin = originInput.value.trim();
         	const destination = document.getElementById("destination").value.trim();
         	const departureDate = new Date(document.getElementById("departure-date").value + "T00:00:00");
         	const arrivalDate = document.getElementById("round-trip").checked

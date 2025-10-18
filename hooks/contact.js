@@ -16,10 +16,10 @@ document.addEventListener("DOMContentLoaded", () => {
             const comment = document.getElementById("comment").value;
 
             // Validation
-            if (!/^[A-Z][a-z]*$/.test(firstName)) {
+            if (!/^[A-Z][A-Za-z]*$/.test(firstName)) {
                 errors.push("First name must be alphabetic and start with a capital letter.");
             }
-            if (!/^[A-Z][a-z]*$/.test(lastName)) {
+            if (!/^[A-Z][A-Za-z]*$/.test(lastName)) {
                 errors.push("Last name must be alphabetic and start with a capital letter.");
             }
             if (firstName === lastName) {

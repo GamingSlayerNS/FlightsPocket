@@ -2,35 +2,31 @@ document.addEventListener("DOMContentLoaded", () => {
     const stayForm = document.getElementById("stay-form");
     const resultsDiv = document.getElementById("stay-results");
 
+    const cityInput = document.getElementById("city");
+    if (cityInput) {
+        cityInput.addEventListener("input", (e) => {
+            resetCitiesPopup(cityInput);
+        });
+        cityInput.addEventListener("blur", (e) => {
+            resetCitiesPopup(cityInput);
+        });
+        cityInput.addEventListener("focus", (e) => {
+            resetCitiesPopup(cityInput);
+        });
+    }
+
     if (stayForm) {
         stayForm.addEventListener("submit", (e) => {
             e.preventDefault();
             resultsDiv.innerHTML = "";
             let errors = [];
 
-            const city = document.getElementById("city").value.trim();
+            const city = cityInput.value.trim();
             const checkIn = new Date(document.getElementById("check-in").value + "T00:00:00");
             const checkOut = new Date(document.getElementById("check-out").value + "T00:00:00");
             const adults = parseInt(document.getElementById("adults-stay").value);
             const children = parseInt(document.getElementById("children-stay").value);
             const infants = parseInt(document.getElementById("infants-stay").value);
-
-            const validCities = [
-                "Austin",
-                "Corpus Christi",
-                "Dallas",
-                "El Paso",
-                "Fort Worth",
-                "Houston",
-                "San Antonio",
-                "Fresno",
-                "Los Angeles",
-                "Oakland",
-                "Sacramento",
-                "San Diego",
-                "San Francisco",
-                "San Jose"
-            ];
             const startDate = new Date("2024-09-01T00:00:00");
             const endDate = new Date("2024-12-01T23:59:59");
             const lowerCaseCities = validCities.map(function (item) {
@@ -69,3 +65,4 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
