@@ -36,9 +36,7 @@ $(document).ready(function () {
         }
 
         const totalGuests = adults + children;
-        if (totalGuests > 2 && infants === 0) {
-            errors.push("Number of guests (adults + children) cannot be more than 2 per room.");
-        }
+        const roomsNeeded = Math.ceil(totalGuests / 2);
 
         if (errors.length > 0) {
             $("#cruise-results").html(errors.join("<br>"));
@@ -47,6 +45,7 @@ $(document).ready(function () {
                           <p>Destination: ${destination}</p>
                           <p>Departing Between: ${departFrom.toDateString()} and ${departTo.toDateString()}</p>
                           <p>Duration: ${durationMin} to ${durationMax} days</p>
+                          <p>Rooms: ${roomsNeeded}</p>
                           <p>Adults: ${adults}</p>
                           <p>Children: ${children}</p>
                           <p>Infants: ${infants}</p>`;
