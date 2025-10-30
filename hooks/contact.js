@@ -42,6 +42,30 @@ document.addEventListener("DOMContentLoaded", () => {
                 errorDiv.innerHTML = errors.join("<br>");
             } else {
                 alert("Form submitted successfully!\n\nFirst Name: " + firstName + "\nLast Name: " + lastName + "\nPhone Number: " + phone + "\nGender: " + gender.value + "\nEmail: " + email + "\nComment: " + comment);
+                
+                let contact = {
+                    firstname: firstName,
+                    lastname: lastName,
+                    phoneNum: phone,
+                    gender: gender.value,
+                    email: email,
+                    comment: comment
+                };
+
+                let contact_json = JSON.stringify(contact);
+
+                const blob = new Blob([contact_json], { type: 'application/json' }); // create the file object that can then be downloaded
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                sessionStorage.setItem('numContacts', (sessionStorage.getItem('numContacts') === null) ? 1 : parseInt(sessionStorage.getItem('numContacts')) + 1);
+                a.download = 'contact' + sessionStorage.getItem('numContacts').padStart(2, "0") + '.json';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                console.log('JSON data download initiated.');
+                
                 contactForm.reset();
             }
         });
