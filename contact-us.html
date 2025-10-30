@@ -91,7 +91,13 @@
                     </div>
                     <div>
                         <label for="phone">Phone Number:</label>
-                        <input type="tel" id="phone" required />
+                        <input
+                            type="tel"
+                            id="phone"
+                            required
+                            placeholder="(123) 456-7890"
+                            pattern="\(\d{3}\) \d{3}-\d{4}"
+                        />
                     </div>
                     <div class="flex-row">
                         <label>Gender:</label>
@@ -116,11 +122,15 @@
                     </div>
                     <button type="submit">Submit</button>
                 </form>
-                <div id="contact-errors"></div>
+                <div id="contact-errors" role="alert" aria-live="polite"></div>
             </div>
         </main>
         <footer>
-            <p><strong>CS6314.001</strong><br>Developed by <strong>Danny Bao ( DXB180034 )</strong>, <strong>Samuel Preston ( SWP210000 )</strong>, <strong>Naxel Santiago Rivera ( NAS180011 )</strong><br>&copy; 2025 Flights Pocket</p>
+            <p>
+                <strong>CS6314.001</strong><br />Developed by <strong>Danny Bao ( DXB180034 )</strong>,
+                <strong>Samuel Preston ( SWP210000 )</strong>, <strong>Naxel Santiago Rivera ( NAS180011 )</strong
+                ><br />&copy; 2025 Flights Pocket
+            </p>
         </footer>
     </body>
 </html>
