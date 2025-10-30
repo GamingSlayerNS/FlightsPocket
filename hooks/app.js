@@ -12,7 +12,7 @@ const validCities = [
     "Sacramento",
     "San Diego",
     "San Francisco",
-    "San Jose"
+    "San Jose",
 ];
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -57,7 +57,7 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 /**
- * @param {HTMLInputElement} inputElem 
+ * @param {HTMLInputElement} inputElem
  */
 function resetCitiesPopup(inputElem) {
     const popupId = "cities-input-popup";
@@ -88,6 +88,14 @@ function resetCitiesPopup(inputElem) {
     for (const city of cities) {
         const cityRow = document.createElement("div");
         cityRow.innerText = city;
+        cityRow.style.cursor = "pointer";
+        // Use mousedown so the input doesn't lose focus before we set value
+        cityRow.addEventListener("mousedown", (e) => {
+            e.preventDefault();
+            inputElem.value = city;
+            popup.style.display = "none";
+            inputElem.style.borderColor = "";
+        });
         popup.appendChild(cityRow);
     }
 

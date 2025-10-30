@@ -1,0 +1,155 @@
+CS 6314 - Assignment#3
+Due Date: 11/9/25, 11:59 pm
+In this assignment, you are supposed to develop a web application for travel
+deals using HTML, CSS, Javascript, jQuery, XML and JSON. The app should
+have 7 web pages, including stays, flights, cars, cruise, contact-us, and cart
+Using an external css (mystyle.css), add the following layout to all web pages.
+Please note for the navigation bar, you must have links to all 6 web pages in your
+web application.
+1. Display current local date and time in your web application.
+2. Validate user inputs in the contact-us page as following ( You are supposed to
+use regular expression for validation in this part)
+• The user must enter first name, last name, phone number, gender ( as a
+radio box), email address, and comment.
+• The first name and last name should be alphabetic only
+• The first letter of first name and last name should be capital
+• The first name and the last name can not be the same
+• Phone number must be formatted as (ddd)ddd-dddd
+• Email address must contain @ and .
+• Gender must be selected
+• The comment must be at least 10 characters
+You should validate the user inputs when the user clicks a “submit” button in the
+contact page. If the user doesn’t enter valid information as specified above, you
+must prompt the user to enter valid information. After validating the above user
+inputs, store them in a JSON file.
+3. Allow users to change font size of main content and background color of your
+web application.
+4. In the flight webpage, the user should be able to choose the type of trip. If the
+user chooses one way trip, the user should be able to enter the origin,
+destination, and departure date. If the user chooses a round trip, the user
+should be able to enter the origin, destination, departure date for departing
+flight and arriving flight. In the flight webpage, there should be a passenger
+icon. If the user clicks on the passenger icon, a form should be displayed. In
+this form, the user also should be able to enter the number of passengers for
+each category (adults, children, or infants). When the user clicks search
+button, after validating the user inputs, you should display all the above
+information entered by the user. If any user input is not valid, you should inform
+the user.
+Validate user inputs for this page as following
+• The user must enter departure date anytime between Sep 1, 2024 to Dec
+1st 2024.
+• Origin and destination must be a city in Texas or California
+• Number of passengers for each category can not be more than 4
+• Create a JSON file for the all available flights. The JSON file should include
+information about available flights including flight-id, origin, destination,
+departure date, arrival date, departure time, arrival time, number of available
+seats and price for at least 50 flights between a city in Texas and a city in
+California be-tween Sep 1, 2024 to Dec 1st 2024.
+• If the user selected a one way trip, when the user clicks the search button, if
+the entered information are valid, you should also display the information (flightid, origin, destination, departure date, arrival date, departure time, arrival time,
+and number of available seats) for all available flights from the requested origin
+to the requested destination that will depart on the requested departure date.
+The available flight must have enough available seats for all passengers. If
+there is not any available flights on the requested departure date, you should
+display the information for available flights within 3 days before and after the
+requested departure date. The user should be able to select a flight and place it
+in the cart.
+• In the cart page, you should display the information of the selected flight (flightid, origin, destination, departure date, arrival date, departure time, arrival time).
+You also need to display total price for all passenger’s tickets. Infant ticket is
+10% of the adult ticket price. Children ticket is 70% of the adult ticket price. The
+user should be able to book the flight after entering first name, last name, date
+of birth and SSN for each passenger . Finally, you need to assign a unique
+book-ing number to the flight in the cart and display all the information of
+booked flight (user-id, booking number, flight-id, origin, destination, departure
+date, arrival date, departure time, arrival time) and all passengers (SSN, first
+name, last name, and date of birth) . User-id is unique number for the user who
+booked the flight. You should also need to update the number of available seats
+in the JSON file accordingly.
+• If the user selected round trip, when the user clicks the search button, if the
+entered information are valid, you should also display the information (flight-id,
+origin, destination, departure date, arrival date, departure time, arrival time, and
+number of available seats) for all available flights from the requested origin to
+the requested destination that will depart on the requested departure date for
+for departing flight and returning flight. The available flights must have enough
+available seats for all passengers. If there is not any available flights on the requested departure date, you should display the information for available flights
+within 3 days before and after the requested departure date. The user should
+be able to select a flight as departing flight and a flight as returning flight. and
+place them in the cart.
+• In the cart page, you should display the information of the selected departing
+flight and returning flight (flight-id, origin, destination, departure date, arrival
+date, departure time, arrival time). You also need to display total price for all
+passenger for both departing flight and returning flight. Infant ticket is 10% of
+the adult ticket price. Children ticket is 70% of the adult ticket price. The user
+should be able to book both departing flight and returning flight after entering
+first name, last name, date of birth and SSN for each passenger . Finally, you
+need to assign a unique booking number to both departing flight and returning
+flight in the cart and display all the information of booked flights (User-id,
+booking number, flight-id, origin, destination, departure date, arrival date,
+departure time, arrival time) and all passengers (SSN, first name, last name,
+and date of birth). You should also store all all the information of booked flights
+in a JSON file. You should also need to update the number of available seats in
+the JSON file accordingly. User-id is a unique number for the user who booked
+the flight.
+5. In the stays webpage, the user should be able to enter the name of city, the
+check in date, check out date, number of guesses for each category (adults,
+children, or infants). When the user clicks a search button, after validating the
+user inputs, you should display all the information entered by the user. You
+should also display the number of rooms the user needs. If any user input is
+not valid, you should inform the user.
+Validate user inputs for this page as following ( You should not use regular
+expression for validation in this part)
+• The user must enter check in date, and check out date anytime between
+Sep 1, 2024 to Dec 1st 2024.
+• The city must be a city in Texas or California
+• Number of guesses can not be more than 2 for each room. However infants
+can stay with adults even if the number of guesses exceeds 2
+• Create a XML file for the all available hotels. The XML file should include in
+formation about available hotels including hotel-id, hotel name, city, number of
+available rooms, date and price per night for at least 20 hotels.
+• When the user clicks the search button, if the entered information are valid, you
+should display the information (hotel-id, hotel name, city, check in date, check
+out date, and price per night ) for all available hotels in the requested city. The
+user should be able to select a hotel and place it in the cart. In the cart page,
+you should display the information of the selected hotel (hotel-id, hotel name,
+city, number of guesses per category, check in date, check out date, number of
+rooms, and price per night for each room , and total price). If the user clicks the
+book button, you should store all information in the cart (user-id, booking
+number, hotel-id, city, hotel name, check in date, check out date, number of
+guesses per category, number of rooms, and price per night for each room ,
+and total price) in a JSON file and update available rooms in the available
+hotels XML file . You need to assign a unique book-ing number to the booked
+hotel. User-id is a unique number for the user who booked the hotel.
+6. In the car webpage, the user should be able to enter the name of city, type of
+car, the check in date, and check out date . When the user clicks a submit button, after validating the user inputs, you should display all the information
+entered by the user. If any user input is not valid, you should inform the user.
+Please note that you are supposed to use DOM methods to develop this page.
+Validate user inputs for this page as following
+• The user must enter check in date, and check out date anytime between Sep 1,
+2024 to Dec 1st 2024.
+• The type of car can be economy, SUV, Compact or midsize
+Create a XML file for the all available cars. The XML file should include information
+about available cars including car-id, the name of city, type of car, the check in date,
+and check out date, and price per day for at least 20 cars
+On this page, you are supposed to suggest available cars that match the user's
+interests and preferences based on their previous booking information. This allows
+users to easily select and add their preferred cars to the cart after entering only their
+check-in and check-out dates, streamlining the booking process. If the user selects a
+suggested car and clicks the book button, you should store all information of the cart
+(User-id, booking number, car-id, the name of city, type of car, the check in date, and
+check out date, and price per day for at least 20 cars , and total price) in a XML file and
+update available cars in the available cars XML file accordingly. You need to assign a
+unique book-ing number to the booked car. User-id is a unique number for the user who
+booked the car.
+7. In the cruise page, the user should be able to enter a destination , enter departing
+between, duration of cruise (minimum and maximum), and number of guesses per
+category. When the user clicks a submit button, after validating the user inputs, you
+should display all the information entered by the user. If any user input is not valid, you
+should inform the user. Please note that you are supposed to use jQuery methods to
+develop this page.
+Validate user inputs for this page as following
+• The destination should be Alaska, Bahamas, Europe, or Mexico
+• For duration of cruise (minimum and maximum), minimum can not be less than 3 and
+maximum can not be greater than 10 days
+• Departing between can be anytime between Sep 1, 2024 to Dec 1st 2024.
+• Number of guesses can not be more than 2 for each room. However infants can stay
+with adults even if the number of guesses exceeds 2 

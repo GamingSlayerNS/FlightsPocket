@@ -14,5 +14,21 @@
     "gender": "Male",
     "email": "manaxhdanny@dorito.com",
     "comment": "Thakns for the pokeMonster"
+  },
+  {
+    "firstname": "Hector",
+    "lastname": "Santiago",
+    "phoneNum": "(123) 456-5698",
+    "gender": "Male",
+    "email": "hlsp@me.com",
+    "comment": "Testinagknsdlkg"
+  },
+  {
+    "firstname": "Tester",
+    "lastname": "Testing",
+    "phoneNum": "(789) 456-1230",
+    "gender": "Male",
+    "email": "utd@dallas.edu",
+    "comment": "selkatjlaskgjlaksdjg"
   }
 ]
