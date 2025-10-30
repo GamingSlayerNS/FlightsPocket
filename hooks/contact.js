@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     comment: comment
                 };
 
-                let contact_json = JSON.stringify(contact);
+                let contact_json = JSON.stringify(contact, null, 2);
 
                 const blob = new Blob([contact_json], { type: 'application/json' }); // create the file object that can then be downloaded
                 const url = URL.createObjectURL(blob);
