@@ -7,11 +7,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const nextDayButton = document.getElementById("next-day-button");
     const skip10DaysButton = document.getElementById("skip-10-days-button");
     const gameMessage = document.getElementById("game-message");
+    const cashOutButton = document.getElementById("cash-out-button");
 
     if (!stockChartCanvas) return;
 
     let userMoney = 10;
-    let currentInvestment = { companyIndex: null, amount: 0 };
+    let currentInvestment = { companyIndex: null, shares: 0, amountInvested: 0, entryPrice: null };
 
     const companies = [
         { name: "FlightCorp", color: "rgba(255, 99, 132, 1)" },
@@ -56,46 +57,44 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     });
 
+    // Helper to get last price of a company
+    function getLastPrice(companyIndex) {
+        const history = stockHistory[companyIndex];
+        return history[history.length - 1];
+    }
+
     function updateDisplay() {
         userMoneySpan.textContent = userMoney.toFixed(2);
         stockChart.update();
     }
 
     function simulateDay() {
-        // 1. Calculate investment result
-        if (currentInvestment.amount > 0) {
-            const companyIndex = currentInvestment.companyIndex;
-            const lastPrice = stockHistory[companyIndex][stockHistory[companyIndex].length - 1];
+        // Capture prices before the day advances
+        const lastPrices = stockHistory.map((history) => history[history.length - 1]);
 
-            // 2. Update stock prices for all companies
-            stockHistory.forEach((history, index) => {
-                const currentPrice = history[history.length - 1];
-                const changePercent = (Math.random() - 0.45) * 0.5; // Increased volatility
-                const newPrice = Math.max(1, currentPrice * (1 + changePercent)); // Prevent stock from going to 0 or negative
-                history.push(newPrice);
-            });
+        // Update stock prices for all companies (no auto cash-out)
+        stockHistory.forEach((history) => {
+            const currentPrice = history[history.length - 1];
+            const changePercent = (Math.random() - 0.45) * 0.5; // Increased volatility
+            const newPrice = Math.max(1, currentPrice * (1 + changePercent));
+            history.push(newPrice);
+        });
 
-            const newPriceOfInvestedStock = stockHistory[companyIndex][stockHistory[companyIndex].length - 1];
-            const growth = newPriceOfInvestedStock / lastPrice;
-            const returnedAmount = currentInvestment.amount * growth;
-            userMoney += returnedAmount;
-
-            gameMessage.textContent = `${companies[companyIndex].name} stock changed from $${lastPrice.toFixed(
+        // Message based on current position (unrealized P/L only)
+        if (currentInvestment.shares > 0) {
+            const idx = currentInvestment.companyIndex;
+            const prev = lastPrices[idx];
+            const now = getLastPrice(idx);
+            const currentValue = currentInvestment.shares * now;
+            const pl = currentValue - currentInvestment.amountInvested;
+            gameMessage.textContent = `${companies[idx].name} changed from $${prev.toFixed(2)} to $${now.toFixed(
                 2
-            )} to $${newPriceOfInvestedStock.toFixed(2)}. You got back $${returnedAmount.toFixed(2)}.`;
-            currentInvestment = { companyIndex: null, amount: 0 };
+            )}. Investment value $${currentValue.toFixed(2)} (P/L $${pl.toFixed(2)}). You're still invested.`;
         } else {
-            // Just update stock prices if no investment was made
-            stockHistory.forEach((history) => {
-                const currentPrice = history[history.length - 1];
-                const changePercent = (Math.random() - 0.45) * 0.5; // Increased volatility
-                const newPrice = Math.max(1, currentPrice * (1 + changePercent));
-                history.push(newPrice);
-            });
             gameMessage.textContent = "A new day has passed. Check the stock prices and make an investment!";
         }
 
-        // 3. Update chart
+        // Update chart
         stockChart.data.labels.push(`Day ${stockChart.data.labels.length + 1}`);
         stockChart.data.datasets.forEach((dataset, index) => {
             dataset.data = stockHistory[index];
@@ -116,16 +115,19 @@ document.addEventListener("DOMContentLoaded", () => {
             gameMessage.textContent = "You don't have enough money to make that investment.";
             return;
         }
-        if (currentInvestment.amount > 0) {
-            gameMessage.textContent = "You must wait for the next day to change your investment.";
+        if (currentInvestment.shares > 0) {
+            gameMessage.textContent = "You already have an active investment. Cash out before investing again.";
             return;
         }
 
+        const entryPrice = getLastPrice(companyIndex);
+        const shares = amount / entryPrice;
+
         userMoney -= amount;
-        currentInvestment = { companyIndex, amount };
-        gameMessage.textContent = `You invested $${amount.toFixed(2)} in ${
+        currentInvestment = { companyIndex, shares, amountInvested: amount, entryPrice };
+        gameMessage.textContent = `You bought ${shares.toFixed(4)} shares of ${
             companies[companyIndex].name
-        }. Click 'Next Day' to see what happens!`;
+        } at $${entryPrice.toFixed(2)}. Click 'Next Day' or 'Skip 10 Days'. Use 'Cash Out' when ready.`;
         investmentAmountInput.value = "";
         updateDisplay();
     });
@@ -136,18 +138,50 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (skip10DaysButton) {
         skip10DaysButton.addEventListener("click", () => {
-            const moneyBefore = userMoney;
             let lastDayMessage = "";
+            const hadInvestment = currentInvestment.shares > 0;
+            let startValue = 0;
+            let idx = currentInvestment.companyIndex;
+            if (hadInvestment) {
+                startValue = currentInvestment.shares * getLastPrice(idx);
+            }
             for (let i = 0; i < 10; i++) {
                 simulateDay();
                 if (i === 9) {
                     lastDayMessage = gameMessage.textContent;
                 }
             }
-            const difference = userMoney - moneyBefore;
-            gameMessage.textContent = `${lastDayMessage} Over 10 days, your money changed by $${difference.toFixed(
+            if (hadInvestment) {
+                const endValue = currentInvestment.shares * getLastPrice(idx);
+                const diff = endValue - startValue;
+                gameMessage.textContent = `${lastDayMessage} Over 10 days, your investment value changed by $${diff.toFixed(
+                    2
+                )}. You're still invested.`;
+            } else {
+                gameMessage.textContent = `${lastDayMessage} Over 10 days, no active investment was held.`;
+            }
+        });
+    }
+
+    // Optional cash-out handler (only realizes gains when user clicks)
+    if (cashOutButton) {
+        cashOutButton.addEventListener("click", () => {
+            if (currentInvestment.shares <= 0) {
+                gameMessage.textContent = "No active investment to cash out.";
+                return;
+            }
+            const idx = currentInvestment.companyIndex;
+            const price = getLastPrice(idx);
+            const value = currentInvestment.shares * price;
+            const pl = value - currentInvestment.amountInvested;
+
+            userMoney += value;
+            currentInvestment = { companyIndex: null, shares: 0, amountInvested: 0, entryPrice: null };
+
+            gameMessage.textContent = `You cashed out ${companies[idx].name} at $${price.toFixed(
                 2
-            )}.`;
+            )} and received $${value.toFixed(2)} (P/L $${pl.toFixed(2)}).`;
+            updateDisplay();
         });
     }
 
