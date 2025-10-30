@@ -1,7 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const contactForm = document.getElementById("contact-form");
     const errorDiv = document.getElementById("contact-errors");
-    // Phone input formatter to enforce (ddd) ddd-dddd as user types
+    // Phone input formatter to enforce (ddd)ddd-dddd as user types
     const phoneInput = document.getElementById("phone");
     if (phoneInput) {
         phoneInput.addEventListener("input", () => {
@@ -45,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 errors.push("First and last name cannot be the same.");
                 firstInvalidEl = firstInvalidEl || document.getElementById("last-name");
             }
-            if (!/^\(\d{3}\) \d{3}-\d{4}$/.test(phone)) {
+            if (!/^\(\d{3}\)\s\d{3}-\d{4}$/.test(phone)) {
                 errors.push("Phone number must be in the format (ddd) ddd-dddd.");
                 firstInvalidEl = firstInvalidEl || document.getElementById("phone");
             }
