@@ -119,7 +119,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const url = URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.href = url;
-            a.download = "db/contact-file.json"; // overwrite the same file when saving
+            a.download = "contact-file.json"; // overwrite the same file when saving ('contact-file.json' file located in 'db' folder)
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);

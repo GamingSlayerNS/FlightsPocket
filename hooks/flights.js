@@ -141,7 +141,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const flights = await res.json();
                     // Persist list for later use (optional)
                     try {
-                        localStorage.setItem("fp_flights_db", JSON.stringify(flights));
+                        sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
                     } catch {}
 
                     const reqDateStr = document.getElementById("departure-date").value; // yyyy-mm-dd
@@ -202,7 +202,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                     flight: f,
                                 };
                                 try {
-                                    localStorage.setItem("fp_cart", JSON.stringify(cart));
+                                    sessionStorage.setItem("fp_cart", JSON.stringify(cart));
                                 } catch {}
                                 window.location.href = "cart.html";
                             });

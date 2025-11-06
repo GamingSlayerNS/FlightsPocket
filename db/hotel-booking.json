@@ -1,0 +1,15 @@
+{
+  "user_id": "Umhnw1u0h",
+  "booking_number": "B3372J6",
+  "hotel_id": "DL43751",
+  "hotel_city": "Dallas",
+  "hotel_name": "Sheraton Dallas Hotel",
+  "checkIn_date": "Mon Sep 30 2024",
+  "checkOut_date": "Wed Oct 02 2024",
+  "adult_guests": 1,
+  "children_guests": 2,
+  "infant_guests": 1,
+  "num_rooms_needed": 2,
+  "price_per_night": "$85.00",
+  "total_price": "$340.00"
+}

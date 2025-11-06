@@ -1,0 +1,170 @@
+<?xml version="1.0" encoding="UTF-8"?><HotelData>
+    <Hotel id="AU21030">
+        <hotelName>Hilton</hotelName>
+        <city>Austin</city>
+        <numAvailableRooms>100</numAvailableRooms>
+        <pricePerNight>120</pricePerNight>
+    </Hotel>
+    <Hotel id="AU21031">
+        <hotelName>Holiday Inn</hotelName>
+        <city>Austin</city>
+        <numAvailableRooms>60</numAvailableRooms>
+        <pricePerNight>60</pricePerNight>
+    </Hotel>
+    <Hotel id="CC94460">
+        <hotelName>Omni Corpus Christi Hotel</hotelName>
+        <city>Corpus Christi</city>
+        <numAvailableRooms>120</numAvailableRooms>
+        <pricePerNight>125</pricePerNight>
+    </Hotel>
+    <Hotel id="CC94461">
+        <hotelName>Hyatt Place</hotelName>
+        <city>Corpus Christi</city>
+        <numAvailableRooms>70</numAvailableRooms>
+        <pricePerNight>90</pricePerNight>
+    </Hotel>
+    <Hotel id="DL43750">
+        <hotelName>Omni Dallas Hotel</hotelName>
+        <city>Dallas</city>
+        <numAvailableRooms>200</numAvailableRooms>
+        <pricePerNight>150</pricePerNight>
+    </Hotel>
+    <Hotel id="DL43751">
+        <hotelName>Sheraton Dallas Hotel</hotelName>
+        <city>Dallas</city>
+        <numAvailableRooms>90</numAvailableRooms>
+        <pricePerNight>85</pricePerNight>
+    </Hotel>
+    <Hotel id="EP86590">
+        <hotelName>DoubleTree by Hilton</hotelName>
+        <city>El Paso</city>
+        <numAvailableRooms>160</numAvailableRooms>
+        <pricePerNight>90</pricePerNight>
+    </Hotel>
+    <Hotel id="EP86591">
+        <hotelName>La Quinta Inn</hotelName>
+        <city>El Paso</city>
+        <numAvailableRooms>80</numAvailableRooms>
+        <pricePerNight>50</pricePerNight>
+    </Hotel>
+    <Hotel id="FW72140">
+        <hotelName>Hampton Inn and Suites</hotelName>
+        <city>Fort Worth</city>
+        <numAvailableRooms>90</numAvailableRooms>
+        <pricePerNight>130</pricePerNight>
+    </Hotel>
+    <Hotel id="FW72141">
+        <hotelName>Hilton Garden Inn</hotelName>
+        <city>Fort Worth</city>
+        <numAvailableRooms>110</numAvailableRooms>
+        <pricePerNight>90</pricePerNight>
+    </Hotel>
+    <Hotel id="HS16080">
+        <hotelName>Crowne Plaza</hotelName>
+        <city>Houston</city>
+        <numAvailableRooms>90</numAvailableRooms>
+        <pricePerNight>50</pricePerNight>
+    </Hotel>
+    <Hotel id="HS16081">
+        <hotelName>Marriott</hotelName>
+        <city>Houston</city>
+        <numAvailableRooms>300</numAvailableRooms>
+        <pricePerNight>190</pricePerNight>
+    </Hotel>
+    <Hotel id="SA39170">
+        <hotelName>The Westin</hotelName>
+        <city>San Antonio</city>
+        <numAvailableRooms>160</numAvailableRooms>
+        <pricePerNight>80</pricePerNight>
+    </Hotel>
+    <Hotel id="SA39171">
+        <hotelName>Days Inn by Wyndham</hotelName>
+        <city>San Antonio</city>
+        <numAvailableRooms>60</numAvailableRooms>
+        <pricePerNight>45</pricePerNight>
+    </Hotel>
+    <Hotel id="FR74500">
+        <hotelName>Country Inn and Suites</hotelName>
+        <city>Fresno</city>
+        <numAvailableRooms>60</numAvailableRooms>
+        <pricePerNight>95</pricePerNight>
+    </Hotel>
+    <Hotel id="FR74501">
+        <hotelName>Garden Inn and Suites</hotelName>
+        <city>Fresno</city>
+        <numAvailableRooms>100</numAvailableRooms>
+        <pricePerNight>55</pricePerNight>
+    </Hotel>
+    <Hotel id="FR74500">
+        <hotelName>Hollywood Inn Suites Hotel</hotelName>
+        <city>Los Angeles</city>
+        <numAvailableRooms>70</numAvailableRooms>
+        <pricePerNight>80</pricePerNight>
+    </Hotel>
+    <Hotel id="FR74501">
+        <hotelName>Sheraton Gateway Los Angeles Hotel</hotelName>
+        <city>Los Angeles</city>
+        <numAvailableRooms>400</numAvailableRooms>
+        <pricePerNight>130</pricePerNight>
+    </Hotel>
+    <Hotel id="OK61910">
+        <hotelName>Oakland Marriott City Center</hotelName>
+        <city>Oakland</city>
+        <numAvailableRooms>500</numAvailableRooms>
+        <pricePerNight>120</pricePerNight>
+    </Hotel>
+    <Hotel id="OK61911">
+        <hotelName>Courtyard by Marriott</hotelName>
+        <city>Oakland</city>
+        <numAvailableRooms>120</numAvailableRooms>
+        <pricePerNight>80</pricePerNight>
+    </Hotel>
+    <Hotel id="SC56280">
+        <hotelName>Hyatt Regency Sacramento</hotelName>
+        <city>Sacramento</city>
+        <numAvailableRooms>350</numAvailableRooms>
+        <pricePerNight>135</pricePerNight>
+    </Hotel>
+    <Hotel id="SC56281">
+        <hotelName>Wyndham Sacramento</hotelName>
+        <city>Sacramento</city>
+        <numAvailableRooms>200</numAvailableRooms>
+        <pricePerNight>75</pricePerNight>
+    </Hotel>
+    <Hotel id="SD91470">
+        <hotelName>Catamaran Resort</hotelName>
+        <city>San Diego</city>
+        <numAvailableRooms>310</numAvailableRooms>
+        <pricePerNight>150</pricePerNight>
+    </Hotel>
+    <Hotel id="SD91471">
+        <hotelName>Hard Rock Hotel San Diego</hotelName>
+        <city>San Diego</city>
+        <numAvailableRooms>400</numAvailableRooms>
+        <pricePerNight>120</pricePerNight>
+    </Hotel>
+    <Hotel id="SF18530">
+        <hotelName>Grand Hyatt San Francisco</hotelName>
+        <city>San Francisco</city>
+        <numAvailableRooms>600</numAvailableRooms>
+        <pricePerNight>135</pricePerNight>
+    </Hotel>
+    <Hotel id="SF18531">
+        <hotelName>Hotel Zephyr</hotelName>
+        <city>San Francisco</city>
+        <numAvailableRooms>350</numAvailableRooms>
+        <pricePerNight>110</pricePerNight>
+    </Hotel>
+    <Hotel id="SJ09470">
+        <hotelName>Spark by Hilton San Jose</hotelName>
+        <city>San Jose</city>
+        <numAvailableRooms>140</numAvailableRooms>
+        <pricePerNight>70</pricePerNight>
+    </Hotel>
+    <Hotel id="SF09471">
+        <hotelName>Four Points by Sheraton</hotelName>
+        <city>San Jose</city>
+        <numAvailableRooms>150</numAvailableRooms>
+        <pricePerNight>120</pricePerNight>
+    </Hotel>
+</HotelData>
