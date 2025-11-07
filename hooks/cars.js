@@ -37,24 +37,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const checkInDiv = document.createElement("div");
         const checkInLabel = document.createElement("label");
-        checkInLabel.textContent = "Check-in Date:";
+        checkInLabel.textContent = "Check-In Date:";
         checkInLabel.htmlFor = "car-check-in";
         const checkInInput = document.createElement("input");
         checkInInput.type = "date";
         checkInInput.id = "car-check-in";
         checkInInput.required = true;
+        checkInInput.setAttribute('min', "2024-09-01");
+        checkInInput.setAttribute('max', "2024-12-01");
         checkInDiv.appendChild(checkInLabel);
         checkInDiv.appendChild(checkInInput);
         form.appendChild(checkInDiv);
 
         const checkOutDiv = document.createElement("div");
         const checkOutLabel = document.createElement("label");
-        checkOutLabel.textContent = "Check-out Date:";
+        checkOutLabel.textContent = "Check-Out Date:";
         checkOutLabel.htmlFor = "car-check-out";
         const checkOutInput = document.createElement("input");
         checkOutInput.type = "date";
         checkOutInput.id = "car-check-out";
         checkOutInput.required = true;
+        checkOutInput.setAttribute('min', "2024-09-01");
+        checkOutInput.setAttribute('max', "2024-12-01");
         checkOutDiv.appendChild(checkOutLabel);
         checkOutDiv.appendChild(checkOutInput);
         form.appendChild(checkOutDiv);
