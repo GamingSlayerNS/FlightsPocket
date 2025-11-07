@@ -22,7 +22,7 @@ $(document).ready(function () {
         if (departFrom < startDate || departFrom > endDate || departTo < startDate || departTo > endDate) {
             errors.push("Departure dates must be between Sep 1, 2024 and Dec 1, 2024.");
         }
-        if (departTo < departFrom) {
+        if (departTo <= departFrom) {
             errors.push('The "departing to" date must be after the "departing from" date.');
         }
         if (durationMin < 3) {
