@@ -155,7 +155,6 @@ document.addEventListener("DOMContentLoaded", () => {
                             const myButton = document.createElement('button');
                             myButton.innerText = 'Add to Cart';
                             myButton.addEventListener('click', () => {
-                                console.log("Hotel Button Clicked!" + name);
                                 const cart = {
                                     hotel: { id: id, name: name, city: hotelCity, num_rooms_needed: roomsNeeded, num_rooms_available: numRoomsAvailable, pricePerNight: price}, 
                                     checkIn_date: checkIn.toDateString(),

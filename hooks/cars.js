@@ -104,7 +104,108 @@ document.addEventListener("DOMContentLoaded", () => {
                                         <p>City: ${city}</p>
                                         <p>Car Type: ${carType}</p>
                                         <p>Check-in: ${checkIn.toDateString()}</p>
-                                        <p>Check-out: ${checkOut.toDateString()}</p>`;
+                                        <p>Check-out: ${checkOut.toDateString()}</p>
+                                        <div id="available-cars"></div>`;
+            }
+
+            const listEl = document.getElementById("available-cars");
+            if (listEl) {
+                var xml = new XMLHttpRequest();
+                xml.open('GET', 'db/rental_cars.xml', false);
+                xml.send();
+                var carData = xml.responseXML;
+                if (carData) {
+                    carData = (new DOMParser()).parseFromString(xml.responseText, 'text/xml');
+                    var carList = carData.getElementsByTagName("Car");
+                    listEl.innerHTML += `<br><table id="car-results" style="width: 100%;">
+                                                <tr style="text-align: left;">
+                                                    <th colspan="6" style="padding-left: 10px;"><h3 style="line-height: 0.5px;">Available Cars</h3></th>
+                                                </tr>
+                                                <tr style="text-align: left; width: 100%; height: 25px; background-color: gainsboro; padding-left: 10px;">
+                                                    <th style="width: 60px; padding-left: 10px;">ID</th>
+                                                    <th style="width: 105px; padding-left: 10px;">City</th>
+                                                    <th style="width: 105px; padding-left: 10px;">Type</th>
+                                                    <th style="width: 135px; padding-left: 10px;">Check-In Date</th>
+                                                    <th style="width: 135px; padding-left: 10px;">Check-Out Date</th>
+                                                    <th style="width: 105px; padding-left: 10px;">Price Per Day</th>
+                                                    <th style="background-color: white; width: 120px; padding-left: 10px;"></th>
+                                                </tr>
+                                             </table>`;
+                    for (const car of carList) {
+                        if ((car.getElementsByTagName("city")[0].firstChild.data.toLowerCase() === city.toLowerCase()) && (car.getElementsByTagName("type")[0].firstChild.data.toLowerCase() === carType.toLowerCase())) {
+                            const id = car.getAttribute("id");
+                            const rental_city = car.getElementsByTagName("city")[0].firstChild.data;
+                            const rental_type = car.getElementsByTagName("type")[0].firstChild.data;
+                            const checkInDate = checkIn.toDateString();
+                            const checkOutDate = checkOut.toDateString();
+                            const price = car.getElementsByTagName("pricePerDay")[0].firstChild.data;
+                            
+                            let tableRef = document.getElementById("car-results");
+                            let result = document.createElement("tr");
+                            
+                            let idCol = document.createElement("td");
+                            idCol.textContent = id;
+                            idCol.style.paddingLeft = "10px";
+                            result.appendChild(idCol);
+                            
+                            let cityCol = document.createElement("td");
+                            cityCol.textContent = rental_city;
+                            cityCol.style.paddingLeft = "10px";
+                            result.appendChild(cityCol);
+
+                            let typeCol = document.createElement("td");
+                            typeCol.textContent = rental_type;
+                            typeCol.style.paddingLeft = "10px";
+                            typeCol.style.fontWeight = "bold";
+                            result.appendChild(typeCol);
+                            
+                            let checkInCol = document.createElement("td");
+                            checkInCol.textContent = checkInDate;
+                            checkInCol.style.paddingLeft = "10px";
+                            result.appendChild(checkInCol);
+                            
+                            let checkOutCol = document.createElement("td");
+                            checkOutCol.textContent = checkOutDate;
+                            checkOutCol.style.paddingLeft = "10px";
+                            result.appendChild(checkOutCol);
+                            
+                            let priceCol = document.createElement("td");
+                            priceCol.textContent = "$" + price;
+                            priceCol.style.paddingLeft = "10px";
+                            priceCol.style.fontWeight = "bold";
+                            priceCol.style.backgroundColor = '#F0F0F0';
+                            result.appendChild(priceCol);
+                            
+                            let bookCol = document.createElement("td");
+                            const myButton = document.createElement('button');
+                            myButton.innerText = 'Add to Cart';
+                            myButton.addEventListener('click', () => {
+                                const cart = {
+                                    car: { id: id, city: rental_city, type: rental_type, pricePerDay: price}, 
+                                    checkIn_date: checkIn.toDateString(),
+                                    checkOut_date: checkOut.toDateString(),
+                                };
+                                try {
+                                    sessionStorage.setItem("rentals_cart", JSON.stringify(cart));
+                                } catch { }
+                                window.location.href = "cart.html";
+                            });
+                            bookCol.appendChild(myButton);
+                            bookCol.style.paddingLeft = "10px";
+                            result.appendChild(bookCol);
+                            tableRef.appendChild(result);
+                            /* result += `<tr style="height: 22px;">
+                                            <td style="padding-left: 10px;">${id}</td>
+                                            <td style="font-weight: bold; padding-left: 10px;">${name}</td>
+                                            <td style="padding-left: 10px;">${hotelCity}</td>
+                                            <td style="padding-left: 10px;">${checkInDate}</td>
+                                            <td style="padding-left: 10px;">${checkOutDate}</td>
+                                            <td style="font-weight: bold; background-color: #F0F0F0; padding-left: 10px;">$${price}</td>
+                                            <td style="padding-left: 10px;"><button id="cart">Add to Cart</button></td>
+                                       </tr>`; */
+                        }
+                    }
+                }
             }
         });
     }

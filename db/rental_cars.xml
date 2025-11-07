@@ -1,0 +1,395 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RentalCarData>
+    <Car id="AU01ECO">
+        <city>Austin</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>39</pricePerDay>
+    </Car>
+    <Car id="AU02SUV">
+        <city>Austin</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>89</pricePerDay>
+    </Car>
+    <Car id="AU03COM">
+        <city>Austin</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>49</pricePerDay>
+    </Car>
+    <Car id="AU04MID">
+        <city>Austin</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>65</pricePerDay>
+    </Car>
+    <Car id="CC01ECO">
+        <city>Corpus Christi</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>25</pricePerDay>
+    </Car>
+    <Car id="CC02SUV">
+        <city>Corpus Christi</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>75</pricePerDay>
+    </Car>
+    <Car id="CC03COM">
+        <city>Corpus Christi</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>29</pricePerDay>
+    </Car>
+    <Car id="CC04MID">
+        <city>Corpus Christi</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>49</pricePerDay>
+    </Car>
+    <Car id="DL01ECO">
+        <city>Dallas</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>45</pricePerDay>
+    </Car>
+    <Car id="DL02SUV">
+        <city>Dallas</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>84</pricePerDay>
+    </Car>
+    <Car id="DL03COM">
+        <city>Dallas</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>52</pricePerDay>
+    </Car>
+    <Car id="DL04MID">
+        <city>Dallas</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>68</pricePerDay>
+    </Car>
+    <Car id="EP01ECO">
+        <city>El Paso</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>27</pricePerDay>
+    </Car>
+    <Car id="EP02SUV">
+        <city>El Paso</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>62</pricePerDay>
+    </Car>
+    <Car id="EP03COM">
+        <city>El Paso</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>36</pricePerDay>
+    </Car>
+    <Car id="EP04MID">
+        <city>El Paso</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>48</pricePerDay>
+    </Car>
+    <Car id="FW01ECO">
+        <city>Fort Worth</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>44</pricePerDay>
+    </Car>
+    <Car id="FW02SUV">
+        <city>Fort Worth</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>82</pricePerDay>
+    </Car>
+    <Car id="FW03COM">
+        <city>Fort Worth</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>56</pricePerDay>
+    </Car>
+    <Car id="FW04MID">
+        <city>Fort Worth</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>65</pricePerDay>
+    </Car>
+    <Car id="HS01ECO">
+        <city>Houston</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>48</pricePerDay>
+    </Car>
+    <Car id="HS02SUV">
+        <city>Houston</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>72</pricePerDay>
+    </Car>
+    <Car id="HS03COM">
+        <city>Houston</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>50</pricePerDay>
+    </Car>
+    <Car id="HS04MID">
+        <city>Houston</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>58</pricePerDay>
+    </Car>
+    <Car id="SA01ECO">
+        <city>San Antonio</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>28</pricePerDay>
+    </Car>
+    <Car id="SA02SUV">
+        <city>San Antonio</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>56</pricePerDay>
+    </Car>
+    <Car id="SA03COM">
+        <city>San Antonio</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>32</pricePerDay>
+    </Car>
+    <Car id="SA04MID">
+        <city>San Antonio</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>39</pricePerDay>
+    </Car>
+    <Car id="FR01ECO">
+        <city>Fresno</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>46</pricePerDay>
+    </Car>
+    <Car id="FR02SUV">
+        <city>Fresno</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>65</pricePerDay>
+    </Car>
+    <Car id="FR03COM">
+        <city>Fresno</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>49</pricePerDay>
+    </Car>
+    <Car id="FR04MID">
+        <city>Fresno</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>54</pricePerDay>
+    </Car>
+    <Car id="LA01ECO">
+        <city>Los Angeles</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>50</pricePerDay>
+    </Car>
+    <Car id="LA02SUV">
+        <city>Los Angeles</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>103</pricePerDay>
+    </Car>
+    <Car id="LA03COM">
+        <city>Los Angeles</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>56</pricePerDay>
+    </Car>
+    <Car id="LA04MID">
+        <city>Los Angeles</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>61</pricePerDay>
+    </Car>
+    <Car id="OK01ECO">
+        <city>Oakland</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>33</pricePerDay>
+    </Car>
+    <Car id="OK02SUV">
+        <city>Oakland</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>60</pricePerDay>
+    </Car>
+    <Car id="OK03COM">
+        <city>Oakland</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>36</pricePerDay>
+    </Car>
+    <Car id="OK04MID">
+        <city>Oakland</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>45</pricePerDay>
+    </Car>
+    <Car id="SC01ECO">
+        <city>Sacramento</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>31</pricePerDay>
+    </Car>
+    <Car id="SC02SUV">
+        <city>Sacramento</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>50</pricePerDay>
+    </Car>
+    <Car id="SC03COM">
+        <city>Sacramento</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>33</pricePerDay>
+    </Car>
+    <Car id="SC04MID">
+        <city>Sacramento</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>39</pricePerDay>
+    </Car>
+    <Car id="SD01ECO">
+        <city>San Diego</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>50</pricePerDay>
+    </Car>
+    <Car id="SD02SUV">
+        <city>San Diego</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>108</pricePerDay>
+    </Car>
+    <Car id="SD03COM">
+        <city>San Diego</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>55</pricePerDay>
+    </Car>
+    <Car id="SD04MID">
+        <city>San Diego</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>71</pricePerDay>
+    </Car>
+    <Car id="SF01ECO">
+        <city>San Francisco</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>58</pricePerDay>
+    </Car>
+    <Car id="SF02SUV">
+        <city>San Francisco</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>93</pricePerDay>
+    </Car>
+    <Car id="SF03COM">
+        <city>San Francisco</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>64</pricePerDay>
+    </Car>
+    <Car id="SF04MID">
+        <city>San Francisco</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>75</pricePerDay>
+    </Car>
+    <Car id="SJ01ECO">
+        <city>San Jose</city>
+        <type>Economy</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>32</pricePerDay>
+    </Car>
+    <Car id="SJ02SUV">
+        <city>San Jose</city>
+        <type>SUV</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>68</pricePerDay>
+    </Car>
+    <Car id="SJ03COM">
+        <city>San Jose</city>
+        <type>Compact</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>35</pricePerDay>
+    </Car>
+    <Car id="SJ04MID">
+        <city>San Jose</city>
+        <type>Midsize</type>
+        <checkInDate></checkInDate>
+        <checkOutDate></checkOutDate>
+        <pricePerDay>44</pricePerDay>
+    </Car>
+</RentalCarData>
