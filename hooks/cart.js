@@ -262,7 +262,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (cached) flights = JSON.parse(cached);
                     } catch {}
                     if (!flights || flights.length === 0) {
-                        const res = await fetch("db/flights.json", { cache: "no-store" });
+                        const res = await fetch("flights.json", { cache: "no-store" });
                         if (res.ok) flights = await res.json();
                     }
 
@@ -288,7 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     const url = URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = "db/flights.json";
+                    a.download = "flights.json";
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);

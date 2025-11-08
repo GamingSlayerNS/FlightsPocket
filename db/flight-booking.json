@@ -1,0 +1,37 @@
+{
+  "userId": "Umhqmxnk1",
+  "bookingNumber": "B1UR5MP",
+  "totalPrice": 388,
+  "flights": {
+    "outbound": {
+      "flightId": "FP1001",
+      "origin": "Dallas",
+      "destination": "Los Angeles",
+      "departureDate": "2024-09-01",
+      "arrivalDate": "2024-09-01",
+      "departureTime": "08:15",
+      "arrivalTime": "10:05",
+      "availableSeats": 9,
+      "price": 189
+    },
+    "return": {
+      "flightId": "FP1067",
+      "origin": "Los Angeles",
+      "destination": "Dallas",
+      "departureDate": "2024-09-02",
+      "arrivalDate": "2024-09-02",
+      "departureTime": "09:00",
+      "arrivalTime": "10:50",
+      "availableSeats": 12,
+      "price": 199
+    }
+  },
+  "passengers": [
+    {
+      "ssn": "123-44-5678",
+      "firstName": "Naxel",
+      "lastName": "santiago",
+      "dob": "2011-03-09"
+    }
+  ]
+}
