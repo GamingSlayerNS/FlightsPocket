@@ -347,6 +347,15 @@ document.addEventListener("DOMContentLoaded", () => {
                     aBooking.click();
                     document.body.removeChild(aBooking);
                     URL.revokeObjectURL(urlBooking);
+                    try {
+                        // append to booking_history in sessionStorage
+                        const raw = sessionStorage.getItem("booking_history");
+                        const history = raw ? JSON.parse(raw) : [];
+                        history.push({ type: "flight", record: bookingRecord, timestamp: new Date().toISOString() });
+                        sessionStorage.setItem("booking_history", JSON.stringify(history));
+                    } catch (err) {
+                        console.warn("Could not save booking history:", err);
+                    }
                 } catch (err) {
                     console.warn("Could not create flight booking file:", err);
                 }
@@ -403,6 +412,16 @@ document.addEventListener("DOMContentLoaded", () => {
                 a.click();
                 document.body.removeChild(a);
                 URL.revokeObjectURL(url);
+
+                try {
+                    // append car booking to booking_history
+                    const raw = sessionStorage.getItem("booking_history");
+                    const history = raw ? JSON.parse(raw) : [];
+                    history.push({ type: "car", record: carBooking, timestamp: new Date().toISOString() });
+                    sessionStorage.setItem("booking_history", JSON.stringify(history));
+                } catch (err) {
+                    console.warn("Could not save booking history:", err);
+                }
 
                 // Optionally update rental_cars.xml: set checkInDate/checkOutDate for this car id and download updated XML
                 try {

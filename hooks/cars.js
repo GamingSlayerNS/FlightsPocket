@@ -43,8 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
         checkInInput.type = "date";
         checkInInput.id = "car-check-in";
         checkInInput.required = true;
-        checkInInput.setAttribute('min', "2024-09-01");
-        checkInInput.setAttribute('max', "2024-12-01");
+        checkInInput.setAttribute("min", "2024-09-01");
+        checkInInput.setAttribute("max", "2024-12-01");
         checkInDiv.appendChild(checkInLabel);
         checkInDiv.appendChild(checkInInput);
         form.appendChild(checkInDiv);
@@ -57,8 +57,8 @@ document.addEventListener("DOMContentLoaded", () => {
         checkOutInput.type = "date";
         checkOutInput.id = "car-check-out";
         checkOutInput.required = true;
-        checkOutInput.setAttribute('min', "2024-09-01");
-        checkOutInput.setAttribute('max', "2024-12-01");
+        checkOutInput.setAttribute("min", "2024-09-01");
+        checkOutInput.setAttribute("max", "2024-12-01");
         checkOutDiv.appendChild(checkOutLabel);
         checkOutDiv.appendChild(checkOutInput);
         form.appendChild(checkOutDiv);
@@ -73,6 +73,117 @@ document.addEventListener("DOMContentLoaded", () => {
 
         main.appendChild(form);
         main.appendChild(resultsDiv);
+
+        // Suggestions based on previous bookings (stored in sessionStorage.booking_history)
+        const suggestionsDiv = document.createElement("div");
+        suggestionsDiv.id = "car-suggestions";
+        suggestionsDiv.style.marginBottom = "1rem";
+        main.insertBefore(suggestionsDiv, form);
+
+        try {
+            const rawHistory = sessionStorage.getItem("booking_history");
+            if (rawHistory) {
+                const history = JSON.parse(rawHistory);
+                // prefer most recent car booking, otherwise use most recent flight booking
+                let recentCar = null;
+                let recentFlight = null;
+                for (let i = history.length - 1; i >= 0; i--) {
+                    const h = history[i];
+                    if (!recentCar && h.type === "car") recentCar = h.record;
+                    if (!recentFlight && h.type === "flight") recentFlight = h.record;
+                    if (recentCar && recentFlight) break;
+                }
+
+                const suggestions = [];
+                if (recentCar) {
+                    // suggest same city & type and a couple of nearby options
+                    suggestions.push({
+                        city: recentCar.city,
+                        type: recentCar.type,
+                        checkIn: recentCar.checkIn_date,
+                        checkOut: recentCar.checkOut_date,
+                        label: `Same as last car (${recentCar.type} in ${recentCar.city})`,
+                    });
+                    // alternate: suggest Economy in same city
+                    if (recentCar.type !== "Economy")
+                        suggestions.push({
+                            city: recentCar.city,
+                            type: "Economy",
+                            checkIn: recentCar.checkIn_date,
+                            checkOut: recentCar.checkOut_date,
+                            label: `Economy in ${recentCar.city}`,
+                        });
+                } else if (recentFlight) {
+                    // use flight destination as suggested city
+                    const destCity =
+                        (recentFlight.flights &&
+                            recentFlight.flights.outbound &&
+                            recentFlight.flights.outbound.destination) ||
+                        recentFlight.flights?.return?.destination ||
+                        recentFlight.flight?.destination ||
+                        null;
+                    if (destCity) {
+                        suggestions.push({
+                            city: destCity,
+                            type: "Economy",
+                            checkIn: null,
+                            checkOut: null,
+                            label: `From your recent flight to ${destCity}`,
+                        });
+                    }
+                }
+
+                if (suggestions.length > 0) {
+                    let html = `<h4>Suggested Cars</h4><div style="display:flex;gap:0.5rem;flex-direction:column;">`;
+                    suggestions.slice(0, 3).forEach((s, idx) => {
+                        html += `<div style="display:flex;align-items:center;gap:0.5rem;"><span>${s.label}</span><button type="button" data-idx="${idx}" class="apply-suggestion">Use</button></div>`;
+                    });
+                    html += `</div>`;
+                    suggestionsDiv.innerHTML = html;
+
+                    // attach handlers
+                    const buttons = suggestionsDiv.querySelectorAll(".apply-suggestion");
+                    buttons.forEach((btn) => {
+                        btn.addEventListener("click", (e) => {
+                            const idx = Number(btn.getAttribute("data-idx"));
+                            const s = suggestions[idx];
+                            if (!s) return;
+                            cityInput.value = s.city || cityInput.value;
+                            // try to set car type if present in options
+                            try {
+                                Array.from(carTypeSelect.options).forEach((opt) => {
+                                    if (opt.value.toLowerCase() === (s.type || "").toLowerCase()) opt.selected = true;
+                                });
+                            } catch {}
+                            // convert checkIn/checkOut (if provided as human-readable) to yyyy-mm-dd
+                            function toISODate(dstr) {
+                                if (!dstr) return null;
+                                const dt = new Date(dstr);
+                                if (isNaN(dt)) return null;
+                                const yyyy = dt.getFullYear();
+                                const mm = String(dt.getMonth() + 1).padStart(2, "0");
+                                const dd = String(dt.getDate()).padStart(2, "0");
+                                return `${yyyy}-${mm}-${dd}`;
+                            }
+                            const inISO = toISODate(s.checkIn);
+                            const outISO = toISODate(s.checkOut);
+                            if (inISO) checkInInput.value = inISO;
+                            if (outISO) checkOutInput.value = outISO;
+
+                            // submit the form to show matching cars
+                            try {
+                                form.requestSubmit();
+                            } catch (err) {
+                                // fallback
+                                form.dispatchEvent(new Event("submit", { cancelable: true }));
+                            }
+                        });
+                    });
+                }
+            }
+        } catch (err) {
+            console.warn("Could not read booking_history for suggestions:", err);
+        }
 
         form.addEventListener("submit", (e) => {
             e.preventDefault();
@@ -111,11 +222,11 @@ document.addEventListener("DOMContentLoaded", () => {
             const listEl = document.getElementById("available-cars");
             if (listEl) {
                 var xml = new XMLHttpRequest();
-                xml.open('GET', 'db/rental_cars.xml', false);
+                xml.open("GET", "db/rental_cars.xml", false);
                 xml.send();
                 var carData = xml.responseXML;
                 if (carData) {
-                    carData = (new DOMParser()).parseFromString(xml.responseText, 'text/xml');
+                    carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
                     var carList = carData.getElementsByTagName("Car");
                     listEl.innerHTML += `<br><table id="car-results" style="width: 100%;">
                                                 <tr style="text-align: left;">
@@ -132,22 +243,25 @@ document.addEventListener("DOMContentLoaded", () => {
                                                 </tr>
                                              </table>`;
                     for (const car of carList) {
-                        if ((car.getElementsByTagName("city")[0].firstChild.data.toLowerCase() === city.toLowerCase()) && (car.getElementsByTagName("type")[0].firstChild.data.toLowerCase() === carType.toLowerCase())) {
+                        if (
+                            car.getElementsByTagName("city")[0].firstChild.data.toLowerCase() === city.toLowerCase() &&
+                            car.getElementsByTagName("type")[0].firstChild.data.toLowerCase() === carType.toLowerCase()
+                        ) {
                             const id = car.getAttribute("id");
                             const rental_city = car.getElementsByTagName("city")[0].firstChild.data;
                             const rental_type = car.getElementsByTagName("type")[0].firstChild.data;
                             const checkInDate = checkIn.toDateString();
                             const checkOutDate = checkOut.toDateString();
                             const price = car.getElementsByTagName("pricePerDay")[0].firstChild.data;
-                            
+
                             let tableRef = document.getElementById("car-results");
                             let result = document.createElement("tr");
-                            
+
                             let idCol = document.createElement("td");
                             idCol.textContent = id;
                             idCol.style.paddingLeft = "10px";
                             result.appendChild(idCol);
-                            
+
                             let cityCol = document.createElement("td");
                             cityCol.textContent = rental_city;
                             cityCol.style.paddingLeft = "10px";
@@ -158,36 +272,36 @@ document.addEventListener("DOMContentLoaded", () => {
                             typeCol.style.paddingLeft = "10px";
                             typeCol.style.fontWeight = "bold";
                             result.appendChild(typeCol);
-                            
+
                             let checkInCol = document.createElement("td");
                             checkInCol.textContent = checkInDate;
                             checkInCol.style.paddingLeft = "10px";
                             result.appendChild(checkInCol);
-                            
+
                             let checkOutCol = document.createElement("td");
                             checkOutCol.textContent = checkOutDate;
                             checkOutCol.style.paddingLeft = "10px";
                             result.appendChild(checkOutCol);
-                            
+
                             let priceCol = document.createElement("td");
                             priceCol.textContent = "$" + price;
                             priceCol.style.paddingLeft = "10px";
                             priceCol.style.fontWeight = "bold";
-                            priceCol.style.backgroundColor = '#F0F0F0';
+                            priceCol.style.backgroundColor = "#F0F0F0";
                             result.appendChild(priceCol);
-                            
+
                             let bookCol = document.createElement("td");
-                            const myButton = document.createElement('button');
-                            myButton.innerText = 'Add to Cart';
-                            myButton.addEventListener('click', () => {
+                            const myButton = document.createElement("button");
+                            myButton.innerText = "Add to Cart";
+                            myButton.addEventListener("click", () => {
                                 const cart = {
-                                    car: { id: id, city: rental_city, type: rental_type, pricePerDay: price}, 
+                                    car: { id: id, city: rental_city, type: rental_type, pricePerDay: price },
                                     checkIn_date: checkIn.toDateString(),
                                     checkOut_date: checkOut.toDateString(),
                                 };
                                 try {
                                     sessionStorage.setItem("rentals_cart", JSON.stringify(cart));
-                                } catch { }
+                                } catch {}
                                 window.location.href = "cart.html";
                             });
                             bookCol.appendChild(myButton);
