@@ -423,7 +423,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     console.warn("Could not save booking history:", err);
                 }
 
-                // Optionally update rental_cars.xml: set checkInDate/checkOutDate for this car id and download updated XML
                 try {
                     var xml = new XMLHttpRequest();
                     xml.open("GET", "db/rental_cars.xml", false);
