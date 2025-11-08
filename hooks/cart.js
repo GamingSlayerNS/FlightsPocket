@@ -13,18 +13,38 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("userId", randId);
     }
 
+    let rentals_cart = null;
     try {
         flight_cart = JSON.parse(sessionStorage.getItem("fp_cart"));
         hotel_cart = JSON.parse(sessionStorage.getItem("hotels_cart"));
+        rentals_cart = JSON.parse(sessionStorage.getItem("rentals_cart"));
     } catch {}
 
-    if ((!flight_cart || !flight_cart.flight) && !hotel_cart) {
+    const hasFlightCart = Boolean(
+        flight_cart && (flight_cart.flight || flight_cart.flights || flight_cart.tripType === "round-trip")
+    );
+    const hasRentalCart = Boolean(rentals_cart && rentals_cart.car);
+
+    if (!hasFlightCart && !hotel_cart) {
         container.innerHTML = `<p>Your cart is empty. Go to the <a href="flights.html">Flights</a> page to add a flight.</p>`;
         return;
     } else {
         if (hotel_cart) {
             const { hotel, checkIn_date, checkOut_date, passengers } = hotel_cart;
-            console.log("Hotel ID: " + hotel.id + "\nHotel Name: " + hotel.name + "\nCheck-In Date: " + checkIn_date + "\nCheck-Out Date: " + checkOut_date + "\nNumber of Adults: " + Number(passengers?.adults || 0) + "\nNumber of Children: " + Number(passengers?.children || 0));
+            console.log(
+                "Hotel ID: " +
+                    hotel.id +
+                    "\nHotel Name: " +
+                    hotel.name +
+                    "\nCheck-In Date: " +
+                    checkIn_date +
+                    "\nCheck-Out Date: " +
+                    checkOut_date +
+                    "\nNumber of Adults: " +
+                    Number(passengers?.adults || 0) +
+                    "\nNumber of Children: " +
+                    Number(passengers?.children || 0)
+            );
             const adults = Number(passengers?.adults || 0);
             const children = Number(passengers?.children || 0);
             const infants = Number(passengers?.infants || 0);
@@ -52,7 +72,7 @@ document.addEventListener("DOMContentLoaded", () => {
             submit.type = "submit";
             submit.textContent = "Book Hotel";
             container.appendChild(submit);
-            submit.addEventListener('click', () => {            
+            submit.addEventListener("click", () => {
                 // create hotel-booking.json file
                 const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
                 const hotel_booking = {
@@ -68,7 +88,7 @@ document.addEventListener("DOMContentLoaded", () => {
                     infant_guests: infants,
                     num_rooms_needed: numRoomsNeeded,
                     price_per_night: "$" + price.toFixed(2),
-                    total_price: "$" + totalPrice.toFixed(2)
+                    total_price: "$" + totalPrice.toFixed(2),
                 };
                 const blob = new Blob([JSON.stringify(hotel_booking, null, 2)], { type: "application/json" });
                 const url = URL.createObjectURL(blob);
@@ -84,11 +104,11 @@ document.addEventListener("DOMContentLoaded", () => {
                 // update hotels.xml file
                 const newSeats = Math.max(0, Number(hotel.num_rooms_available) - numRoomsNeeded);
                 var xml = new XMLHttpRequest();
-                xml.open('GET', 'db/hotels.xml', false);
+                xml.open("GET", "db/hotels.xml", false);
                 xml.send();
                 var hotelData = xml.responseXML;
                 if (hotelData) {
-                    hotelData = (new DOMParser()).parseFromString(xml.responseText, 'text/xml');
+                    hotelData = new DOMParser().parseFromString(xml.responseText, "text/xml");
                     var hotelList = hotelData.getElementsByTagName("Hotel");
                     for (const hotels of hotelList) {
                         if (hotels.getAttribute("id") === hotel.id) {
@@ -99,11 +119,11 @@ document.addEventListener("DOMContentLoaded", () => {
                     const serializer = new XMLSerializer();
                     const updatedXMLString = serializer.serializeToString(hotelData);
 
-                    const blob = new Blob([updatedXMLString], { type: 'application/xml' });
+                    const blob = new Blob([updatedXMLString], { type: "application/xml" });
                     const url = URL.createObjectURL(blob);
-                    const a = document.createElement('a');
+                    const a = document.createElement("a");
                     a.href = url;
-                    a.download = 'hotels.xml';
+                    a.download = "hotels.xml";
                     document.body.appendChild(a);
                     a.click();
                     document.body.removeChild(a);
@@ -114,30 +134,63 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
                 try {
                     sessionStorage.removeItem("hotels_cart");
-                } catch { }
+                } catch {}
             });
         }
-        if (flight_cart || flight_cart.flight) {
-            const { flight, passengers } = flight_cart;
-            const adults = Number(passengers?.adults || 0);
-            const children = Number(passengers?.children || 0);
-            const infants = Number(passengers?.infants || 0);
-            const totalPax = adults + children + infants;
+        if (flight_cart) {
+            // Support both one-way (flight) and round-trip (flights.outbound + flights.return)
+            let adults = 0,
+                children = 0,
+                infants = 0,
+                totalPax = 0;
+            let isRound = flight_cart.tripType === "round-trip";
+            let outbound = null,
+                ret = null;
+            if (isRound) {
+                const passengers = flight_cart.passengers || {};
+                adults = Number(passengers?.adults || 0);
+                children = Number(passengers?.children || 0);
+                infants = Number(passengers?.infants || 0);
+                totalPax = adults + children + infants;
+                outbound = flight_cart.flights?.outbound || null;
+                ret = flight_cart.flights?.return || null;
+            } else {
+                const { flight, passengers } = flight_cart;
+                adults = Number(passengers?.adults || 0);
+                children = Number(passengers?.children || 0);
+                infants = Number(passengers?.infants || 0);
+                totalPax = adults + children + infants;
+                outbound = flight || null;
+            }
 
-            const adultCost = flight.price;
-            const childCost = flight.price * 0.7;
-            const infantCost = flight.price * 0.1;
+            if (!outbound) {
+                container.innerHTML += `<p>Selected flight data is missing or invalid.</p>`;
+                return;
+            }
+
+            // compute per-passenger costs
+            const adultCost = Number(outbound.price) + (ret ? Number(ret.price) : 0);
+            const childCost = adultCost * 0.7;
+            const infantCost = adultCost * 0.1;
             const totalPrice = adults * adultCost + children * childCost + infants * infantCost;
 
             const headerHtml = `
                 <div class="flight-summary">
-                    <h3>Selected Flight</h3>
-                    <p><strong>${flight.flightId}</strong> — ${flight.origin} → ${flight.destination}</p>
-                    <p>Departure: ${flight.departureDate} ${flight.departureTime} | Arrival: ${flight.arrivalDate} ${flight.arrivalTime
-                            }</p>
-                    <p>Price (Adult): $${adultCost.toFixed(2)} | Child: $${childCost.toFixed(2)} | Infant: $${infantCost.toFixed(
-                                2
-                            )}</p>
+                    <h3>Selected Flight${isRound ? " (Round-Trip)" : ""}</h3>
+                    <p><strong>${outbound.flightId}${ret ? ` ⇄ ${ret.flightId}` : ""}</strong> — ${outbound.origin} → ${
+                outbound.destination
+            }${ret ? ` ⇄ ${ret.origin} → ${ret.destination}` : ""}</p>
+                    <p>Outbound: ${outbound.departureDate} ${outbound.departureTime} | ${outbound.arrivalDate} ${
+                outbound.arrivalTime
+            }</p>
+                    ${
+                        ret
+                            ? `<p>Return: ${ret.departureDate} ${ret.departureTime} | ${ret.arrivalDate} ${ret.arrivalTime}</p>`
+                            : ""
+                    }
+                    <p>Price (Adult): $${adultCost.toFixed(2)} | Child: $${childCost.toFixed(
+                2
+            )} | Infant: $${infantCost.toFixed(2)}</p>
                     <p>Passengers: Adults ${adults}, Children ${children}, Infants ${infants}</p>
                     <h4>Total: $${totalPrice.toFixed(2)}</h4>
                 </div>
@@ -147,7 +200,6 @@ document.addEventListener("DOMContentLoaded", () => {
             form.id = "booking-form";
             form.className = "booking-form";
 
-            const fields = [];
             for (let i = 0; i < totalPax; i++) {
                 const paxType = i < adults ? "Adult" : i < adults + children ? "Child" : "Infant";
                 const group = document.createElement("div");
@@ -160,7 +212,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="date" placeholder="Date of Birth" required class="p-dob" />
                     <input type="text" placeholder="SSN (ddd-dd-dddd)" required class="p-ssn" />
                 </div>`;
-                fields.push(group);
                 form.appendChild(group);
             }
 
@@ -175,11 +226,9 @@ document.addEventListener("DOMContentLoaded", () => {
             form.addEventListener("submit", async (e) => {
                 e.preventDefault();
 
-                // validation for SSN format ###-##-####
                 const ssnRe = /^\d{3}-\d{2}-\d{4}$/;
                 const passengersList = [];
                 let hasError = false;
-
                 const groups = form.querySelectorAll(".flex-row");
                 groups.forEach((g, idx) => {
                     const first = g.querySelector(".p-first").value.trim();
@@ -197,52 +246,53 @@ document.addEventListener("DOMContentLoaded", () => {
                     return;
                 }
 
-                // Generate booking number
-                // const userId = `U${Date.now().toString(36)}`;
                 const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
 
                 const summary = {
                     userId,
                     bookingNumber,
-                    flightId: flight.flightId,
-                    origin: flight.origin,
-                    destination: flight.destination,
-                    departureDate: flight.departureDate,
-                    arrivalDate: flight.arrivalDate,
-                    departureTime: flight.departureTime,
-                    arrivalTime: flight.arrivalTime,
                     passengers: passengersList,
                 };
 
-                // Update seats in a local copy of flights DB and trigger download
+                // Update seats in flights DB for outbound (and return if round-trip)
                 try {
                     let flights = [];
                     try {
                         const cached = sessionStorage.getItem("fp_flights_db");
                         if (cached) flights = JSON.parse(cached);
-                    } catch { }
+                    } catch {}
                     if (!flights || flights.length === 0) {
                         const res = await fetch("db/flights.json", { cache: "no-store" });
                         if (res.ok) flights = await res.json();
                     }
-                    const idx = flights.findIndex((f) => f.flightId === flight.flightId);
-                    if (idx !== -1) {
-                        const newSeats = Math.max(0, Number(flights[idx].availableSeats) - totalPax);
-                        flights[idx].availableSeats = newSeats;
-                        try {
-                            sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
-                        } catch { }
-                        // download updated DB file to satisfy assignment "update the number of available seats"
-                        const blob = new Blob([JSON.stringify(flights, null, 2)], { type: "application/json" });
-                        const url = URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = "db/flights.json";
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                        URL.revokeObjectURL(url);
-                    }
+
+                    const changedIds = [];
+                    const updateSeatsFor = (flightId) => {
+                        const idx = flights.findIndex((f) => f.flightId === flightId);
+                        if (idx !== -1) {
+                            const newSeats = Math.max(0, Number(flights[idx].availableSeats) - totalPax);
+                            flights[idx].availableSeats = newSeats;
+                            changedIds.push(flightId);
+                        }
+                    };
+
+                    if (outbound && outbound.flightId) updateSeatsFor(outbound.flightId);
+                    if (ret && ret.flightId) updateSeatsFor(ret.flightId);
+
+                    try {
+                        sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
+                    } catch {}
+
+                    // download updated DB
+                    const blob = new Blob([JSON.stringify(flights, null, 2)], { type: "application/json" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "db/flights.json";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
                 } catch (err) {
                     console.warn("Could not update flights DB:", err);
                 }
@@ -252,12 +302,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 <h3>Booking Confirmed</h3>
                 <p><strong>User ID:</strong> ${summary.userId}</p>
                 <p><strong>Booking #:</strong> ${summary.bookingNumber}</p>
-                <p><strong>Flight:</strong> ${summary.flightId} — ${summary.origin} → ${summary.destination}</p>
-                <p><strong>Departure:</strong> ${summary.departureDate} ${summary.departureTime}</p>
-                <p><strong>Arrival:</strong> ${summary.arrivalDate} ${summary.arrivalTime}</p>
+                ${
+                    outbound
+                        ? `<p><strong>Outbound:</strong> ${outbound.flightId} — ${outbound.origin} → ${outbound.destination} | ${outbound.departureDate} ${outbound.departureTime}</p>`
+                        : ""
+                }
+                ${
+                    ret
+                        ? `<p><strong>Return:</strong> ${ret.flightId} — ${ret.origin} → ${ret.destination} | ${ret.departureDate} ${ret.departureTime}</p>`
+                        : ""
+                }
                 <h4>Passengers</h4>
                 <ul>
-                    ${summary.passengers.map((p) => `<li>${p.ssn} — ${p.firstName} ${p.lastName} (${p.dob})</li>`).join("")}
+                    ${summary.passengers
+                        .map((p) => `<li>${p.ssn} — ${p.firstName} ${p.lastName} (${p.dob})</li>`)
+                        .join("")}
                 </ul>
                 <p><strong>Total Paid:</strong> $${totalPrice.toFixed(2)}</p>
                 `;
@@ -265,7 +324,124 @@ document.addEventListener("DOMContentLoaded", () => {
                 container.innerHTML = details;
                 try {
                     sessionStorage.removeItem("fp_cart");
-                } catch { }
+                } catch {}
+                // Also create a booking JSON file for the flight(s)
+                try {
+                    const bookingRecord = {
+                        userId: summary.userId,
+                        bookingNumber: summary.bookingNumber,
+                        totalPrice: totalPrice,
+                        flights: {},
+                    };
+                    if (outbound) bookingRecord.flights.outbound = outbound;
+                    if (ret) bookingRecord.flights.return = ret;
+                    bookingRecord.passengers = summary.passengers;
+                    const blobBooking = new Blob([JSON.stringify(bookingRecord, null, 2)], {
+                        type: "application/json",
+                    });
+                    const urlBooking = URL.createObjectURL(blobBooking);
+                    const aBooking = document.createElement("a");
+                    aBooking.href = urlBooking;
+                    aBooking.download = "flight-booking.json";
+                    document.body.appendChild(aBooking);
+                    aBooking.click();
+                    document.body.removeChild(aBooking);
+                    URL.revokeObjectURL(urlBooking);
+                } catch (err) {
+                    console.warn("Could not create flight booking file:", err);
+                }
+            });
+        }
+        // Rentals / Car booking rendering
+        if (hasRentalCart) {
+            const cart = rentals_cart;
+            const car = cart.car;
+            const checkIn = cart.checkIn_date;
+            const checkOut = cart.checkOut_date;
+
+            const headerHtml = `
+                <div class="car-summary">
+                    <h3>Selected Car</h3>
+                    <p><strong>${car.id}</strong> — ${car.city} | ${car.type}</p>
+                    <p>Check-In: ${checkIn}</p>
+                    <p>Check-Out: ${checkOut}</p>
+                    <p>Price per day: $${Number(
+                        car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || 0
+                    )}</p>
+                </div>
+            `;
+            container.innerHTML += headerHtml;
+
+            const bookBtn = document.createElement("button");
+            bookBtn.textContent = "Book Car";
+            container.appendChild(bookBtn);
+            bookBtn.addEventListener("click", () => {
+                const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+                const carBooking = {
+                    userId,
+                    bookingNumber,
+                    carId: car.id,
+                    city: car.city,
+                    type: car.type,
+                    checkIn_date: checkIn,
+                    checkOut_date: checkOut,
+                    pricePerDay:
+                        car.pricePerDay ||
+                        car.pricePerDay ||
+                        car.pricePerDay ||
+                        car.pricePerDay ||
+                        car.pricePerDay ||
+                        0,
+                };
+                // download booking JSON
+                const blob = new Blob([JSON.stringify(carBooking, null, 2)], { type: "application/json" });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "car-booking.json";
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                // Optionally update rental_cars.xml: set checkInDate/checkOutDate for this car id and download updated XML
+                try {
+                    var xml = new XMLHttpRequest();
+                    xml.open("GET", "db/rental_cars.xml", false);
+                    xml.send();
+                    var carData = xml.responseXML;
+                    if (carData) {
+                        carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
+                        var carList = carData.getElementsByTagName("Car");
+                        for (const c of carList) {
+                            if (c.getAttribute("id") === car.id) {
+                                let inNode = c.getElementsByTagName("checkInDate")[0];
+                                let outNode = c.getElementsByTagName("checkOutDate")[0];
+                                if (inNode) inNode.textContent = checkIn;
+                                if (outNode) outNode.textContent = checkOut;
+                                break;
+                            }
+                        }
+                        const serializer = new XMLSerializer();
+                        const updatedXMLString = serializer.serializeToString(carData);
+                        const blobXML = new Blob([updatedXMLString], { type: "application/xml" });
+                        const urlXML = URL.createObjectURL(blobXML);
+                        const aXML = document.createElement("a");
+                        aXML.href = urlXML;
+                        aXML.download = "rental_cars.xml";
+                        document.body.appendChild(aXML);
+                        aXML.click();
+                        document.body.removeChild(aXML);
+                        URL.revokeObjectURL(urlXML);
+                    }
+                } catch (err) {
+                    console.warn("Could not update rental_cars.xml", err);
+                }
+
+                try {
+                    sessionStorage.removeItem("rentals_cart");
+                } catch {}
+                container.innerHTML = `<h3>Car booked</h3><p>Booking #: ${bookingNumber}</p>`;
             });
         }
     }
