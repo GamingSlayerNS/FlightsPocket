@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let flight_cart = null;
     let hotel_cart = null;
+    let rental_cart = null;
 
     // generate user id
     const randId = `U${Date.now().toString(36)}`;
@@ -13,128 +14,29 @@ document.addEventListener("DOMContentLoaded", () => {
         sessionStorage.setItem("userId", randId);
     }
 
-    let rentals_cart = null;
     try {
         flight_cart = JSON.parse(sessionStorage.getItem("fp_cart"));
         hotel_cart = JSON.parse(sessionStorage.getItem("hotels_cart"));
-        rentals_cart = JSON.parse(sessionStorage.getItem("rentals_cart"));
+        rental_cart = JSON.parse(sessionStorage.getItem("rentals_cart"));
     } catch {}
 
-    const hasFlightCart = Boolean(
+    /* const hasFlightCart = Boolean(
         flight_cart && (flight_cart.flight || flight_cart.flights || flight_cart.tripType === "round-trip")
     );
-    const hasRentalCart = Boolean(rentals_cart && rentals_cart.car);
+    const hasRentalCart = Boolean(rentals_cart && rentals_cart.car); */
 
-    if (!hasFlightCart && !hotel_cart) {
+    // if (!hasFlightCart && !hotel_cart) {
+    if ((!flight_cart || !flight_cart.flight) && !hotel_cart && !rental_cart) {
         container.innerHTML = `<p>Your cart is empty. Go to the <a href="flights.html">Flights</a> page to add a flight.</p>`;
         return;
     } else {
         if (hotel_cart) {
-            const { hotel, checkIn_date, checkOut_date, passengers } = hotel_cart;
-            console.log(
-                "Hotel ID: " +
-                    hotel.id +
-                    "\nHotel Name: " +
-                    hotel.name +
-                    "\nCheck-In Date: " +
-                    checkIn_date +
-                    "\nCheck-Out Date: " +
-                    checkOut_date +
-                    "\nNumber of Adults: " +
-                    Number(passengers?.adults || 0) +
-                    "\nNumber of Children: " +
-                    Number(passengers?.children || 0)
-            );
-            const adults = Number(passengers?.adults || 0);
-            const children = Number(passengers?.children || 0);
-            const infants = Number(passengers?.infants || 0);
-            const numRoomsNeeded = Number(hotel.num_rooms_needed);
-            const price = Number(hotel.pricePerNight);
-            const numNights = (new Date(checkOut_date) - new Date(checkIn_date)) / (1000 * 60 * 60 * 24);
-            const totalPrice = numRoomsNeeded * price * numNights;
-            const headerHtml = `
-                <div class="hotel-summary">
-                    <h3>Selected Hotel</h3>
-                    <p><strong>Hotel Name: ${hotel.name}</strong></p>
-                    <p>Hotel-ID: ${hotel.id}</p>
-                    <p>City: ${hotel.city}</p>
-                    <p>Guests: Adults ${adults}, Children ${children}, Infants ${infants}</p>
-                    <p>Check-In Date: ${checkIn_date}</p>
-                    <p>Check-Out Date: ${checkOut_date}</p>
-                    <p>Rooms Needed: ${numRoomsNeeded}</p>
-                    <p>Price Per Night: $${price.toFixed(2)}</p>
-                    <h4>Total: $${totalPrice.toFixed(2)}</h4>
-                </div>
-            `;
-            container.innerHTML += headerHtml;
+            run_HotelCart(userId, hotel_cart, container, false);
 
-            const submit = document.createElement("button");
-            submit.type = "submit";
-            submit.textContent = "Book Hotel";
-            container.appendChild(submit);
-            submit.addEventListener("click", () => {
-                // create hotel-booking.json file
-                const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-                const hotel_booking = {
-                    user_id: userId,
-                    booking_number: bookingNumber,
-                    hotel_id: hotel.id,
-                    hotel_city: hotel.city,
-                    hotel_name: hotel.name,
-                    checkIn_date: checkIn_date,
-                    checkOut_date: checkOut_date,
-                    adult_guests: adults,
-                    children_guests: children,
-                    infant_guests: infants,
-                    num_rooms_needed: numRoomsNeeded,
-                    price_per_night: "$" + price.toFixed(2),
-                    total_price: "$" + totalPrice.toFixed(2),
-                };
-                const blob = new Blob([JSON.stringify(hotel_booking, null, 2)], { type: "application/json" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "hotel-booking.json"; // overwrite the same file when saving ('hotel-booking.json' file located in 'db' folder)
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                console.log("Created hotel-booking.json file.");
-
-                // update hotels.xml file
-                const newSeats = Math.max(0, Number(hotel.num_rooms_available) - numRoomsNeeded);
-                var xml = new XMLHttpRequest();
-                xml.open("GET", "db/hotels.xml", false);
-                xml.send();
-                var hotelData = xml.responseXML;
-                if (hotelData) {
-                    hotelData = new DOMParser().parseFromString(xml.responseText, "text/xml");
-                    var hotelList = hotelData.getElementsByTagName("Hotel");
-                    for (const hotels of hotelList) {
-                        if (hotels.getAttribute("id") === hotel.id) {
-                            hotels.getElementsByTagName("numAvailableRooms")[0].textContent = newSeats;
-                            break;
-                        }
-                    }
-                    const serializer = new XMLSerializer();
-                    const updatedXMLString = serializer.serializeToString(hotelData);
-
-                    const blob = new Blob([updatedXMLString], { type: "application/xml" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "hotels.xml";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                    console.log("Successfully updated 'hotels.xml' file.");
-                } else {
-                    console.log("Could not find 'hotels.xml'!");
+            document.addEventListener('click', function (event) {
+                if (event.target.matches('#hotel-submit')) {
+                    run_HotelCart(userId, hotel_cart, container, true);
                 }
-                try {
-                    sessionStorage.removeItem("hotels_cart");
-                } catch {}
             });
         }
         if (flight_cart) {
@@ -216,154 +118,172 @@ document.addEventListener("DOMContentLoaded", () => {
             }
 
             const submit = document.createElement("button");
+            submit.id = "flight-submit";
             submit.type = "submit";
             submit.textContent = "Book Flight";
             form.appendChild(submit);
 
             container.innerHTML += headerHtml;
             container.appendChild(form);
-
-            form.addEventListener("submit", async (e) => {
-                e.preventDefault();
-
-                const ssnRe = /^\d{3}-\d{2}-\d{4}$/;
-                const passengersList = [];
-                let hasError = false;
-                const groups = form.querySelectorAll(".flex-row");
-                groups.forEach((g, idx) => {
-                    const first = g.querySelector(".p-first").value.trim();
-                    const last = g.querySelector(".p-last").value.trim();
-                    const dob = g.querySelector(".p-dob").value.trim();
-                    const ssn = g.querySelector(".p-ssn").value.trim();
-                    if (!first || !last || !dob || !ssnRe.test(ssn)) {
-                        hasError = true;
-                    }
-                    passengersList.push({ ssn, firstName: first, lastName: last, dob });
+            
+            // ssn input formatter to enforce ddd-dd-dddd as user types
+            const ssnInput = document.querySelector(".p-ssn");
+            if (ssnInput) {
+                ssnInput.addEventListener("input", () => {
+                    const digits = ssnInput.value.replace(/\D/g, "").slice(0, 9);
+                    const parts = [];
+                    if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
+                    if (digits.length >= 3) parts[0] += "-";
+                    if (digits.length > 3) parts.push(digits.slice(3, Math.min(5, digits.length)));
+                    if (digits.length >= 5) parts[1] += "-";
+                    if (digits.length > 5) parts.push(digits.slice(5));
+                    ssnInput.value = parts.join("");
                 });
+            }
 
-                if (hasError) {
-                    alert("Please complete all passenger details. SSN must be in the format ddd-dd-dddd.");
-                    return;
-                }
+            document.addEventListener("submit", async (e) => {
+                e.preventDefault();
+                if (e.submitter.matches('#flight-submit')) {
+                    const ssnRe = /^\d{3}-\d{2}-\d{4}$/;
+                    const passengersList = [];
+                    let hasError = false;
 
-                const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-
-                const summary = {
-                    userId,
-                    bookingNumber,
-                    passengers: passengersList,
-                };
-
-                // Update seats in flights DB for outbound (and return if round-trip)
-                try {
-                    let flights = [];
-                    try {
-                        const cached = sessionStorage.getItem("fp_flights_db");
-                        if (cached) flights = JSON.parse(cached);
-                    } catch {}
-                    if (!flights || flights.length === 0) {
-                        const res = await fetch("flights.json", { cache: "no-store" });
-                        if (res.ok) flights = await res.json();
-                    }
-
-                    const changedIds = [];
-                    const updateSeatsFor = (flightId) => {
-                        const idx = flights.findIndex((f) => f.flightId === flightId);
-                        if (idx !== -1) {
-                            const newSeats = Math.max(0, Number(flights[idx].availableSeats) - totalPax);
-                            flights[idx].availableSeats = newSeats;
-                            changedIds.push(flightId);
+                    const groups = document.querySelector("#booking-form").querySelectorAll(".flex-row");
+                    groups.forEach((g, idx) => {
+                        const first = g.querySelector(".p-first").value.trim();
+                        const last = g.querySelector(".p-last").value.trim();
+                        const dob = g.querySelector(".p-dob").value.trim();
+                        const ssn = g.querySelector(".p-ssn").value.trim();
+                        if (!first || !last || !dob || !ssnRe.test(ssn)) {
+                            hasError = true;
                         }
-                    };
-
-                    if (outbound && outbound.flightId) updateSeatsFor(outbound.flightId);
-                    if (ret && ret.flightId) updateSeatsFor(ret.flightId);
-
-                    try {
-                        sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
-                    } catch {}
-
-                    // download updated DB
-                    const blob = new Blob([JSON.stringify(flights, null, 2)], { type: "application/json" });
-                    const url = URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = "flights.json";
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    URL.revokeObjectURL(url);
-                } catch (err) {
-                    console.warn("Could not update flights DB:", err);
-                }
-
-                // Show confirmation
-                const details = `
-                <h3>Booking Confirmed</h3>
-                <p><strong>User ID:</strong> ${summary.userId}</p>
-                <p><strong>Booking #:</strong> ${summary.bookingNumber}</p>
-                ${
-                    outbound
-                        ? `<p><strong>Outbound:</strong> ${outbound.flightId} — ${outbound.origin} → ${outbound.destination} | ${outbound.departureDate} ${outbound.departureTime}</p>`
-                        : ""
-                }
-                ${
-                    ret
-                        ? `<p><strong>Return:</strong> ${ret.flightId} — ${ret.origin} → ${ret.destination} | ${ret.departureDate} ${ret.departureTime}</p>`
-                        : ""
-                }
-                <h4>Passengers</h4>
-                <ul>
-                    ${summary.passengers
-                        .map((p) => `<li>${p.ssn} — ${p.firstName} ${p.lastName} (${p.dob})</li>`)
-                        .join("")}
-                </ul>
-                <p><strong>Total Paid:</strong> $${totalPrice.toFixed(2)}</p>
-                `;
-
-                container.innerHTML = details;
-                try {
-                    sessionStorage.removeItem("fp_cart");
-                } catch {}
-                // Also create a booking JSON file for the flight(s)
-                try {
-                    const bookingRecord = {
-                        userId: summary.userId,
-                        bookingNumber: summary.bookingNumber,
-                        totalPrice: totalPrice,
-                        flights: {},
-                    };
-                    if (outbound) bookingRecord.flights.outbound = outbound;
-                    if (ret) bookingRecord.flights.return = ret;
-                    bookingRecord.passengers = summary.passengers;
-                    const blobBooking = new Blob([JSON.stringify(bookingRecord, null, 2)], {
-                        type: "application/json",
+                        passengersList.push({ ssn, firstName: first, lastName: last, dob });
                     });
-                    const urlBooking = URL.createObjectURL(blobBooking);
-                    const aBooking = document.createElement("a");
-                    aBooking.href = urlBooking;
-                    aBooking.download = "flight-booking.json";
-                    document.body.appendChild(aBooking);
-                    aBooking.click();
-                    document.body.removeChild(aBooking);
-                    URL.revokeObjectURL(urlBooking);
-                    try {
-                        // append to booking_history in sessionStorage
-                        const raw = sessionStorage.getItem("booking_history");
-                        const history = raw ? JSON.parse(raw) : [];
-                        history.push({ type: "flight", record: bookingRecord, timestamp: new Date().toISOString() });
-                        sessionStorage.setItem("booking_history", JSON.stringify(history));
-                    } catch (err) {
-                        console.warn("Could not save booking history:", err);
+
+                    if (hasError) {
+                        alert("Please complete all passenger details. SSN must be in the format ddd-dd-dddd.");
+                        return;
                     }
-                } catch (err) {
-                    console.warn("Could not create flight booking file:", err);
+
+                    const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+
+                    const summary = {
+                        userId,
+                        bookingNumber,
+                        passengers: passengersList,
+                    };
+
+                    // Update seats in flights DB for outbound (and return if round-trip)
+                    try {
+                        let flights = [];
+                        try {
+                            const cached = sessionStorage.getItem("fp_flights_db");
+                            if (cached) flights = JSON.parse(cached);
+                        } catch {}
+                        if (!flights || flights.length === 0) {
+                            const res = await fetch("flights.json", { cache: "no-store" });
+                            if (res.ok) flights = await res.json();
+                        }
+
+                        const changedIds = [];
+                        const updateSeatsFor = (flightId) => {
+                            const idx = flights.findIndex((f) => f.flightId === flightId);
+                            if (idx !== -1) {
+                                const newSeats = Math.max(0, Number(flights[idx].availableSeats) - totalPax);
+                                flights[idx].availableSeats = newSeats;
+                                changedIds.push(flightId);
+                            }
+                        };
+
+                        if (outbound && outbound.flightId) updateSeatsFor(outbound.flightId);
+                        if (ret && ret.flightId) updateSeatsFor(ret.flightId);
+
+                        try {
+                            sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
+                        } catch {}
+
+                        // download updated DB
+                        const blob = new Blob([JSON.stringify(flights, null, 2)], { type: "application/json" });
+                        const url = URL.createObjectURL(blob);
+                        const a = document.createElement("a");
+                        a.href = url;
+                        a.download = "flights.json";
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                        URL.revokeObjectURL(url);
+                    } catch (err) {
+                        console.warn("Could not update flights DB:", err);
+                    }
+
+                    // Show confirmation
+                    const details = `
+                    <h3>Booking Confirmed</h3>
+                    <p><strong>User ID:</strong> ${summary.userId}</p>
+                    <p><strong>Booking #:</strong> ${summary.bookingNumber}</p>
+                    ${
+                        outbound
+                            ? `<p><strong>Outbound:</strong> ${outbound.flightId} — ${outbound.origin} → ${outbound.destination} | ${outbound.departureDate} ${outbound.departureTime}</p>`
+                            : ""
+                    }
+                    ${
+                        ret
+                            ? `<p><strong>Return:</strong> ${ret.flightId} — ${ret.origin} → ${ret.destination} | ${ret.departureDate} ${ret.departureTime}</p>`
+                            : ""
+                    }
+                    <h4>Passengers</h4>
+                    <ul>
+                        ${summary.passengers
+                            .map((p) => `<li>${p.ssn} — ${p.firstName} ${p.lastName} (${p.dob})</li>`)
+                            .join("")}
+                    </ul>
+                    <p><strong>Total Paid:</strong> $${totalPrice.toFixed(2)}</p>
+                    `;
+
+                    container.innerHTML = details;
+                    try {
+                        sessionStorage.removeItem("fp_cart");
+                    } catch {}
+                    // Also create a booking JSON file for the flight(s)
+                    try {
+                        const bookingRecord = {
+                            userId: summary.userId,
+                            bookingNumber: summary.bookingNumber,
+                            totalPrice: totalPrice,
+                            flights: {},
+                        };
+                        if (outbound) bookingRecord.flights.outbound = outbound;
+                        if (ret) bookingRecord.flights.return = ret;
+                        bookingRecord.passengers = summary.passengers;
+                        const blobBooking = new Blob([JSON.stringify(bookingRecord, null, 2)], {
+                            type: "application/json",
+                        });
+                        const urlBooking = URL.createObjectURL(blobBooking);
+                        const aBooking = document.createElement("a");
+                        aBooking.href = urlBooking;
+                        aBooking.download = "flight-booking.json";
+                        document.body.appendChild(aBooking);
+                        aBooking.click();
+                        document.body.removeChild(aBooking);
+                        URL.revokeObjectURL(urlBooking);
+                        try {
+                            // append to booking_history in sessionStorage
+                            const raw = sessionStorage.getItem("booking_history");
+                            const history = raw ? JSON.parse(raw) : [];
+                            history.push({ type: "flight", record: bookingRecord, timestamp: new Date().toISOString() });
+                            sessionStorage.setItem("booking_history", JSON.stringify(history));
+                        } catch (err) {
+                            console.warn("Could not save booking history:", err);
+                        }
+                    } catch (err) {
+                        console.warn("Could not create flight booking file:", err);
+                    }
                 }
             });
         }
         // Rentals / Car booking rendering
-        if (hasRentalCart) {
-            const cart = rentals_cart;
+        if (rental_cart) {
+            const cart = rental_cart;
             const car = cart.car;
             const checkIn = cart.checkIn_date;
             const checkOut = cart.checkOut_date;
@@ -464,3 +384,115 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     }
 });
+
+function run_HotelCart(userId, cart, container, clicked) {
+    const { hotel, checkIn_date, checkOut_date, passengers } = cart;
+    console.log(
+        "Hotel ID: " +
+            hotel.id +
+            "\nHotel Name: " +
+            hotel.name +
+            "\nCheck-In Date: " +
+            checkIn_date +
+            "\nCheck-Out Date: " +
+            checkOut_date +
+            "\nNumber of Adults: " +
+            Number(passengers?.adults || 0) +
+            "\nNumber of Children: " +
+            Number(passengers?.children || 0)
+    );
+    const adults = Number(passengers?.adults || 0);
+    const children = Number(passengers?.children || 0);
+    const infants = Number(passengers?.infants || 0);
+    const numRoomsNeeded = Number(hotel.num_rooms_needed);
+    const price = Number(hotel.pricePerNight);
+    const numNights = (new Date(checkOut_date) - new Date(checkIn_date)) / (1000 * 60 * 60 * 24);
+    const totalPrice = numRoomsNeeded * price * numNights;
+
+    if (!clicked) {
+        const headerHtml = `
+            <div class="hotel-summary">
+                <h3>Selected Hotel</h3>
+                <p><strong>Hotel Name: ${hotel.name}</strong></p>
+                <p>Hotel-ID: ${hotel.id}</p>
+                <p>City: ${hotel.city}</p>
+                <p>Guests: Adults ${adults}, Children ${children}, Infants ${infants}</p>
+                <p>Check-In Date: ${checkIn_date}</p>
+                <p>Check-Out Date: ${checkOut_date}</p>
+                <p>Rooms Needed: ${numRoomsNeeded}</p>
+                <p>Price Per Night: $${price.toFixed(2)}</p>
+                <h4>Total: $${totalPrice.toFixed(2)}</h4>
+            </div>
+        `;
+        container.innerHTML += headerHtml;
+
+        const submit = document.createElement("button");
+        submit.id = "hotel-submit";
+        submit.type = "submit";
+        submit.textContent = "Book Hotel";
+        container.appendChild(submit);
+    } else {
+        // create hotel-booking.json file
+        const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+        const hotel_booking = {
+            user_id: userId,
+            booking_number: bookingNumber,
+            hotel_id: hotel.id,
+            hotel_city: hotel.city,
+            hotel_name: hotel.name,
+            checkIn_date: checkIn_date,
+            checkOut_date: checkOut_date,
+            adult_guests: adults,
+            children_guests: children,
+            infant_guests: infants,
+            num_rooms_needed: numRoomsNeeded,
+            price_per_night: "$" + price.toFixed(2),
+            total_price: "$" + totalPrice.toFixed(2),
+        };
+        const blob = new Blob([JSON.stringify(hotel_booking, null, 2)], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url;
+        a.download = "hotel-booking.json"; // overwrite the same file when saving ('hotel-booking.json' file located in 'db' folder)
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        console.log("Created hotel-booking.json file.");
+
+        // update hotels.xml file
+        const newSeats = Math.max(0, Number(hotel.num_rooms_available) - numRoomsNeeded);
+        var xml = new XMLHttpRequest();
+        xml.open("GET", "db/hotels.xml", false);
+        xml.send();
+        var hotelData = xml.responseXML;
+        if (hotelData) {
+            hotelData = new DOMParser().parseFromString(xml.responseText, "text/xml");
+            var hotelList = hotelData.getElementsByTagName("Hotel");
+            for (const hotels of hotelList) {
+                if (hotels.getAttribute("id") === hotel.id) {
+                    hotels.getElementsByTagName("numAvailableRooms")[0].textContent = newSeats;
+                    break;
+                }
+            }
+            const serializer = new XMLSerializer();
+            const updatedXMLString = serializer.serializeToString(hotelData);
+
+            const blob = new Blob([updatedXMLString], { type: "application/xml" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "hotels.xml";
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            console.log("Successfully updated 'hotels.xml' file.");
+        } else {
+            console.log("Could not find 'hotels.xml'!");
+        }
+        try {
+            sessionStorage.removeItem("hotels_cart");
+        } catch { }
+    }
+}

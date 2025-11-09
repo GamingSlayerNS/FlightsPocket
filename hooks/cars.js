@@ -228,25 +228,26 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (carData) {
                     carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
                     var carList = carData.getElementsByTagName("Car");
-                    listEl.innerHTML += `<br><table id="car-results" style="width: 100%;">
-                                                <tr style="text-align: left;">
-                                                    <th colspan="6" style="padding-left: 10px;"><h3 style="line-height: 0.5px;">Available Cars</h3></th>
-                                                </tr>
-                                                <tr style="text-align: left; width: 100%; height: 25px; background-color: gainsboro; padding-left: 10px;">
-                                                    <th style="width: 60px; padding-left: 10px;">ID</th>
-                                                    <th style="width: 105px; padding-left: 10px;">City</th>
-                                                    <th style="width: 105px; padding-left: 10px;">Type</th>
-                                                    <th style="width: 135px; padding-left: 10px;">Check-In Date</th>
-                                                    <th style="width: 135px; padding-left: 10px;">Check-Out Date</th>
-                                                    <th style="width: 105px; padding-left: 10px;">Price Per Day</th>
-                                                    <th style="background-color: white; width: 120px; padding-left: 10px;"></th>
-                                                </tr>
-                                             </table>`;
+                    let car_found = false;
                     for (const car of carList) {
+                        const options = {
+                            year: 'numeric',
+                            month: 'short',
+                            day: '2-digit'
+                        };
+                        let invalidCheckInDate = true;
+                        let invalidCheckOutDate = true;
+                        if (car.getElementsByTagName("checkInDate")[0].textContent.trim() !== '' && car.getElementsByTagName("checkOutDate")[0].textContent.trim() !== '') {
+                            invalidCheckInDate = (checkIn.toLocaleDateString('en-US', options) <= new Date(car.getElementsByTagName("checkInDate")[0].textContent.trim()).toLocaleDateString('en-US', options)) && (new Date(car.getElementsByTagName("checkInDate")[0].textContent.trim()).toLocaleDateString('en-US', options) <= checkOut.toLocaleDateString('en-US', options));
+                            invalidCheckOutDate = (checkIn.toLocaleDateString('en-US', options) <= new Date(car.getElementsByTagName("checkOutDate")[0].textContent.trim()).toLocaleDateString('en-US', options)) && (new Date(car.getElementsByTagName("checkOutDate")[0].textContent.trim()).toLocaleDateString('en-US', options) <= checkOut.toLocaleDateString('en-US', options));
+                        }
                         if (
                             car.getElementsByTagName("city")[0].firstChild.data.toLowerCase() === city.toLowerCase() &&
-                            car.getElementsByTagName("type")[0].firstChild.data.toLowerCase() === carType.toLowerCase()
+                            car.getElementsByTagName("type")[0].firstChild.data.toLowerCase() === carType.toLowerCase() &&
+                            ((car.getElementsByTagName("checkInDate")[0].textContent.trim() === '' && car.getElementsByTagName("checkOutDate")[0].textContent.trim() === '') ||
+                            (!invalidCheckInDate && !invalidCheckOutDate))
                         ) {
+                            car_found = true;
                             const id = car.getAttribute("id");
                             const rental_city = car.getElementsByTagName("city")[0].firstChild.data;
                             const rental_type = car.getElementsByTagName("type")[0].firstChild.data;
@@ -254,41 +255,113 @@ document.addEventListener("DOMContentLoaded", () => {
                             const checkOutDate = checkOut.toDateString();
                             const price = car.getElementsByTagName("pricePerDay")[0].firstChild.data;
 
-                            let tableRef = document.getElementById("car-results");
-                            let result = document.createElement("tr");
+                            const car_table = document.createElement('table');
+                            car_table.id = "car-results";
+                            car_table.style.width = "100%";
+
+                            const tr1 = document.createElement('tr');
+                            tr1.style.textAlign = "left";
+
+                            const th_tr1 = document.createElement('th');
+                            th_tr1.colSpan = 6;
+                            th_tr1.style.paddingLeft = "10px";
+
+                            const h3 = document.createElement('h3');
+                            h3.style.lineHeight = "0.5px";
+                            h3.textContent = "Available Cars";
+                            th_tr1.appendChild(h3);
+                            tr1.appendChild(th_tr1);
+
+                            const tr2 = document.createElement('tr');
+                            tr2.style.textAlign = "left";
+                            tr2.style.width = "100%";
+                            tr2.style.height = "25px";
+                            tr2.style.paddingLeft = "10px";
+
+                            const th1_tr2 = document.createElement('th');
+                            th1_tr2.style.width = "60px";
+                            th1_tr2.style.paddingLeft = "10px";
+                            th1_tr2.style.backgroundColor = "gainsboro";
+                            th1_tr2.textContent = "ID";
+                            tr2.appendChild(th1_tr2);
+
+                            const th2_tr2 = document.createElement('th');
+                            th2_tr2.style.width = "105px";
+                            th2_tr2.style.paddingLeft = "10px";
+                            th2_tr2.style.backgroundColor = "gainsboro";
+                            th2_tr2.textContent = "City";
+                            tr2.appendChild(th2_tr2);
+
+                            const th3_tr2 = document.createElement('th');
+                            th3_tr2.style.width = "105px";
+                            th3_tr2.style.paddingLeft = "10px";
+                            th3_tr2.style.backgroundColor = "gainsboro";
+                            th3_tr2.textContent = "Type";
+                            tr2.appendChild(th3_tr2);
+
+                            const th4_tr2 = document.createElement('th');
+                            th4_tr2.style.width = "135px";
+                            th4_tr2.style.paddingLeft = "10px";
+                            th4_tr2.style.backgroundColor = "gainsboro";
+                            th4_tr2.textContent = "Check-In Date";
+                            tr2.appendChild(th4_tr2);
+
+                            const th5_tr2 = document.createElement('th');
+                            th5_tr2.style.width = "135px";
+                            th5_tr2.style.paddingLeft = "10px";
+                            th5_tr2.style.backgroundColor = "gainsboro";
+                            th5_tr2.textContent = "Check-Out Date";
+                            tr2.appendChild(th5_tr2);
+
+                            const th6_tr2 = document.createElement('th');
+                            th6_tr2.style.width = "105px";
+                            th6_tr2.style.paddingLeft = "10px";
+                            th6_tr2.style.backgroundColor = "gainsboro";
+                            th6_tr2.textContent = "Price Per Day";
+                            tr2.appendChild(th6_tr2);
+
+                            const th7_tr2 = document.createElement('th');
+                            th7_tr2.style.width = "120px";
+                            th7_tr2.style.paddingLeft = "10px";
+                            th7_tr2.style.backgroundColor = "transparent";
+                            tr2.appendChild(th7_tr2);
+                            car_table.appendChild(tr1);
+                            car_table.appendChild(tr2);
+                            
+                            let result_row = document.createElement("tr");
 
                             let idCol = document.createElement("td");
                             idCol.textContent = id;
                             idCol.style.paddingLeft = "10px";
-                            result.appendChild(idCol);
+                            result_row.appendChild(idCol);
 
                             let cityCol = document.createElement("td");
                             cityCol.textContent = rental_city;
                             cityCol.style.paddingLeft = "10px";
-                            result.appendChild(cityCol);
+                            result_row.appendChild(cityCol);
 
                             let typeCol = document.createElement("td");
                             typeCol.textContent = rental_type;
                             typeCol.style.paddingLeft = "10px";
                             typeCol.style.fontWeight = "bold";
-                            result.appendChild(typeCol);
+                            result_row.appendChild(typeCol);
 
                             let checkInCol = document.createElement("td");
                             checkInCol.textContent = checkInDate;
                             checkInCol.style.paddingLeft = "10px";
-                            result.appendChild(checkInCol);
+                            result_row.appendChild(checkInCol);
 
                             let checkOutCol = document.createElement("td");
                             checkOutCol.textContent = checkOutDate;
                             checkOutCol.style.paddingLeft = "10px";
-                            result.appendChild(checkOutCol);
+                            result_row.appendChild(checkOutCol);
 
                             let priceCol = document.createElement("td");
                             priceCol.textContent = "$" + price;
                             priceCol.style.paddingLeft = "10px";
                             priceCol.style.fontWeight = "bold";
                             priceCol.style.backgroundColor = "#F0F0F0";
-                            result.appendChild(priceCol);
+                            result_row.appendChild(priceCol);
 
                             let bookCol = document.createElement("td");
                             const myButton = document.createElement("button");
@@ -306,18 +379,15 @@ document.addEventListener("DOMContentLoaded", () => {
                             });
                             bookCol.appendChild(myButton);
                             bookCol.style.paddingLeft = "10px";
-                            result.appendChild(bookCol);
-                            tableRef.appendChild(result);
-                            /* result += `<tr style="height: 22px;">
-                                            <td style="padding-left: 10px;">${id}</td>
-                                            <td style="font-weight: bold; padding-left: 10px;">${name}</td>
-                                            <td style="padding-left: 10px;">${hotelCity}</td>
-                                            <td style="padding-left: 10px;">${checkInDate}</td>
-                                            <td style="padding-left: 10px;">${checkOutDate}</td>
-                                            <td style="font-weight: bold; background-color: #F0F0F0; padding-left: 10px;">$${price}</td>
-                                            <td style="padding-left: 10px;"><button id="cart">Add to Cart</button></td>
-                                       </tr>`; */
+                            result_row.appendChild(bookCol);
+                            car_table.appendChild(result_row);
+                            listEl.appendChild(car_table);
                         }
+                    }
+                    if (!car_found) {
+                        const car_not_found_msg = document.createElement('h3');
+                        car_not_found_msg.textContent = "No vehicles matching your search preferences were found.";
+                        listEl.appendChild(car_not_found_msg);
                     }
                 }
             }
