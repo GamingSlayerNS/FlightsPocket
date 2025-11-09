@@ -20,13 +20,13 @@ document.addEventListener("DOMContentLoaded", () => {
         rental_cart = JSON.parse(sessionStorage.getItem("rentals_cart"));
     } catch {}
 
-    /* const hasFlightCart = Boolean(
+    const hasFlightCart = Boolean(
         flight_cart && (flight_cart.flight || flight_cart.flights || flight_cart.tripType === "round-trip")
     );
-    const hasRentalCart = Boolean(rentals_cart && rentals_cart.car); */
+    /* const hasRentalCart = Boolean(rentals_cart && rentals_cart.car); */
 
     // if (!hasFlightCart && !hotel_cart) {
-    if ((!flight_cart || !flight_cart.flight) && !hotel_cart && !rental_cart) {
+    if (!hasFlightCart && !hotel_cart && !rental_cart) {
         container.innerHTML = `<p>Your cart is empty. Go to the <a href="flights.html">Flights</a> page to add a flight.</p>`;
         return;
     } else {
@@ -128,8 +128,8 @@ document.addEventListener("DOMContentLoaded", () => {
             
             // ssn input formatter to enforce ddd-dd-dddd as user types
             const ssnInput = document.querySelector(".p-ssn");
-            if (ssnInput) {
-                ssnInput.addEventListener("input", () => {
+            document.addEventListener("input", function(e) {
+                if (e.target.matches(".p-ssn")) {
                     const digits = ssnInput.value.replace(/\D/g, "").slice(0, 9);
                     const parts = [];
                     if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
@@ -138,8 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     if (digits.length >= 5) parts[1] += "-";
                     if (digits.length > 5) parts.push(digits.slice(5));
                     ssnInput.value = parts.join("");
-                });
-            }
+                }
+            });
 
             document.addEventListener("submit", async (e) => {
                 e.preventDefault();
@@ -287,16 +287,20 @@ document.addEventListener("DOMContentLoaded", () => {
             const car = cart.car;
             const checkIn = cart.checkIn_date;
             const checkOut = cart.checkOut_date;
+            const numDays = (new Date(checkOut) - new Date(checkIn)) / (1000 * 60 * 60 * 24);
+            const price = Number(
+                        car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || 0
+                    );
+            const totalPrice = price * numDays;
 
             const headerHtml = `
                 <div class="car-summary">
                     <h3>Selected Car</h3>
                     <p><strong>${car.id}</strong> — ${car.city} | ${car.type}</p>
-                    <p>Check-In: ${checkIn}</p>
-                    <p>Check-Out: ${checkOut}</p>
-                    <p>Price per day: $${Number(
-                        car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || car.pricePerDay || 0
-                    )}</p>
+                    <p>Check-In Date: ${checkIn}</p>
+                    <p>Check-Out Date: ${checkOut}</p>
+                    <p>Price Per Day: $${price.toFixed(2)}</p>
+                    <h4>Total: $${totalPrice.toFixed(2)}</h4>
                 </div>
             `;
             container.innerHTML += headerHtml;
