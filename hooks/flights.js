@@ -1,6 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
     const flightForm = document.getElementById("flight-form");
-    const arrivalDateContainer = document.getElementById("arrival-date-container");
+    const departingFlightDateContainer = document.getElementById("departing-flight");
+    const arrivingFlightDateContainer = document.getElementById("arrival-date-container");
     const passengerIcon = document.getElementById("passenger-icon");
     const passengerForm = document.getElementById("passenger-form");
     const resultsDiv = document.getElementById("flight-results");
@@ -36,9 +37,11 @@ document.addEventListener("DOMContentLoaded", () => {
         tripTypeRadios.forEach((radio) => {
             radio.addEventListener("change", () => {
                 if (document.getElementById("round-trip").checked) {
-                    arrivalDateContainer.style.display = "block";
+                    arrivingFlightDateContainer.style.display = "block";
+                    departingFlightDateContainer.textContent = "Departure Date (Departing Flight):";
                 } else {
-                    arrivalDateContainer.style.display = "none";
+                    arrivingFlightDateContainer.style.display = "none";
+                    departingFlightDateContainer.textContent = "Departure Date:";
                 }
             });
         });
@@ -123,10 +126,12 @@ document.addEventListener("DOMContentLoaded", () => {
             let output = `<h3>Flight Search Details</h3>
                           <p>Trip Type: ${document.getElementById("one-way").checked ? "One Way" : "Round Trip"}</p>
                           <p>Origin: ${origin}</p>
-                          <p>Destination: ${destination}</p>
-                          <p>Departure Date: ${departureDate.toDateString()}</p>`;
+                          <p>Destination: ${destination}</p>`;
             if (arrivalDate) {
-                output += `<p>Arrival Date: ${arrivalDate.toDateString()}</p>`;
+                output += `<p>Departure Date (Departing Flight): ${departureDate.toDateString()}</p>
+                           <p>Departure Date (Arriving Flight): ${arrivalDate.toDateString()}</p>`;
+            } else {
+                output += `<p>Departure Date: ${departureDate.toDateString()}</p>`;
             }
             output += `<p>Adults: ${adults}</p>
                        <p>Children: ${children}</p>
@@ -188,11 +193,11 @@ document.addEventListener("DOMContentLoaded", () => {
                         );
                         for (const f of matching) {
                             const li = document.createElement("li");
-                            li.innerHTML = `<strong>${f.flightId}</strong> — ${f.origin} → ${f.destination} | Dep ${
+                            li.innerHTML = `<strong>${f.flightId}</strong> — ${f.origin} → ${f.destination} | Departure: ${
                                 f.departureDate
-                            } ${f.departureTime} | Arr ${f.arrivalDate} ${f.arrivalTime} | Seats: ${
+                            } ${f.departureTime} | Arrival: ${f.arrivalDate} ${f.arrivalTime} | Available Seats: ${
                                 f.availableSeats
-                            } | $${f.price.toFixed(2)} `;
+                            } | Price: $${f.price.toFixed(2)} `;
                             const btn = document.createElement("button");
                             btn.textContent = "Add to Cart";
                             btn.addEventListener("click", () => {
@@ -281,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // render pairs
                     output += `<h3>Available Round-Trip Options</h3>`;
-                    output += `<ul id="available-roundtrips"></ul>`;
+                    output += `<ul id="available-roundtrips" style="white-space: pre-wrap;"></ul>`;
                     resultsDiv.innerHTML = output;
 
                     const listEl = document.getElementById("available-roundtrips");
@@ -290,14 +295,18 @@ document.addEventListener("DOMContentLoaded", () => {
                         const li = document.createElement("li");
                         li.innerHTML = `<strong>${p.outbound.flightId} ⇄ ${p.return.flightId}</strong> — ${
                             p.outbound.origin
-                        } → ${p.outbound.destination} | Dep ${p.outbound.departureDate} ${
+                        } → ${p.outbound.destination}\n<strong>Departing Flight:</strong>&emsp;Departure ${p.outbound.departureDate} ${
                             p.outbound.departureTime
-                        } | Ret ${p.return.departureDate} ${p.return.departureTime} | Seats: ${Math.min(
+                        } | Arrival ${p.outbound.arrivalDate} ${p.outbound.arrivalTime
+                        }\n<strong>Returning Flight:</strong>&emsp;Departure ${p.return.departureDate} ${p.return.departureTime
+                        } | Arrival ${p.return.arrivalDate} ${p.return.arrivalTime
+                        }\nAvailable Seats: ${Math.min(
                             p.outbound.availableSeats,
                             p.return.availableSeats
-                        )} | Total $${p.totalPrice.toFixed(2)}`;
+                        )} | Total Price: $${p.totalPrice.toFixed(2)}`;
                         const btn = document.createElement("button");
                         btn.textContent = "Add Round-Trip to Cart";
+                        btn.style.marginLeft = "10px";
                         btn.addEventListener("click", () => {
                             const cart = {
                                 tripType: "round-trip",

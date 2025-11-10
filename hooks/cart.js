@@ -51,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
             flightContainer = document.createElement('div');
             flightContainer.setAttribute('id', 'flight-container');
             container.appendChild(flightContainer);
-            console.log("flight container created!!! flight container is " + ((flightContainer) ? "true" : "false"));
         }
         if (flight_cart) {
             // Support both one-way (flight) and round-trip (flights.outbound + flights.return)
@@ -96,12 +95,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     <p><strong>${outbound.flightId}${ret ? ` ⇄ ${ret.flightId}` : ""}</strong> — ${outbound.origin} → ${
                 outbound.destination
             }${ret ? ` ⇄ ${ret.origin} → ${ret.destination}` : ""}</p>
-                    <p>Outbound: ${outbound.departureDate} ${outbound.departureTime} | ${outbound.arrivalDate} ${
+                    <p><strong>Departing Flight:</strong>&emsp;Departing&ensp;${outbound.departureDate} ${outbound.departureTime}&ensp;|&ensp;Arrival&ensp;${outbound.arrivalDate} ${
                 outbound.arrivalTime
             }</p>
                     ${
                         ret
-                            ? `<p>Return: ${ret.departureDate} ${ret.departureTime} | ${ret.arrivalDate} ${ret.arrivalTime}</p>`
+                            ? `<p><strong>Returning Flight:</strong>&emsp;Departing&ensp;${ret.departureDate} ${ret.departureTime}&ensp;|&ensp;Arrival&ensp;${ret.arrivalDate} ${ret.arrivalTime}</p>`
                             : ""
                     }
                     <p>Price (Adult): $${adultCost.toFixed(2)} | Child: $${childCost.toFixed(
@@ -221,7 +220,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
                     // Show confirmation
                     const details = `
-                    <h3>Booking Confirmed</h3>
+                    <h3>Flight Booking Confirmed!</h3>
                     <p><strong>User ID:</strong> ${summary.userId}</p>
                     <p><strong>Booking #:</strong> ${summary.bookingNumber}</p>
                     ${
@@ -344,7 +343,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 <div id="car-container">
                     <div class="car-summary">
                         <h3>Selected Car</h3>
-                        <p><strong>${car.id}</strong> — ${car.city} | ${car.type}</p>
+                        <p><strong>Car ID: ${car.id}</strong></p>
+                        <p>City: ${car.city} | Type: ${car.type}</p>
                         <p>Check-In Date: ${checkIn}</p>
                         <p>Check-Out Date: ${checkOut}</p>
                         <p>Price Per Day: $${price.toFixed(2)}</p>
@@ -361,80 +361,106 @@ document.addEventListener("DOMContentLoaded", () => {
             carContainer.appendChild(bookBtn);
             if (document.querySelector("#rental-submit")) {
                 document.querySelector("#rental-submit").addEventListener("click", async () => {
-                        const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-                        const carBooking = {
-                            userId,
-                            bookingNumber,
-                            carId: car.id,
-                            city: car.city,
-                            type: car.type,
-                            checkIn_date: checkIn,
-                            checkOut_date: checkOut,
-                            pricePerDay:
-                                car.pricePerDay ||
-                                car.pricePerDay ||
-                                car.pricePerDay ||
-                                car.pricePerDay ||
-                                car.pricePerDay ||
-                                0,
-                        };
+                    const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+                    const carBooking = {
+                        userId,
+                        bookingNumber,
+                        carId: car.id,
+                        city: car.city,
+                        type: car.type,
+                        checkIn_date: checkIn,
+                        checkOut_date: checkOut,
+                        pricePerDay:
+                            car.pricePerDay ||
+                            car.pricePerDay ||
+                            car.pricePerDay ||
+                            car.pricePerDay ||
+                            car.pricePerDay ||
+                            0,
+                    };
 
-                        const usedPhp = await postPhpOrDownload({
-                            body: JSON.stringify(carBooking),
-                            fetchContentType: 'application/json',
-                            fallback: JSON.stringify(carBooking, null, 2),
-                            fallbackType: 'application/json',
-                            fallbackName: 'car-booking.json',
-                            url: '/php/book-car.php'
-                        });
+                    const usedPhp = await postPhpOrDownload({
+                        body: JSON.stringify(carBooking),
+                        fetchContentType: 'application/json',
+                        fallback: JSON.stringify(carBooking, null, 2),
+                        fallbackType: 'application/json',
+                        fallbackName: 'car-booking.json',
+                        url: '/php/book-car.php'
+                    });
 
-                        try {
-                            // append car booking to booking_history
-                            const raw = sessionStorage.getItem("booking_history");
-                            const history = raw ? JSON.parse(raw) : [];
-                            history.push({ type: "car", record: carBooking, timestamp: new Date().toISOString() });
-                            sessionStorage.setItem("booking_history", JSON.stringify(history));
-                        } catch (err) {
-                            console.warn("Could not save booking history:", err);
-                        }
+                    try {
+                        // append car booking to booking_history
+                        const raw = sessionStorage.getItem("booking_history");
+                        const history = raw ? JSON.parse(raw) : [];
+                        history.push({ type: "car", record: carBooking, timestamp: new Date().toISOString() });
+                        sessionStorage.setItem("booking_history", JSON.stringify(history));
+                    } catch (err) {
+                        console.warn("Could not save booking history:", err);
+                    }
 
-                        try {
-                            var xml = new XMLHttpRequest();
-                            xml.open("GET", "db/rental_cars.xml", false);
-                            xml.send();
-                            var carData = xml.responseXML;
-                            if (carData && !usedPhp) {
-                                carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
-                                var carList = carData.getElementsByTagName("Car");
-                                for (const c of carList) {
-                                    if (c.getAttribute("id") === car.id) {
-                                        let inNode = c.getElementsByTagName("checkInDate")[0];
-                                        let outNode = c.getElementsByTagName("checkOutDate")[0];
-                                        if (inNode) inNode.textContent = checkIn;
-                                        if (outNode) outNode.textContent = checkOut;
-                                        break;
-                                    }
+                    try {
+                        var xml = new XMLHttpRequest();
+                        xml.open("GET", "db/rental_cars.xml", false);
+                        xml.send();
+                        var carData = xml.responseXML;
+                        if (carData && !usedPhp) {
+                            carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
+                            var carList = carData.getElementsByTagName("Car");
+                            for (const c of carList) {
+                                if (c.getAttribute("id") === car.id) {
+                                    let inNode = c.getElementsByTagName("checkInDate")[0];
+                                    let outNode = c.getElementsByTagName("checkOutDate")[0];
+                                    if (inNode) inNode.textContent = checkIn;
+                                    if (outNode) outNode.textContent = checkOut;
+                                    break;
                                 }
-                                const serializer = new XMLSerializer();
-                                const updatedXMLString = serializer.serializeToString(carData);
-                                const blobXML = new Blob([updatedXMLString], { type: "application/xml" });
-                                const urlXML = URL.createObjectURL(blobXML);
-                                const aXML = document.createElement("a");
-                                aXML.href = urlXML;
-                                aXML.download = "rental_cars.xml";
-                                document.body.appendChild(aXML);
-                                aXML.click();
-                                document.body.removeChild(aXML);
-                                URL.revokeObjectURL(urlXML);
                             }
-                        } catch (err) {
-                            console.warn("Could not update rental_cars.xml", err);
+                            const serializer = new XMLSerializer();
+                            const updatedXMLString = serializer.serializeToString(carData);
+                            const blobXML = new Blob([updatedXMLString], { type: "application/xml" });
+                            const urlXML = URL.createObjectURL(blobXML);
+                            const aXML = document.createElement("a");
+                            aXML.href = urlXML;
+                            aXML.download = "rental_cars.xml";
+                            document.body.appendChild(aXML);
+                            aXML.click();
+                            document.body.removeChild(aXML);
+                            URL.revokeObjectURL(urlXML);
                         }
+                    } catch (err) {
+                        console.warn("Could not update rental_cars.xml", err);
+                    }
 
-                        try {
-                            sessionStorage.removeItem("rentals_cart");
-                        } catch {}
-                        carContainer.innerHTML = `<h3>Car booked</h3><p>Booking #: ${bookingNumber}</p>`;
+                    try {
+                        sessionStorage.removeItem("rentals_cart");
+                    } catch {}
+                    carContainer.innerHTML = `<h3>Car Booking Confirmed!</h3>
+                                              <p>Booking #: ${carBooking.bookingNumber}</p>
+                                              <p>User ID: ${carBooking.userId}</p>
+                                              <p>Car ID: ${carBooking.carId}</p>
+                                              <p>City: ${carBooking.city}</p>
+                                              <p>Type: ${carBooking.type}</p>
+                                              <p>Check-In Date: ${carBooking.checkIn_date}</p>
+                                              <p>Check-Out Date: ${carBooking.checkOut_date}</p>
+                                              <p>Price Per Day: $${Number(carBooking.pricePerDay).toFixed(2)}</p>
+                                              <h4>Total Paid: $${totalPrice.toFixed(2)}</h4>
+                                              <h4 id="carCountdownDisplay"></h4>
+                    `;
+
+                    let count = 15;
+                    const countdownElement = document.getElementById('carCountdownDisplay');
+                    countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+                    const countdownInterval = setInterval(() => {
+                        count--;
+                        countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+                        if (count <= 0) {
+                            clearInterval(countdownInterval);
+                            countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+                            location.reload();
+                        }
+                    }, 1000);
                 });
             }
         }
@@ -557,7 +583,7 @@ async function run_HotelCart(userId, cart, container, clicked) {
         
         // Show confirmation
         const details = `
-            <h3>Booking Confirmed</h3>
+            <h3>Hotel Booking Confirmed!</h3>
             <p><strong>User ID:</strong> ${hotel_booking.user_id}</p>
             <p><strong>Booking #:</strong> ${hotel_booking.booking_number}</p>
             <p><strong>Hotel:</strong> ${hotel_booking.hotel_name} — ${hotel_booking.hotel_city} (${hotel_booking.hotel_id})</p>
