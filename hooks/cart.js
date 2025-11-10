@@ -27,7 +27,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // if (!hasFlightCart && !hotel_cart) {
     if (!hasFlightCart && !hotel_cart && !rental_cart) {
-        container.innerHTML = `<p>Your cart is empty. Go to the <a href="flights.html">Flights</a> page to add a flight.</p>`;
+        container.innerHTML = `<p>Your cart is empty. Go to the <a href="stays.html">Stays</a> page to book a hotel, the <a href="flights.html">Flights</a> page to add a flight, or the <a href="cars.html">Cars</a> page to book a car.</p>`;
         return;
     } else {
         if (hotel_cart) {
