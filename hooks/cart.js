@@ -38,12 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
                     run_HotelCart(userId, hotel_cart, container, true);
                 }
             });
+
+            if (flight_cart || rental_cart) {
+                const border = document.createElement('p');
+                border.style.borderBottom = "2px dashed black";
+                border.style.margin = "22px 0 0 -10px";
+                container.appendChild(border);
+            }
         }
         let flightContainer = document.getElementById('flight-container');
         if (!flightContainer) {
             flightContainer = document.createElement('div');
             flightContainer.setAttribute('id', 'flight-container');
             container.appendChild(flightContainer);
+            console.log("flight container created!!! flight container is " + ((flightContainer) ? "true" : "false"));
         }
         if (flight_cart) {
             // Support both one-way (flight) and round-trip (flights.outbound + flights.return)
@@ -233,9 +241,11 @@ document.addEventListener("DOMContentLoaded", () => {
                             .join("")}
                     </ul>
                     <p><strong>Total Paid:</strong> $${totalPrice.toFixed(2)}</p>
+                    <h4 id="flightCountdownDisplay"></h4>
                     `;
 
-                    flightContainer.innerHTML = details;
+                    document.getElementById('flight-container').innerHTML = details;
+                    
                     try {
                         sessionStorage.removeItem("fp_cart");
                     } catch {}
@@ -286,8 +296,37 @@ document.addEventListener("DOMContentLoaded", () => {
                     } catch (err) {
                         console.warn("Could not create flight booking file:", err);
                     }
+
+                    let count = 15;
+                    const countdownElement = document.getElementById('flightCountdownDisplay');
+                    countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+                    if (rental_cart) {
+                        const border = document.createElement('p');
+                        border.style.borderBottom = "2px dashed black";
+                        border.style.margin = "22px 0 0 -10px";
+                        document.getElementById('flight-container').appendChild(border);
+                    }
+
+                    const countdownInterval = setInterval(() => {
+                        count--;
+                        countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+                        if (count <= 0) {
+                            clearInterval(countdownInterval);
+                            countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+                            location.reload();
+                        }
+                    }, 1000);
                 }
             });
+
+            if (rental_cart) {
+                const border = document.createElement('p');
+                border.style.borderBottom = "2px dashed black";
+                border.style.margin = "22px 0 0 -10px";
+                document.getElementById('flight-container').appendChild(border);
+            }
         }
         // Rentals / Car booking rendering
         if (rental_cart) {
@@ -317,84 +356,87 @@ document.addEventListener("DOMContentLoaded", () => {
             const carContainer = document.getElementById('car-container');
 
             const bookBtn = document.createElement("button");
+            bookBtn.id = "rental-submit";
             bookBtn.textContent = "Book Car";
             carContainer.appendChild(bookBtn);
-            bookBtn.addEventListener("click", async () => {
-                const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-                const carBooking = {
-                    userId,
-                    bookingNumber,
-                    carId: car.id,
-                    city: car.city,
-                    type: car.type,
-                    checkIn_date: checkIn,
-                    checkOut_date: checkOut,
-                    pricePerDay:
-                        car.pricePerDay ||
-                        car.pricePerDay ||
-                        car.pricePerDay ||
-                        car.pricePerDay ||
-                        car.pricePerDay ||
-                        0,
-                };
+            if (document.querySelector("#rental-submit")) {
+                document.querySelector("#rental-submit").addEventListener("click", async () => {
+                        const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+                        const carBooking = {
+                            userId,
+                            bookingNumber,
+                            carId: car.id,
+                            city: car.city,
+                            type: car.type,
+                            checkIn_date: checkIn,
+                            checkOut_date: checkOut,
+                            pricePerDay:
+                                car.pricePerDay ||
+                                car.pricePerDay ||
+                                car.pricePerDay ||
+                                car.pricePerDay ||
+                                car.pricePerDay ||
+                                0,
+                        };
 
-                const usedPhp = await postPhpOrDownload({
-                    body: JSON.stringify(carBooking),
-                    fetchContentType: 'application/json',
-                    fallback: JSON.stringify(carBooking, null, 2),
-                    fallbackType: 'application/json',
-                    fallbackName: 'car-booking.json',
-                    url: '/php/book-car.php'
-                });
+                        const usedPhp = await postPhpOrDownload({
+                            body: JSON.stringify(carBooking),
+                            fetchContentType: 'application/json',
+                            fallback: JSON.stringify(carBooking, null, 2),
+                            fallbackType: 'application/json',
+                            fallbackName: 'car-booking.json',
+                            url: '/php/book-car.php'
+                        });
 
-                try {
-                    // append car booking to booking_history
-                    const raw = sessionStorage.getItem("booking_history");
-                    const history = raw ? JSON.parse(raw) : [];
-                    history.push({ type: "car", record: carBooking, timestamp: new Date().toISOString() });
-                    sessionStorage.setItem("booking_history", JSON.stringify(history));
-                } catch (err) {
-                    console.warn("Could not save booking history:", err);
-                }
-
-                try {
-                    var xml = new XMLHttpRequest();
-                    xml.open("GET", "db/rental_cars.xml", false);
-                    xml.send();
-                    var carData = xml.responseXML;
-                    if (carData && !usedPhp) {
-                        carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
-                        var carList = carData.getElementsByTagName("Car");
-                        for (const c of carList) {
-                            if (c.getAttribute("id") === car.id) {
-                                let inNode = c.getElementsByTagName("checkInDate")[0];
-                                let outNode = c.getElementsByTagName("checkOutDate")[0];
-                                if (inNode) inNode.textContent = checkIn;
-                                if (outNode) outNode.textContent = checkOut;
-                                break;
-                            }
+                        try {
+                            // append car booking to booking_history
+                            const raw = sessionStorage.getItem("booking_history");
+                            const history = raw ? JSON.parse(raw) : [];
+                            history.push({ type: "car", record: carBooking, timestamp: new Date().toISOString() });
+                            sessionStorage.setItem("booking_history", JSON.stringify(history));
+                        } catch (err) {
+                            console.warn("Could not save booking history:", err);
                         }
-                        const serializer = new XMLSerializer();
-                        const updatedXMLString = serializer.serializeToString(carData);
-                        const blobXML = new Blob([updatedXMLString], { type: "application/xml" });
-                        const urlXML = URL.createObjectURL(blobXML);
-                        const aXML = document.createElement("a");
-                        aXML.href = urlXML;
-                        aXML.download = "rental_cars.xml";
-                        document.body.appendChild(aXML);
-                        aXML.click();
-                        document.body.removeChild(aXML);
-                        URL.revokeObjectURL(urlXML);
-                    }
-                } catch (err) {
-                    console.warn("Could not update rental_cars.xml", err);
-                }
 
-                try {
-                    sessionStorage.removeItem("rentals_cart");
-                } catch {}
-                carContainer.innerHTML = `<h3>Car booked</h3><p>Booking #: ${bookingNumber}</p>`;
-            });
+                        try {
+                            var xml = new XMLHttpRequest();
+                            xml.open("GET", "db/rental_cars.xml", false);
+                            xml.send();
+                            var carData = xml.responseXML;
+                            if (carData && !usedPhp) {
+                                carData = new DOMParser().parseFromString(xml.responseText, "text/xml");
+                                var carList = carData.getElementsByTagName("Car");
+                                for (const c of carList) {
+                                    if (c.getAttribute("id") === car.id) {
+                                        let inNode = c.getElementsByTagName("checkInDate")[0];
+                                        let outNode = c.getElementsByTagName("checkOutDate")[0];
+                                        if (inNode) inNode.textContent = checkIn;
+                                        if (outNode) outNode.textContent = checkOut;
+                                        break;
+                                    }
+                                }
+                                const serializer = new XMLSerializer();
+                                const updatedXMLString = serializer.serializeToString(carData);
+                                const blobXML = new Blob([updatedXMLString], { type: "application/xml" });
+                                const urlXML = URL.createObjectURL(blobXML);
+                                const aXML = document.createElement("a");
+                                aXML.href = urlXML;
+                                aXML.download = "rental_cars.xml";
+                                document.body.appendChild(aXML);
+                                aXML.click();
+                                document.body.removeChild(aXML);
+                                URL.revokeObjectURL(urlXML);
+                            }
+                        } catch (err) {
+                            console.warn("Could not update rental_cars.xml", err);
+                        }
+
+                        try {
+                            sessionStorage.removeItem("rentals_cart");
+                        } catch {}
+                        carContainer.innerHTML = `<h3>Car booked</h3><p>Booking #: ${bookingNumber}</p>`;
+                });
+            }
         }
     }
 });
@@ -524,9 +566,25 @@ async function run_HotelCart(userId, cart, container, clicked) {
             <p><strong>Guests:</strong> Adults ${hotel_booking.adult_guests}, Children ${hotel_booking.children_guests}, Infants ${hotel_booking.infant_guests}</p>
             <p><strong>Rooms:</strong> ${hotel_booking.num_rooms_needed}</p>
             <p><strong>Total Paid:</strong> ${hotel_booking.total_price}</p>
+            <h4 id="hotelCountdownDisplay"></h4>
         `;
 
         document.getElementById('hotel-container').innerHTML = details;
+        
+        let count = 15;
+        const countdownElement = document.getElementById('hotelCountdownDisplay');
+        countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+        const countdownInterval = setInterval(() => {
+            count--;
+            countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+
+            if (count <= 0) {
+                clearInterval(countdownInterval);
+                countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+                location.reload();
+            }
+        }, 1000);
     }
 }
 
