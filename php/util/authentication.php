@@ -37,8 +37,24 @@ function requireAuth() {
         exit;
     }
 
-    // Session is valid
+    $session = $result->fetch_assoc();
+    $phoneNumber = $session['User'];
     $stmt->close();
+
+    $userStmt = $mysqli->prepare("SELECT PhoneNumber, FirstName, LastName, DateOfBirth, Gender, Email, Admin FROM Users WHERE PhoneNumber = ?");
+    if (!$userStmt) {
+        $mysqli->close();
+        header('Location: /login.php');
+        exit;
+    }
+
+    $userStmt->bind_param("s", $phoneNumber);
+    $userStmt->execute();
+    $userResult = $userStmt->get_result();
+    
+    $GLOBALS['user'] = $userResult->fetch_assoc();
+    
+    $userStmt->close();
     $mysqli->close();
 }
 

@@ -1,6 +1,8 @@
 <?php
 require_once 'php/util/authentication.php';
 requireAuth();
+$user = $GLOBALS['user'];
+$user = $GLOBALS['user'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +23,7 @@ requireAuth();
             </button>
             <h1>Flights Pocket</h1>
             <div id="datetime"></div>
+            <div>Hello <?php echo $user['FirstName'] . ' ' . $user['LastName'] ?>!</div>
         </header>
         <nav>
             <a href="index.php" style="height: 17.5px"
