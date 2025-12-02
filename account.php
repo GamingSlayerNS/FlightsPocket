@@ -54,6 +54,58 @@ require_once 'php/account.php';
                         </ul>
                     <?php endif; ?>
                 </section>
+                <section>
+                    <h3>Admin: Queries</h3>
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_flights_tx_range" />
+                        <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
+                        <label>From: <input type="date" name="from" value="2024-09-01" /></label>
+                        <label>To: <input type="date" name="to" value="2024-10-31" /></label>
+                        <button type="submit">Flights departing TX (Sep-Oct)</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_hotels_tx_range" />
+                        <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
+                        <label>From: <input type="date" name="from" value="2024-09-01" /></label>
+                        <label>To: <input type="date" name="to" value="2024-10-31" /></label>
+                        <button type="submit">Hotels in TX (Sep-Oct)</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_top_hotels" />
+                        <label>Top N: <input name="n" type="number" min="1" max="50" value="5" /></label>
+                        <button type="submit">Most expensive booked hotels</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_flights_with_infant" />
+                        <button type="submit">All booked flights with an infant passenger</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_flights_infant_and_5children" />
+                        <button type="submit">Flights with infant and ≥5 children</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_top_flights" />
+                        <label>Top N: <input name="n" type="number" min="1" max="50" value="5" /></label>
+                        <button type="submit">Most expensive booked flights</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_flights_tx_no_infant" />
+                        <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
+                        <button type="submit">Flights from TX with no infant passenger</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:6px">
+                        <input type="hidden" name="action" value="admin_count_flights_arrive_ca_months" />
+                        <label>California City: <input name="city" placeholder="e.g. Los Angeles" /></label>
+                        <button type="submit">Count flights arriving CA (Sep/Oct 2024)</button>
+                    </form>
+                </section>
             <?php endif; ?>
         <?php else: ?>
             <p>No user profile available.</p>
@@ -116,6 +168,8 @@ require_once 'php/account.php';
                                 </div>
                             <?php endif; ?>
                         <?php endforeach; ?>
+                    <?php elseif ($action === 'admin_count_flights_arrive_ca_months' && isset($searchResults['count'])): ?>
+                        <p><strong>Count:</strong> <?php echo (int)$searchResults['count']; ?></p>
                     <?php else: ?>
                         <?php foreach ($searchResults as $res): ?>
                             <?php if (isset($res['flights']) || isset($res['passengers'])): ?>
