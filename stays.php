@@ -19,7 +19,7 @@
             <div id="datetime"></div>
         </header>
         <nav>
-            <a href="index.html" style="height: 17.5px"
+            <a href="index.php" style="height: 17.5px"
                 ><img
                     src="assets/Home Page Icon.png"
                     alt="Home Icon"
@@ -27,7 +27,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.8px"
                 />Home</a
             >
-            <a href="flights.html" style="height: 17.5px"
+            <a href="flights.php" style="height: 17.5px"
                 ><img
                     src="assets/Flights Icon.png"
                     alt="Flights Icon"
@@ -35,7 +35,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px"
                 />Flights</a
             >
-            <a href="stays.html" style="height: 17.5px"
+            <a href="stays.php" style="height: 17.5px"
                 ><img
                     src="assets/Stays Icon.png"
                     alt="Stays Icon"
@@ -43,7 +43,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5.8px"
                 />Stays</a
             >
-            <a href="cars.html" style="height: 17.5px"
+            <a href="cars.php" style="height: 17.5px"
                 ><img
                     src="assets/Cars Icon.png"
                     alt="Cars Icon"
@@ -51,7 +51,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.2px"
                 />Cars</a
             >
-            <a href="cruises.html" style="height: 17.5px"
+            <a href="cruises.php" style="height: 17.5px"
                 ><img
                     src="assets/Cruises Icon.png"
                     alt="Cruises Icon"
@@ -59,7 +59,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px"
                 />Cruises</a
             >
-            <a href="contact-us.html" style="height: 17.5px"
+            <a href="contact-us.php" style="height: 17.5px"
                 ><img
                     src="assets/Contact Us Icon.png"
                     alt="Contact Us Icon"
@@ -67,7 +67,7 @@
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.75px; margin-left: -5px"
                 />Contact Us</a
             >
-            <a href="cart.html" style="height: 17.5px"
+            <a href="cart.php" style="height: 17.5px"
                 ><img
                     src="assets/cart.png"
                     alt="Cart Icon"
