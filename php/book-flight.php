@@ -1,4 +1,6 @@
 <?php
+require_once 'util/authentication.php';
+requireAuth();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {

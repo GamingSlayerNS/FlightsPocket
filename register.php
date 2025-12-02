@@ -1,9 +1,13 @@
+<?php
+require_once 'php/util/authentication.php';
+requireAuth();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>Flights - Flights Pocket</title>
+        <title>Register</title>
         <link rel="stylesheet" href="src/mystyle.css" />
         <script src="hooks/app.js"></script>
         <script src="hooks/register.js" defer></script>

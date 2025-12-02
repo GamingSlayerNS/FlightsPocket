@@ -1,3 +1,7 @@
+<?php
+require_once 'php/util/authentication.php';
+requireAuth();
+?>
 <!DOCTYPE html>
 <html lang="en">
     <head>

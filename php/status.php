@@ -1,3 +1,7 @@
+<?php
+require_once 'util/authentication.php';
+requireAuth();
+?>
 <!DOCTYPE html>
 <html>
 <body>
