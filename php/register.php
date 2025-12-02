@@ -1,6 +1,6 @@
 <?php
+require_once 'util/db.php';
 require_once 'util/authentication.php';
-requireAuth();
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
@@ -52,7 +52,6 @@ if (count($errors) > 0) {
     exit;
 }
 
-require_once '/util/db.php';
 $mysqli = createMysqli();
 
 if ($mysqli->connect_errno) {
@@ -159,6 +158,15 @@ if (!$stmt->execute()) {
 
 $stmt->close();
 $mysqli->close();
+
+if (!createSession($phoneNumber)) {
+    http_response_code(500);
+    echo json_encode([
+        'success' => false,
+        'error' => 'Failed to create session token.',
+    ]);
+    exit;
+}
 
 http_response_code(200);
 echo json_encode([

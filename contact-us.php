@@ -81,6 +81,14 @@ $user = $GLOBALS['user'];
                     style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px; margin-left: -5px"
                 />Cart</a
             >
+            <a href="logout.php" style="height: 17.5px"
+                ><img
+                    src="assets/Logout.svg"
+                    alt="Logout Icon"
+                    height="16px"
+                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px; margin-left: -5px"
+                />Logout</a
+            >
         </nav>
         <main>
             <aside class="open">

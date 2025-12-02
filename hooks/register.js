@@ -119,6 +119,8 @@ async function handleRegisterSubmit(ev) {
         errorDiv.innerHTML = "<ul>" + errors.map((error) => `<li>${error}</li>`).join("") + "</ul>";
         return;
     }
+
+    window.location.href = "/index.php";
 }
 
 document.getElementById("register-form").addEventListener("submit", handleRegisterSubmit);

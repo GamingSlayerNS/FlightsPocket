@@ -17,7 +17,6 @@
             </button>
             <h1>Flights Pocket</h1>
             <div id="datetime"></div>
-            <div>Hello <?php echo $user['FirstName'] . ' ' . $user['LastName'] ?>!</div>
         </header>
         <main>
             <aside class="open">
@@ -39,6 +38,9 @@
                     <div>
                         <label for="password">Password:</label>
                         <input type="password" id="password" name="password" required />
+                    </div>
+                    <div>
+                        <a href="/register.php">Create an account</a>
                     </div>
                     <button type="submit">Login</button>
                 </form>

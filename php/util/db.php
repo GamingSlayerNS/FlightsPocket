@@ -10,7 +10,7 @@ function createMysqli() {
         username: 'root',
         password: '',
         database: 'flightspocket',
-        port: 0,
+        port: null,
         socket: $socket
     );
 }
