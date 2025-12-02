@@ -77,7 +77,7 @@ document.addEventListener("DOMContentLoaded", () => {
                         try {
                             sessionStorage.setItem("hotels_cart", JSON.stringify(cart));
                         } catch { }
-                        window.location.href = "cart.html";
+                        window.location.href = "cart.php";
                     });
                 } */
             }
@@ -164,7 +164,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 try {
                                     sessionStorage.setItem("hotels_cart", JSON.stringify(cart));
                                 } catch { }
-                                window.location.href = "cart.html";
+                                window.location.href = "cart.php";
                             });
                             bookCol.appendChild(myButton);
                             bookCol.style.paddingLeft = "10px";

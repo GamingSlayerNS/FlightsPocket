@@ -375,7 +375,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 try {
                                     sessionStorage.setItem("rentals_cart", JSON.stringify(cart));
                                 } catch {}
-                                window.location.href = "cart.html";
+                                window.location.href = "cart.php";
                             });
                             bookCol.appendChild(myButton);
                             bookCol.style.paddingLeft = "10px";

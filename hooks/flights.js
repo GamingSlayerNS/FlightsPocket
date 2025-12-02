@@ -209,7 +209,7 @@ document.addEventListener("DOMContentLoaded", () => {
                                 try {
                                     sessionStorage.setItem("fp_cart", JSON.stringify(cart));
                                 } catch {}
-                                window.location.href = "cart.html";
+                                window.location.href = "cart.php";
                             });
                             li.appendChild(btn);
                             listEl.appendChild(li);
@@ -317,7 +317,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             try {
                                 sessionStorage.setItem("fp_cart", JSON.stringify(cart));
                             } catch {}
-                            window.location.href = "cart.html";
+                            window.location.href = "cart.php";
                         });
                         li.appendChild(btn);
                         listEl.appendChild(li);
