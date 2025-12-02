@@ -54,6 +54,21 @@ document.addEventListener("DOMContentLoaded", () => {
             body.style.backgroundColor = e.target.value;
         });
     }
+
+    // Phone number auto-formatting for the register/login phone inputs only
+    const phoneInputs = document.querySelectorAll(
+        'input[type="tel"]#phone-number, input[type="tel"][name="phone-number"]'
+    );
+    phoneInputs.forEach((input) => {
+        input.addEventListener("input", () => {
+            const digits = input.value.replace(/\D/g, "").slice(0, 10);
+            const parts = [];
+            if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
+            if (digits.length > 3) parts.push(digits.slice(3, Math.min(6, digits.length)));
+            if (digits.length > 6) parts.push(digits.slice(6));
+            input.value = parts.join("-");
+        });
+    });
 });
 
 /**

@@ -153,3 +153,213 @@ maximum can not be greater than 10 days
 • Departing between can be anytime between Sep 1, 2024 to Dec 1st 2024.
 • Number of guesses can not be more than 2 for each room. However infants can stay
 with adults even if the number of guesses exceeds 2 
+
+
+
+
+
+
+
+New Instructions:
+
+
+CS 6314 - Assignment#4
+Due Date: 12/3/25, 11:59 pm
+n this assignment, you are supposed to develop a web application for travel
+deals using HTML, CSS, Javascript, jQuery, XML,JSON, Ajax, PHP and Mysql.
+The app should have 7 web pages, including stays, flights, contact-us, register,
+login, cart and my-account
+Using an external css (mystyle.css), add the following layout to all web pages.
+Please note for the navigation bar, you must have links to all 7 web pages in your
+web application.
+1. Add a register web page to your web application to register users. You should
+ask each user to enter Phone number, Password , FirstName, LastName, Date
+of birth, Email, and Gender (as radio button) . Before registering each user,
+you should validate the user’s inputs as following
+• User must enter Phone number, Password , FirstName, LastName, Date
+of birth, and Email. Gender is not a required user input.
+• Phone number is a unique number. User can not use a phone number
+that already has been used by another user.
+• Phone number must be formatted as ddd-ddd-dddd
+• User must enter the same Password two times.
+• The Password must be at least 8 characters.
+• Date of birth must have 2 digits for month, 2 digits fore day, and four digits for year
+• Email must contain @ and .com
+If the user inputs are not valid, prompt the user. After validating the user’s inputs,
+you should insert the user’s information into the “users” table in your database.
+Users table has 7 fields including Phone number, Password , FirstName, LastName, Date of birth, Gender, and Email. Phone number is a unique number in
+the table. After inserting the above information into the table successfully, you
+should prompt the user. The User should be able to log in to your web application
+using her/his Phone number and the password. Phone number for the admin
+should be 222-222-2222.
+2. Display current local date and time in your web application.
+3. After login to the web application, the user should be able to see his/her first
+name, and last name in all webpages.
+4. After login to the web application, user should be able to submit a comment in
+the contact page. The comment must be at least 10 characters. You should
+validate the user input when the user clicks a “submit” button in the contact
+page. If the user doesn’t enter valid information as specified above or did not
+login to the web application, you must prompt the user to login and enter valid
+information. After validating the user input, assign a unique number (contact-id)
+to the comment and store Contact-id, Phone number, FirstName, LastName,
+Date of birth, Email, and Gender in a XML file
+5. Allow users to change font size of main content and background color of your
+web application.
+6. Create a JSON file for the all available flights. The JSON file should include
+in-formation about available flights including flight-id, origin, destination,
+depar-ture date, arrival date, departure time, arrival time, number of available
+seats and price for at least 50 flights between a city in Texas and a city in
+California between Sep 1, 2024 to Dec 1st 2024. The admin should be able
+to load the JSON file into the “flights” table in the database after login to the
+webpage and in the my-account page. Flights table should have 9 fields,
+including flight-id, origin, destination, departure date, arrival date, departure
+time, arrival time, number of available seats and price.
+7. After login to the web application, in the flight webpage, the user should be
+able to choose the type of trip. If the user chooses one way trip, the user
+should be able to enter the origin, destination, and departure date. If the user
+chooses a round trip, the user should be able to enter the origin, destination,
+departure date for departing flight and arriving flight. In the flight webpage,
+there should be a passenger icon. If the user clicks on the passenger icon, a
+form should be displayed. In this form, the user also should be able to enter
+the number of passengers for each category (adults, children, or infants).
+When the user clicks search button, after validating the user inputs, you should
+display all the above information entered by the user. If any user input is not
+valid, you should inform the user.
+Validate user inputs for this page as following
+• The user must enter departure date anytime between Sep 1, 2024 to Dec 1st
+2024.
+• Origin and destination must be a city in Texas or California
+• Number of passengers for each category can not be more than 4
+• If the user selected a one way trip, when the user clicks the search button, if
+the entered information are valid, you should retrieve and display the information (flight-id, origin, destination, departure date, arrival date, departure time,
+arrival time, and number of available seats) for all available flights from the requested origin to the requested destination that will depart on the requested
+departure date. The available flights should be retrieved from “flights” table in
+your database and must have enough available seats for all passengers. If
+there is not any available flights on the requested departure date, you should
+retrieve and display the information for available flights within 3 days before
+and after the requested departure date. The user should be able to select a
+flight and place it in the cart.
+• In the cart page, you should display the information of the selected flight (flightid, origin, destination, departure date, arrival date, departure time, arrival time).
+You also need to display total price for all passenger. Infant ticket is 10% of the
+adult ticket price. Children ticket is 70% of the adult ticket price. The user
+should be able to book the selected flight after entering first name, last name,
+date of birth and SSN for each passenger. When the user books a flight for all
+passengers, you need to assign a unique flight booking id to the selected flight
+in the cart and assign a unique ticket id to each ticket (one booking may have
+several tickets; one ticket for each passenger) and insert booking, tickets, and
+passenger information in “flight-booking” table , “ticket” table , and passenger
+table. You also need to update available number of seats of the booked flight in
+the flights table.
+Flights table should have 9 fields, including flight-id, origin, destination, departure
+date, arrival date, departure time, arrival time, number of available seats and
+price. Fight-id is a unique number
+Passenger table has 5 fields, including SSN, first name, last name, date of birth ,
+and category (adults, children, or infants). SSN is a unique number
+Flight-booking table has 3 fields, including flight-booking-id, flight-id, total price
+for all passengers
+Tickets table has 4 fields, including ticket-id, flight-booking-id, SSN, and price for
+the passenger. Ticket-id is a unique number
+• After booking the selected flight, you should display all the information of the
+booked flight (flight-booking-id, flight-id, origin, destination, departure date, arrival date, departure time, arrival time, total price for all passengers). You
+should also display ticket information for each passengers (ticket-id, flight-booking-id, SSN, first name, last name, date of birth, and price for each ticket) .
+• If the user selected round trip, when the user clicks the search button, if the entered information are valid, you should also display the information (flight-id,
+origin, destination, departure date, arrival date, departure time, arrival time, and
+number of available seats) for all available flights from the requested origin to
+the requested destination that will depart on the requested departure date for
+for departing flight and returning flight. The available flights must have enough
+available seats for all passengers. If there is not any available flights on the requested departure date, you should display the information for available flights
+within 3 days before and after the requested departure date. The user should
+be able to select a flight as departing flight and a flight as returning flight. and
+place them in the cart.
+• In the cart page, you should display the information of the selected departing
+flight and returning flight (flight-id, origin, destination, departure date, arrival
+date, departure time, arrival time). You also need to display total price for all
+passenger for both departing flight and returning flight. Infant ticket is 10% of
+the adult ticket price. Children ticket is 70% of the adult ticket price. The user
+should be able to book both departing flight and returning flight after entering
+first name, last name, date of birth and SSN for each passenger . When the
+user books a flight for all passengers, you need to assign a unique flight booking id to both departing flight and returning flight in the cart and assign a unique
+ticket id to each ticket (one booking may have several tickets; one ticket for departing flight and one ticket for returning flight for each passenger) and insert
+booking, tickets, and passenger information in “flight-booking” table , “ticket”
+table , and passenger table. You also need to update available number of seats
+of the booked flight in the flights table.
+Flights table should have 9 fields, including flight-id, origin, destination, departure
+date, arrival date, departure time, arrival time, number of available seats and
+price. Fight-id is a unique number
+Passenger table has 5 fields, including SSN, first name, last name, date of birth ,
+and category (adults, children, or infants). SSN is a unique number
+Flight-booking table has 3 fields, including flight-booking-id, flight-id, total price
+for all passengers
+Tickets table has 4 fields, including ticket-id, flight-booking-id, SSN, and price for
+the passenger. Ticket-id is a unique number
+• After booking the selected departing flight and returning flight, you should display all the information of the booked flights (flight-booking-id, flight-id, origin,
+destination, departure date, arrival date, departure time, arrival time, total price
+for all passengers). You should also display ticket information for departing
+flight and for returning flight for each passengers (ticket-id, flight-booking-id,
+SSN, first name, last name, date of birth, and price for each ticket.
+8- After login to the web application, in the stays webpage, the user should be
+able to enter the name of city, the check in date, check out date, number of
+guesses for each category (adults, children, or infants). When the user clicks
+a search button, after validating the user inputs, you should display all the
+information entered by the user. You should also display the number of rooms
+the user needs. If any user input is not valid, you should inform the user.
+Validate user inputs for this page as following
+• The user must enter check in date, and check out date anytime between Sep 1,
+2024 to Dec 1st 2024.
+• The city must be a city in Texas or California
+• Number of guesses can not be more than 2 for each room. However infants
+can stay with adults even if the number of guesses exceeds 2
+• Create a XML file for the all available hotels. The XML file should include information about available hotels including hotel-id, hotel name, city and price
+per night for at least 20 hotels. For simplicity, we assume hotels always have
+available rooms. The admin should be able to load the XML file into the “hotels” table in the database after login to the webpage and in the my-account
+page. Hotels table should have 4 fields, including hotel-id, hotel name, city and
+price per night
+• When the user clicks the search button, if the entered information are valid, you
+should retrieve and display the information (hotel-id, hotel name, city, and price
+per night ) for all available hotels in the requested city from hotels table. The
+user should be able to select a hotel and place it in the cart. In the cart page,
+you should display the information of the selected hotel (hotel-id, hotel name,
+city, number of guesses per category, number of rooms, check in date, and
+check out date, price per night for each room , and total price).
+• The user should be able to book the selected hotel after entering first name,
+last name, date of birth and SSN for each guess . When the user books a hotel
+for all guesses, you need to assign a unique hotel booking id to to the selected
+hotel in the cart and insert booking information in “hotel-booking” table and
+“guesses" table.
+Hotel table has 4 fields, including hotel-id, hotel name, city, and price per night
+Guesses table has 6 fields, including SSN, hotel-booking-id, first name, last
+name, date of birth , and category (adults, children, or infants). SSN is a unique
+number
+Hotel-booking table has 7 fields, including hotel-booking-id, hotel-id, check in
+date, and check out date, number of rooms, price per night for each room , and
+total price
+• After booking the selected hotel, you should display all the information of the
+booked hotels (hotel-booking-id, hotel-id, hotel name, city, and price per night).
+You should also display number of rooms, check in date, and check out date,
+price per night for each room , and total price. You also need to display SSN,
+first name, last name, date of birth , and category (adults, children, or infants)
+for all guesses.
+In the account page, the user should be able to retrieve all the information about
+booked flights and booked hotels using hotel-booking id and Flight-booking-id
+In the account page, the user should be able to retrieve information of all
+passengers in a booked flights using Flight-booking-id
+the user should be able to retrieve all the information of all booked flights and
+booked hotels for SEP 2024
+the user should be able to retrieve all the information about booked flights for
+specific person using SSN
+In the account page, the admin should be able to retrieved all booked flights will
+departure from a city in Texas from sep 2024 to oct 2024
+In the account page, the admin should be able to retrieved all information for
+booked hotels in a a city in Texas from sep 2024 to oct 2024
+In the account page, the admin should be able to retrieved all information for
+most expensive booked hotels
+In the account page, the admin should be able to retrieved all booked flights with
+an infant passenger
+In the account page, the admin should be able to retrieved all booked flights with
+an infant passenger and attest 5 children
+In the account page, the admin should be able to retrieved all the information of
+most expensive booked flights
+In the account page, the admin should be able to retrieve all the information
+about booked flights departure from a city in Texas and have no infant passenger
+In the account page, the admin should be able to retrieved the number of booked
+flight that will arrive to a city in California on sep 2024 or oct 2024

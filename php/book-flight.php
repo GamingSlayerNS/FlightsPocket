@@ -25,6 +25,16 @@ $bookingNumber = isset($jsonInput['bookingNumber']) ? $jsonInput['bookingNumber'
 $totalPrice = isset($jsonInput['totalPrice']) ? $jsonInput['totalPrice'] : 0;
 $passengers = isset($jsonInput['passengers']) && is_array($jsonInput['passengers']) ? $jsonInput['passengers'] : [];
 
+// Prefer authenticated user id (phone number) over client-provided userId
+if (isset($GLOBALS['user']) && is_array($GLOBALS['user']) && !empty($GLOBALS['user']['PhoneNumber'])) {
+    $userId = $GLOBALS['user']['PhoneNumber'];
+}
+
+// Fallback booking number if not provided
+if (empty($bookingNumber)) {
+    $bookingNumber = 'B' . strtoupper(substr(bin2hex(random_bytes(4)), 0, 8));
+}
+
 $jsonFile = __DIR__ . '/../db/flights.json';
 
 $flights = [];
