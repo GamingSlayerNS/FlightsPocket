@@ -52,19 +52,8 @@ if (count($errors) > 0) {
     exit;
 }
 
-$socket = getenv('MYSQL_SOCKET');
-if ($socket === false) {
-    $socket = null;
-}
-
-$mysqli = new mysqli(
-    hostname: null,
-    username: 'root',
-    password: '',
-    database: 'flightspocket',
-    port: 0,
-    socket: $socket
-);
+require_once '/util/db.php';
+$mysqli = createMysqli();
 
 if ($mysqli->connect_errno) {
     http_response_code(500);

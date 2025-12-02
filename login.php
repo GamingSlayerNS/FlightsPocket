@@ -6,13 +6,43 @@
         <title>Login</title>
         <link rel="stylesheet" href="src/mystyle.css" />
         <script src="hooks/app.js"></script>
+        <script src="hooks/login.js" defer></script>
     </head>
     <body>
         <header>
+            <button id="hamburger-menu">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </button>
             <h1>Flights Pocket</h1>
             <div id="datetime"></div>
         </header>
         <main>
+            <aside class="open">
+                <div>
+                    <h2>Options</h2>
+                    <label for="font-size">Font Size:</label>
+                    <input type="range" id="font-size" min="10" max="30" value="16" />
+                    <label for="bg-color">Background Color:</label>
+                    <input type="color" id="bg-color" value="#ffffff" />
+                </div>
+            </aside>
+            <div class="container">
+                <h2>Login</h2>
+                <form id="login-form">
+                    <div>
+                        <label for="phone-number">Phone Number<br/> (XXX-XXX-XXXX):</label>
+                        <input type="tel" id="phone-number" name="phone-number" required />
+                    </div>
+                    <div>
+                        <label for="password">Password:</label>
+                        <input type="password" id="password" name="password" required />
+                    </div>
+                    <button type="submit">Login</button>
+                </form>
+                <div id="login-errors" role="alert" aria-live="polite"></div>
+            </div>
         </main>
         <footer>
             <p>

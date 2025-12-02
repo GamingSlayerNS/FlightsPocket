@@ -14,13 +14,21 @@ CREATE TABLE IF NOT EXISTS Users (
 
 INSERT INTO Users
 (PhoneNumber, Password, FirstName, LastName, DateOfBirth, Gender, Email, Admin)
-VALUES (
+SELECT 
     '222-222-2222',
-    '$2y$10$xOVnN9TwaKS38LYG3ULSTuIfDxVnNorWkfsbIASisDOmacDm0Vtke',
+    '$2y$10$xOVnN9TwaKS38LYG3ULSTuIfDxVnNorWkfsbIASisDOmacDm0Vtke', -- Password: 1234567890
     'Admin',
     'Admin',
     '2000-01-01',
     null,
     'admin@example.com',
     1
+WHERE NOT EXISTS (
+    SELECT 1 FROM Users WHERE PhoneNumber = '222-222-2222'
+);
+
+CREATE TABLE IF NOT EXISTS Sessions (
+    User VARCHAR(20) UNIQUE NOT NULL,
+    Token VARCHAR(32) NOT NULL,
+    Expiration DATETIME NOT NULL
 );

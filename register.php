@@ -1,7 +1,3 @@
-<?php
-require_once 'php/util/authentication.php';
-requireAuth();
-?>
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -22,64 +18,6 @@ requireAuth();
             <h1>Flights Pocket</h1>
             <div id="datetime"></div>
         </header>
-        <nav>
-            <a href="index.php" style="height: 17.5px"
-                ><img
-                    src="assets/Home Page Icon.png"
-                    alt="Home Icon"
-                    height="13px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.8px"
-                />Home</a
-            >
-            <a href="flights.php" style="height: 17.5px"
-                ><img
-                    src="assets/Flights Icon.png"
-                    alt="Flights Icon"
-                    height="15px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px"
-                />Flights</a
-            >
-            <a href="stays.php" style="height: 17.5px"
-                ><img
-                    src="assets/Stays Icon.png"
-                    alt="Stays Icon"
-                    height="15px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5.8px"
-                />Stays</a
-            >
-            <a href="cars.php" style="height: 17.5px"
-                ><img
-                    src="assets/Cars Icon.png"
-                    alt="Cars Icon"
-                    height="17px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.2px"
-                />Cars</a
-            >
-            <a href="cruises.php" style="height: 17.5px"
-                ><img
-                    src="assets/Cruises Icon.png"
-                    alt="Cruises Icon"
-                    height="16px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px"
-                />Cruises</a
-            >
-            <a href="contact-us.php" style="height: 17.5px"
-                ><img
-                    src="assets/Contact Us Icon.png"
-                    alt="Contact Us Icon"
-                    height="16px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 4.75px; margin-left: -5px"
-                />Contact Us</a
-            >
-            <a href="cart.php" style="height: 17.5px"
-                ><img
-                    src="assets/cart.png"
-                    alt="Cart Icon"
-                    height="16px"
-                    style="padding: 0px 10px 0px 0px; vertical-align: middle; margin-bottom: 5px; margin-left: -5px"
-                />Cart</a
-            >
-        </nav>
         <main>
             <aside class="open">
                 <div>
