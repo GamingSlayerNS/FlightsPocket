@@ -132,8 +132,28 @@ require_once 'php/account.php';
             </form>
 
             <form method="get" style="margin-bottom:6px">
-                <input type="hidden" name="action" value="sep2024" />
-                <button type="submit">Show My Sep 2024 Bookings</button>
+                <input type="hidden" name="action" value="bookings_by_month" />
+                <label for="month">Select Month:</label>
+                <select name="month" id="month">
+                    <option value="01">January</option>
+                    <option value="02">February</option>
+                    <option value="03">March</option>
+                    <option value="04">April</option>
+                    <option value="05">May</option>
+                    <option value="06">June</option>
+                    <option value="07">July</option>
+                    <option value="08">August</option>
+                    <option value="09" selected>September</option>
+                    <option value="10">October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+                <label for="year">Select Year:</label>
+                <select name="year" id="year">
+                    <option value="2024" selected>2024</option>
+                    <option value="2025">2025</option>
+                </select>
+                <button type="submit">Show Bookings</button>
             </form>
 
             <form method="get" style="margin-bottom:6px">
@@ -195,44 +215,49 @@ require_once 'php/account.php';
             <?php endif; ?>
         </section>
 
-        <h2>Your Bookings</h2>
+        <div style="width: 100%; height: 3px; border-bottom: 3px solid #787878ff; margin: 20px 0;"></div>
+
+        <h2>Your Bookings:</h2>
         <?php if (empty($userBookings)): ?>
             <p>You have no bookings yet.</p>
         <?php else: ?>
             <?php foreach ($userBookings as $b): ?>
                 <div class="booking">
                     <h3>Booking #: <?php echo htmlspecialchars($b['bookingNumber'] ?? 'N/A'); ?></h3>
-                    <p><strong>Total Price:</strong> $<?php echo htmlspecialchars(number_format($b['totalPrice'] ?? 0, 2)); ?></p>
-                    <?php if (!empty($b['flights'])): ?>
-                        <?php if (isset($b['flights']['outbound'])): $out = $b['flights']['outbound']; ?>
+                    <div  style="margin-left: 32px;">
+
+                        <p><strong>Total Price:</strong> $<?php echo htmlspecialchars(number_format($b['totalPrice'] ?? 0, 2)); ?></p>
+                        <?php if (!empty($b['flights'])): ?>
+                            <?php if (isset($b['flights']['outbound'])): $out = $b['flights']['outbound']; ?>
                             <div><strong>Outbound:</strong> <?php echo htmlspecialchars($out['flightId'] ?? ''); ?> — <?php echo htmlspecialchars(($out['origin'] ?? '') . ' → ' . ($out['destination'] ?? '')); ?>
                             <br />Departure: <?php echo htmlspecialchars(($out['departureDate'] ?? '') . ' ' . ($out['departureTime'] ?? '')); ?>
                             <br />Arrival: <?php echo htmlspecialchars(($out['arrivalDate'] ?? '') . ' ' . ($out['arrivalTime'] ?? '')); ?>
-                            </div>
+                        </div>
                         <?php endif; ?>
                         <?php if (isset($b['flights']['return'])): $ret = $b['flights']['return']; ?>
-                            <div><strong>Return:</strong> <?php echo htmlspecialchars($ret['flightId'] ?? ''); ?> — <?php echo htmlspecialchars(($ret['origin'] ?? '') . ' → ' . ($ret['destination'] ?? '')); ?>
-                            <br />Departure: <?php echo htmlspecialchars(($ret['departureDate'] ?? '') . ' ' . ($ret['departureTime'] ?? '')); ?>
-                            <br />Arrival: <?php echo htmlspecialchars(($ret['arrivalDate'] ?? '') . ' ' . ($ret['arrivalTime'] ?? '')); ?>
-                            </div>
-                        <?php endif; ?>
+                        <div><strong>Return:</strong> <?php echo htmlspecialchars($ret['flightId'] ?? ''); ?> — <?php echo htmlspecialchars(($ret['origin'] ?? '') . ' → ' . ($ret['destination'] ?? '')); ?>
+                        <br />Departure: <?php echo htmlspecialchars(($ret['departureDate'] ?? '') . ' ' . ($ret['departureTime'] ?? '')); ?>
+                        <br />Arrival: <?php echo htmlspecialchars(($ret['arrivalDate'] ?? '') . ' ' . ($ret['arrivalTime'] ?? '')); ?>
+                    </div>
                     <?php endif; ?>
-
+                    <?php endif; ?>
+                    
                     <?php if (!empty($b['passengers'])): ?>
                         <h4>Passengers</h4>
                         <ul>
-                        <?php foreach ($b['passengers'] as $p): ?>
-                            <li><?php echo htmlspecialchars(($p['ssn'] ?? '') . ' — ' . ($p['firstName'] ?? '') . ' ' . ($p['lastName'] ?? '') . ' (' . ($p['dob'] ?? '') . ')'); ?></li>
+                            <?php foreach ($b['passengers'] as $p): ?>
+                                <li><?php echo htmlspecialchars(($p['ssn'] ?? '') . ' — ' . ($p['firstName'] ?? '') . ' ' . ($p['lastName'] ?? '') . ' (' . ($p['dob'] ?? '') . ')'); ?></li>
+                                <?php endforeach; ?>
+                            </ul>
+                            <?php endif; ?>
+                        </div>
+                        </div>
                         <?php endforeach; ?>
-                        </ul>
-                    <?php endif; ?>
-                </div>
-            <?php endforeach; ?>
-        <?php endif; ?>
-    </section>
-</main>
-<footer>
-    <p>&copy; 2025 Flights Pocket</p>
-</footer>
-</body>
-</html>
+                        <?php endif; ?>
+                    </section>
+                </main>
+                <footer>
+                    <p>&copy; 2025 Flights Pocket</p>
+                </footer>
+            </body>
+            </html>

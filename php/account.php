@@ -316,6 +316,64 @@ if ($action) {
             }
             if (empty($searchResults)) $searchMessage = 'No flight bookings found for that SSN in your account.';
             break;
+        case 'bookings_by_month':
+            $month = $_GET['month'] ?? '';
+            $year = $_GET['year'] ?? '';
+            if ($month === '' || $year === '') {
+                $searchMessage = 'Please provide both month and year.';
+                break;
+            }
+
+            // Validate month and year
+            if (!preg_match('/^(0[1-9]|1[0-2])$/', $month) || !preg_match('/^\d{4}$/', $year)) {
+                $searchMessage = 'Invalid month or year format.';
+                break;
+            }
+
+            $targetYm = "$year-$month";
+
+            // Filter flight bookings by month and year
+            foreach ($userBookings as $fb) {
+                $added = false;
+                $flights = $fb['flights'] ?? [];
+                foreach (['outbound', 'return'] as $leg) {
+                    if (isset($flights[$leg]['departureDate']) && str_starts_with($flights[$leg]['departureDate'], $targetYm)) {
+                        $searchResults[] = ['type' => 'flight', 'booking' => $fb];
+                        $added = true;
+                        break;
+                    }
+                }
+                if ($added) continue;
+            }
+
+            // Filter hotel bookings by month and year
+            foreach ($userHotelBookings as $hb) {
+                $checkIn = $hb['checkIn_date'] ?? $hb['check_in'] ?? '';
+                $checkOut = $hb['checkOut_date'] ?? $hb['check_out'] ?? '';
+                $found = false;
+                foreach ([$checkIn, $checkOut] as $dstr) {
+                    if (!$dstr) continue;
+                    $ts = strtotime($dstr);
+                    if ($ts !== false) {
+                        if (date('Y-m', $ts) === $targetYm) {
+                            $found = true;
+                            break;
+                        }
+                    } else {
+                        // Fallback: simple substring check
+                        if (stripos($dstr, date('M', mktime(0, 0, 0, intval($month), 10))) !== false && stripos($dstr, $year) !== false) {
+                            $found = true;
+                            break;
+                        }
+                    }
+                }
+                if ($found) $searchResults[] = ['type' => 'hotel', 'booking' => $hb];
+            }
+
+            if (empty($searchResults)) {
+                $searchMessage = "No bookings found for $year-$month in your account.";
+            }
+            break;
         default:
             $searchMessage = '';
     }
