@@ -113,50 +113,54 @@ require_once 'php/account.php';
 
         <section>
             <h3>Retrieve Bookings / Passengers</h3>
-            <form method="get" style="margin-bottom:6px">
+            <form method="get" style="margin-bottom:32px">
                 <input type="hidden" name="action" value="flight_by_id" />
                 <label>Flight Booking ID: <input name="id" placeholder="e.g. B1UR5MP" /></label>
                 <button type="submit">Find Flight Booking</button>
             </form>
 
-            <form method="get" style="margin-bottom:6px">
+            <form method="get" style="margin-bottom:32px">
                 <input type="hidden" name="action" value="flight_passengers" />
                 <label>Flight Booking ID (Passengers): <input name="id" placeholder="e.g. B1UR5MP" /></label>
                 <button type="submit">Show Passengers</button>
             </form>
 
-            <form method="get" style="margin-bottom:6px">
+            <form method="get" style="margin-bottom:32px">
                 <input type="hidden" name="action" value="hotel_by_id" />
                 <label>Hotel Booking ID: <input name="id" placeholder="e.g. B3372J6" /></label>
                 <button type="submit">Find Hotel Booking</button>
             </form>
 
-            <form method="get" style="margin-bottom:6px">
+            <form method="get" style="margin-bottom:32px">
                 <input type="hidden" name="action" value="bookings_by_month" />
-                <label for="month">Select Month:</label>
-                <select name="month" id="month">
-                    <option value="01">January</option>
-                    <option value="02">February</option>
-                    <option value="03">March</option>
-                    <option value="04">April</option>
-                    <option value="05">May</option>
-                    <option value="06">June</option>
-                    <option value="07">July</option>
-                    <option value="08">August</option>
-                    <option value="09" selected>September</option>
-                    <option value="10">October</option>
-                    <option value="11">November</option>
-                    <option value="12">December</option>
-                </select>
-                <label for="year">Select Year:</label>
-                <select name="year" id="year">
-                    <option value="2024" selected>2024</option>
-                    <option value="2025">2025</option>
-                </select>
+                <div style="display: flex; flex-direction: row;">
+                    <label for="month">Select Month:</label>
+                    <select name="month" id="month" style="margin-left: 8px">
+                        <option value="01">January</option>
+                        <option value="02">February</option>
+                        <option value="03">March</option>
+                        <option value="04">April</option>
+                        <option value="05">May</option>
+                        <option value="06">June</option>
+                        <option value="07">July</option>
+                        <option value="08">August</option>
+                        <option value="09" selected>September</option>
+                        <option value="10">October</option>
+                        <option value="11">November</option>
+                        <option value="12">December</option>
+                    </select>
+                </div>
+                <div style="display: flex; flex-direction: row;">
+                    <label for="year">Select Year:</label>
+                    <select name="year" id="year" style="margin-left: 8px">
+                        <option value="2024" selected>2024</option>
+                        <option value="2025">2025</option>
+                    </select>
+                </div>
                 <button type="submit">Show Bookings</button>
             </form>
 
-            <form method="get" style="margin-bottom:6px">
+            <form method="get" style="margin-bottom:32px">
                 <input type="hidden" name="action" value="flight_by_ssn" />
                 <label>Search my flights by passenger SSN: <input name="ssn" placeholder="123-45-6789" /></label>
                 <button type="submit">Search by SSN</button>
