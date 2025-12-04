@@ -1,6 +1,14 @@
 CREATE DATABASE IF NOT EXISTS flightspocket;
 USE flightspocket;
 
+-- Drop existing tables to apply changes
+DROP TABLE IF EXISTS Tickets;
+DROP TABLE IF EXISTS FlightBookings;
+DROP TABLE IF EXISTS Passengers;
+DROP TABLE IF EXISTS Flights;
+DROP TABLE IF EXISTS Sessions;
+DROP TABLE IF EXISTS Users;
+
 -- Users Table
 CREATE TABLE IF NOT EXISTS Users (
     PhoneNumber VARCHAR(20) UNIQUE NOT NULL,
@@ -37,15 +45,15 @@ CREATE TABLE IF NOT EXISTS Sessions (
 
 -- Flights Table
 CREATE TABLE IF NOT EXISTS Flights (
-    FlightID INT AUTO_INCREMENT PRIMARY KEY,
+    FlightID VARCHAR(10) PRIMARY KEY,
     Origin VARCHAR(100) NOT NULL,
     Destination VARCHAR(100) NOT NULL,
     DepartureDate DATE NOT NULL,
     ArrivalDate DATE NOT NULL,
     DepartureTime TIME NOT NULL,
     ArrivalTime TIME NOT NULL,
-    AvailableSeats INT NOT NULL,
-    Price DECIMAL(10, 2) NOT NULL
+    AvailableSeats INT NOT NULL CHECK (AvailableSeats >= 0),
+    Price DECIMAL(10, 2) NOT NULL CHECK (Price >= 0)
 );
 
 -- Passenger Table
@@ -60,7 +68,7 @@ CREATE TABLE IF NOT EXISTS Passengers (
 -- Flight-booking Table
 CREATE TABLE IF NOT EXISTS FlightBookings (
     FlightBookingID INT AUTO_INCREMENT PRIMARY KEY,
-    FlightID INT NOT NULL,
+    FlightID VARCHAR(10) NOT NULL,
     TotalPrice DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (FlightID) REFERENCES Flights(FlightID)
 );
