@@ -8,6 +8,9 @@ DROP TABLE IF EXISTS Passengers;
 DROP TABLE IF EXISTS Flights;
 DROP TABLE IF EXISTS Sessions;
 DROP TABLE IF EXISTS Users;
+DROP TABLE IF EXISTS Guests;
+DROP TABLE IF EXISTS HotelBookings;
+DROP TABLE IF EXISTS Hotels;
 
 -- Users Table
 CREATE TABLE IF NOT EXISTS Users (
@@ -81,4 +84,35 @@ CREATE TABLE IF NOT EXISTS Tickets (
     Price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (FlightBookingID) REFERENCES FlightBookings(FlightBookingID),
     FOREIGN KEY (SSN) REFERENCES Passengers(SSN)
+);
+
+-- Hotels Table
+CREATE TABLE IF NOT EXISTS Hotels (
+    HotelID INT AUTO_INCREMENT PRIMARY KEY,
+    HotelName VARCHAR(255) NOT NULL,
+    City VARCHAR(100) NOT NULL,
+    PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0)
+);
+
+-- Guests Table
+CREATE TABLE IF NOT EXISTS Guests (
+    SSN CHAR(9) PRIMARY KEY,
+    HotelBookingID INT NOT NULL,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
+    FOREIGN KEY (HotelBookingID) REFERENCES HotelBookings(HotelBookingID)
+);
+
+-- Hotel-booking Table
+CREATE TABLE IF NOT EXISTS HotelBookings (
+    HotelBookingID INT AUTO_INCREMENT PRIMARY KEY,
+    HotelID INT NOT NULL,
+    CheckInDate DATE NOT NULL,
+    CheckOutDate DATE NOT NULL,
+    NumberOfRooms INT NOT NULL CHECK (NumberOfRooms > 0),
+    PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0),
+    TotalPrice DECIMAL(10, 2) NOT NULL CHECK (TotalPrice >= 0),
+    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID)
 );
