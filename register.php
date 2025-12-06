@@ -72,6 +72,9 @@
                     <label for="confirm-password">Confirm Password:</label>
                     <input type="password" id="confirm-password" name="confirm-password" required />
                   </div>
+                  <div>
+                    <a href="/login.php">Log in to an account</a>
+                  </div>
                   <button type="submit">Submit</button>
                 </form>
                 <div id="register-errors" role="alert" aria-live="polite"></div>

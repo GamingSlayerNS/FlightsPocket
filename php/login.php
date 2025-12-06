@@ -68,7 +68,7 @@ if ($result->num_rows === 0) {
     http_response_code(401);
     echo json_encode([
         'success' => false,
-        'error' => 'Invalid phone number or password.',
+        'error' => 'Invalid phone number.',
     ]);
     exit;
 }
@@ -82,7 +82,7 @@ if (!password_verify($password, $user['Password'])) {
     http_response_code(401);
     echo json_encode([
         'success' => false,
-        'error' => 'Invalid phone number or password.',
+        'error' => 'Incorrect password.',
     ]);
     exit;
 }
