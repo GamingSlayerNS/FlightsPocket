@@ -259,17 +259,27 @@ require_once 'php/account.php';
                                 </div>
                                 <?php endforeach; ?>
                                 <?php endif; ?>
+                <?php if (isset($user['Admin']) && ($user['Admin'] == 1 || $user['Admin'] === '1')): ?>
+                    <div style="width: 100%; height: 3px; border-bottom: 3px solid #787878ff; margin: 20px 0;"></div>
 
-                <div style="width: 100%; height: 3px; border-bottom: 3px solid #787878ff; margin: 20px 0;"></div>
+                    <section>
+                        <form method="post" enctype="multipart/form-data" action="php/upload-flights.php" style="margin-bottom:6px">
+                            <label for="flights-json">Upload Flights JSON:</label>
+                            <input type="file" name="flights-json" id="flights-json" accept="application/json" required />
+                            <button type="submit">Upload</button>
+                        </form>
+                    </section>
 
+                    <div style="width: 100%; height: 3px; border-bottom: 3px solid #787878ff; margin: 20px 0;"></div>
 
-                <section>
-                    <form method="post" enctype="multipart/form-data" action="php/upload-flights.php" style="margin-bottom:6px">
-                        <label for="flights-json">Upload Flights JSON:</label>
-                        <input type="file" name="flights-json" id="flights-json" accept="application/json" required />
-                        <button type="submit">Upload</button>
-                    </form>
-                </section>
+                    <section>
+                        <form method="post" enctype="multipart/form-data" action="php/upload-hotels.php" style="margin-bottom:6px">
+                            <label for="hotels-xml">Upload Hotels XML:</label>
+                            <input type="file" name="hotels-xml" id="hotels-xml" accept="application/xml" required />
+                            <button type="submit">Upload</button>
+                        </form>
+                    </section>
+                <?php endif; ?>
             </section>
 
             </main>
