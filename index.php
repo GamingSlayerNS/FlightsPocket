@@ -23,7 +23,7 @@ $user = $GLOBALS['user'];
             </button>
             <h1>Flights Pocket</h1>
             <div id="datetime"></div>
-            <div>Hello <?php echo $user['FirstName'] . ' ' . $user['LastName'] ?>!</div>
+            <div style="margin-top: 6px;">Hello <strong><?php echo $user['FirstName'] . ' ' . $user['LastName'] ?></strong>!</div>
         </header>
         <nav>
             <a href="index.php" style="height: 17.5px"
@@ -103,7 +103,7 @@ $user = $GLOBALS['user'];
                 </div>
             </aside>
             <div class="container">
-                <h2>Welcome to Flights Pocket</h2>
+                <h2>Welcome to Flights Pocket, <?php echo $user['FirstName'] ?>!</h2>
                 <p>Your one-stop shop for the best travel deals.</p>
 
                 <div id="stock-game">

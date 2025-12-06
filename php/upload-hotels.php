@@ -40,7 +40,6 @@ if ($xml === false) {
 }
 
 $mysqli = createMysqli();
-$stmt = $mysqli->prepare("INSERT INTO Hotels (HotelID, HotelName, City, PricePerNight) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE HotelName=VALUES(HotelName), City=VALUES(City), PricePerNight=VALUES(PricePerNight)");
 
 $successCount = 0;
 $failureCount = 0;
@@ -66,8 +65,10 @@ foreach ($xml->Hotel as $index => $hotel) {
         continue;
     }
 
+    $stmt = $mysqli->prepare("INSERT INTO Hotels (HotelID, HotelName, City, PricePerNight) VALUES (?, ?, ?, ?) ON DUPLICATE KEY UPDATE HotelName=VALUES(HotelName), City=VALUES(City), PricePerNight=VALUES(PricePerNight)");
+
     $stmt->bind_param(
-        'isss',
+        'sssd',
         $hotelID,
         $hotelName,
         $city,
