@@ -109,6 +109,10 @@ $searchResults = [
     'columns' => [], // Column names for the frontend
     'data' => []    // Actual data rows
 ];
+$hotelResults = [
+    'columns' => [], // Column names for the frontend
+    'data' => []    // Actual data rows
+];
 $searchMessage = '';
 if ($action) {
     switch ($action) {
@@ -596,6 +600,8 @@ if ($action) {
             $year = $_GET['year'] ?? '';
             $searchResults['columns'] = []; // Initialize columns
             $searchResults['data'] = [];
+            $hotelResults['columns'] = []; // Initialize columns
+            $hotelResults['data'] = [];
 
             if ($month && $year) {
                 // Fetch flight bookings for the selected month and year
@@ -628,10 +634,10 @@ if ($action) {
                 $stmt->execute();
                 $result = $stmt->get_result();
                 while ($row = $result->fetch_assoc()) {
-                    if (empty($searchResults['columns'])) {
-                        $searchResults['columns'] = array_keys($row); // Set columns dynamically
+                    if (empty($hotelResults['columns'])) {
+                        $hotelResults['columns'] = array_keys($row); // Set columns dynamically
                     }
-                    $searchResults['data'][] = $row; // Add row data
+                    $hotelResults['data'][] = $row; // Add row data
                 }
                 $stmt->close();
             }

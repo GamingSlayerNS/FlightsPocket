@@ -183,6 +183,26 @@ require_once 'php/account.php';
                                 <?php endforeach; ?>
                             </tbody>
                         </table>
+                    <?php endif; ?><br>
+                    <?php if (!empty($hotelResults['data'])): ?>
+                        <table border="1" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <?php foreach ($hotelResults['columns'] as $header): ?>
+                                        <th><?php echo htmlspecialchars($header); ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($hotelResults['data'] as $result): ?>
+                                    <tr>
+                                        <?php foreach ($result as $value): ?>
+                                            <td><?php echo htmlspecialchars($value); ?></td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </section>
 
