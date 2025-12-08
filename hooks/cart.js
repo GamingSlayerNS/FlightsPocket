@@ -140,18 +140,20 @@ document.addEventListener("DOMContentLoaded", () => {
             flightContainer.appendChild(form);
             
             // ssn input formatter to enforce ddd-dd-dddd as user types
-            const ssnInput = document.querySelector(".p-ssn");
+            const ssnInput = document.querySelectorAll(".p-ssn");
             document.addEventListener("input", function(e) {
                 if (e.target.matches(".p-ssn")) {
-                    const digits = ssnInput.value.replace(/\D/g, "").slice(0, 9);
-                    const parts = [];
-                    if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
-                    if (digits.length >= 3) parts[0] += "-";
-                    if (digits.length > 3) parts.push(digits.slice(3, Math.min(5, digits.length)));
-                    if (digits.length >= 5) parts[1] += "-";
-                    if (digits.length > 5) parts.push(digits.slice(5));
-                    ssnInput.value = parts.join("");
-                }
+                    ssnInput.forEach(element => {
+                        const digits = element.value.replace(/\D/g, "").slice(0, 9);
+                        const parts = [];
+                        if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
+                        if (digits.length >= 3) parts[0] += "-";
+                        if (digits.length > 3) parts.push(digits.slice(3, Math.min(5, digits.length)));
+                        if (digits.length >= 5) parts[1] += "-";
+                        if (digits.length > 5) parts.push(digits.slice(5));
+                        element.value = parts.join("");
+                    }
+                )}
             });
 
             document.addEventListener("submit", async (e) => {
