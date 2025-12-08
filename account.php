@@ -138,7 +138,7 @@ require_once 'php/account.php';
                                 <thead>
                                     <tr>
                                         <th>Booking Number</th>
-                                        <th>User ID</th>
+                                        <!-- <th>User ID</th> -->
                                         <th>Total Price</th>
                                         <th>Outbound Flight</th>
                                         <th>Return Flight</th>
@@ -148,7 +148,7 @@ require_once 'php/account.php';
                                     <?php foreach ($allFlightBookings as $fb): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($fb['bookingNumber'] ?? $fb['FlightBookingID'] ?? 'N/A'); ?></td>
-                                            <td><?php echo htmlspecialchars($fb['userId'] ?? 'N/A'); ?></td>
+                                            <!-- <td><?php echo htmlspecialchars($fb['userId'] ?? 'N/A'); ?></td> -->
                                             <td>$<?php echo htmlspecialchars(number_format($fb['totalPrice'] ?? $fb['TotalPrice'] ?? 0, 2)); ?></td>
                                             <td><?php echo htmlspecialchars(($fb['outbound']['flightId'] ?? $fb['FlightID'] ?? '') . ' (' . ($fb['outbound']['origin'] ?? $fb['Origin'] ?? '') . ' → ' . ($fb['outbound']['destination'] ?? $fb['Destination'] ?? '') . ')'); ?></td>
                                             <td><?php echo htmlspecialchars(($fb['return']['flightId'] ?? '') . ' (' . ($fb['return']['origin'] ?? '') . ' → ' . ($fb['return']['destination'] ?? '') . ')'); ?></td>
@@ -166,7 +166,7 @@ require_once 'php/account.php';
                                 <thead>
                                     <tr>
                                         <th>Booking Number</th>
-                                        <th>User ID</th>
+                                        <!--<th>User ID</th>-->
                                         <th>Hotel Name</th>
                                         <th>City</th>
                                         <th>Check-in</th>
@@ -178,7 +178,7 @@ require_once 'php/account.php';
                                     <?php foreach ($allHotelBookings as $hb): ?>
                                         <tr>
                                             <td><?php echo htmlspecialchars($hb['booking_number'] ?? $hb['HotelBookingID'] ?? 'N/A'); ?></td>
-                                            <td><?php echo htmlspecialchars($hb['user_id'] ?? 'N/A'); ?></td>
+                                            <!--<td><?php echo htmlspecialchars($hb['user_id'] ?? 'N/A'); ?></td>-->
                                             <td><?php echo htmlspecialchars($hb['hotel_name'] ?? $hb['HotelName'] ?? 'N/A'); ?></td>
                                             <td><?php echo htmlspecialchars($hb['hotel_city'] ?? $hb['City'] ?? 'N/A'); ?></td>
                                             <td><?php echo htmlspecialchars($hb['checkIn_date'] ?? $hb['CheckInDate'] ?? 'N/A'); ?></td>

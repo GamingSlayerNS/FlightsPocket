@@ -36,7 +36,8 @@ while ($row = $result->fetch_assoc()) {
 $stmt->close();
 
 // Combine JSON and SQL flight bookings
-$allFlightBookings = array_merge($jsonBookings, $sqlBookings);
+// $allFlightBookings = array_merge($jsonBookings, $sqlBookings);
+$allFlightBookings = $sqlBookings;
 
 // Read hotel bookings from JSON
 $hotelFile = __DIR__ . '/../db/hotel-booking.json';
@@ -56,17 +57,38 @@ if (file_exists($hotelFile)) {
 }
 
 // Fetch hotel bookings from SQL
-$sqlHotelBookings = [];
+/* $sqlHotelBookings = [];
 $stmt = $db->prepare("SELECT * FROM HotelBookings");
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
     $sqlHotelBookings[] = $row;
 }
+$stmt->close(); */
+$sqlHotelBookings = [];
+$stmt = $db->prepare(
+    "SELECT hb.HotelBookingID,
+            h.HotelName,
+            h.City,
+            hb.CheckInDate,
+            hb.CheckOutDate,
+            hb.TotalPrice
+     FROM HotelBookings hb
+     JOIN Hotels h ON hb.HotelID = h.HotelID"
+);
+
+$stmt->execute();
+$result = $stmt->get_result();
+
+while ($row = $result->fetch_assoc()) {
+    $sqlHotelBookings[] = $row;
+}
+
 $stmt->close();
 
 // Combine JSON and SQL hotel bookings
-$allHotelBookings = array_merge($jsonHotelBookings, $sqlHotelBookings);
+// $allHotelBookings = array_merge($jsonHotelBookings, $sqlHotelBookings);
+$allHotelBookings = $sqlHotelBookings;
 
 // Display all bookings without filtering by user
 $userBookings = $allFlightBookings;
