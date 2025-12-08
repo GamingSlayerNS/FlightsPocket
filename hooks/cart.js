@@ -207,16 +207,22 @@ document.addEventListener("DOMContentLoaded", () => {
                         }
                     };
 
-                    if (outbound && outbound.flightId) updateSeatsFor(outbound.flightId);
-                    if (ret && ret.flightId) updateSeatsFor(ret.flightId);
-
                     try {
                         sessionStorage.setItem("fp_flights_db", JSON.stringify(flights));
                     } catch {}
 
                     const bookings = [];
-                    if (outbound && outbound.flightId) bookings.push({ flightId: outbound.flightId, passengerCount: totalPax });
-                    if (ret && ret.flightId) bookings.push({ flightId: ret.flightId, passengerCount: totalPax });
+                    const bookingsCopy = [];
+                    if (outbound && outbound.flightId) {
+                        bookings.push({ flightId: outbound.flightId, passengerCount: totalPax });
+                        bookingsCopy.push({ flightId: outbound.flightId, passengerCount: totalPax, currentAvailableSeats: flights[flights.findIndex((f) => f.flightId === outbound.flightId)].availableSeats });
+                        updateSeatsFor(outbound.flightId);
+                    }
+                    if (ret && ret.flightId) {
+                        bookings.push({ flightId: ret.flightId, passengerCount: totalPax });
+                        bookingsCopy.push({ flightId: ret.flightId, passengerCount: totalPax, currentAvailableSeats: flights[flights.findIndex((f) => f.flightId === ret.flightId)].availableSeats });
+                        updateSeatsFor(ret.flightId);
+                    }
 
                     // Show confirmation
                     const details = `
@@ -260,9 +266,17 @@ document.addEventListener("DOMContentLoaded", () => {
                         if (ret) bookingRecord.flights.return = ret;
 
                         bookingRecord.passengers = summary.passengers;
+                        const bookingRecordCopy = bookingRecord.passengers;
+
+                        for (let i = 0; i < totalPax; i++) {
+                            const passengerCost = i < adults ? adultCost : i < adults + children ? childCost : infantCost;
+                            const passengerType = i < adults ? "Adult" : i < adults + children ? "Child" : "Infant";
+                            bookingRecordCopy[i].price = passengerCost;
+                            bookingRecordCopy[i].type = passengerType;
+                        }
 
                         const usedPhp = await postPhpOrDownload({
-                            body: JSON.stringify({ bookings, userId, bookingNumber, totalPrice, passengers: bookingRecord.passengers }),
+                            body: JSON.stringify({ bookings: bookingsCopy, userId, bookingNumber, totalPrice, passengers: bookingRecordCopy }),
                             url: '/php/book-flight.php',
                             fetchContentType: 'application/json',
                             fallback: JSON.stringify(flights, null, 2),

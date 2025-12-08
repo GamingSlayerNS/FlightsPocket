@@ -61,7 +61,7 @@ CREATE TABLE IF NOT EXISTS Flights (
 
 -- Passenger Table
 CREATE TABLE IF NOT EXISTS Passengers (
-    SSN CHAR(9) PRIMARY KEY,
+    SSN VARCHAR(100) PRIMARY KEY,
     FirstName VARCHAR(100) NOT NULL,
     LastName VARCHAR(100) NOT NULL,
     DateOfBirth DATE NOT NULL,
@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS Passengers (
 
 -- Flight-booking Table
 CREATE TABLE IF NOT EXISTS FlightBookings (
-    FlightBookingID INT AUTO_INCREMENT PRIMARY KEY,
+    FlightBookingID VARCHAR(10) PRIMARY KEY,
     FlightID VARCHAR(10) NOT NULL,
     TotalPrice DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (FlightID) REFERENCES Flights(FlightID)
@@ -79,8 +79,8 @@ CREATE TABLE IF NOT EXISTS FlightBookings (
 -- Tickets Table
 CREATE TABLE IF NOT EXISTS Tickets (
     TicketID INT AUTO_INCREMENT PRIMARY KEY,
-    FlightBookingID INT NOT NULL,
-    SSN CHAR(9) NOT NULL,
+    FlightBookingID VARCHAR(10) NOT NULL,
+    SSN VARCHAR(11) NOT NULL,
     Price DECIMAL(10, 2) NOT NULL,
     FOREIGN KEY (FlightBookingID) REFERENCES FlightBookings(FlightBookingID),
     FOREIGN KEY (SSN) REFERENCES Passengers(SSN)

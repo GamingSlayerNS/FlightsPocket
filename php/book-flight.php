@@ -96,21 +96,30 @@ try {
 
         // Update available seats in the Flights table
         $stmt = $mysqli->prepare("UPDATE Flights SET AvailableSeats = ? WHERE FlightID = ?");
-        $stmt->bind_param('ii', $newAvailableSeats, $flightId);
+        $stmt->bind_param('is', $newAvailableSeats, $flightId);
         $stmt->execute();
         $stmt->close();
 
         // Insert booking into FlightBookings table
-        $stmt = $mysqli->prepare("INSERT INTO FlightBookings (FlightID, TotalPrice) VALUES (?, ?)");
-        $stmt->bind_param('id', $flightId, $totalPrice);
+        $stmt = $mysqli->prepare("INSERT INTO FlightBookings (FlightBookingID, FlightID, TotalPrice) VALUES (?, ?, ?)");
+        $stmt->bind_param('ssd', $bookingNumber, $flightId, $totalPrice);
         $stmt->execute();
-        $flightBookingId = $stmt->insert_id;
+        // $flightBookingId = $stmt->insert_id;
         $stmt->close();
+
+        // Insert tickets into Passengers table
+        foreach ($passengers as $passenger) {
+            // $type = "Adult";
+            $stmt = $mysqli->prepare("INSERT INTO Passengers (SSN, FirstName, LastName, DateOfBirth, Category) VALUES (?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE SSN=VALUES(SSN)");
+            $stmt->bind_param("sssss", $passenger['ssn'], $passenger['firstName'], $passenger['lastName'], $passenger['dob'], $passenger['type']);
+            $stmt->execute();
+            $stmt->close();
+        }
 
         // Insert tickets into Tickets table
         foreach ($passengers as $passenger) {
             $stmt = $mysqli->prepare("INSERT INTO Tickets (FlightBookingID, SSN, Price) VALUES (?, ?, ?)");
-            $stmt->bind_param('isd', $flightBookingId, $passenger['ssn'], $passenger['price']);
+            $stmt->bind_param('ssd', $bookingNumber, $passenger['ssn'], $passenger['price']);
             $stmt->execute();
             $stmt->close();
         }
