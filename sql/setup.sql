@@ -65,7 +65,9 @@ CREATE TABLE IF NOT EXISTS Passengers (
     FirstName VARCHAR(100) NOT NULL,
     LastName VARCHAR(100) NOT NULL,
     DateOfBirth DATE NOT NULL,
-    Category ENUM('Adult', 'Child', 'Infant') NOT NULL
+    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
+    UserPhone VARCHAR(20) NOT NULL,
+    FOREIGN KEY (UserPhone) REFERENCES Users(PhoneNumber)
 );
 
 -- Flight-booking Table
@@ -73,7 +75,9 @@ CREATE TABLE IF NOT EXISTS FlightBookings (
     FlightBookingID VARCHAR(10) PRIMARY KEY,
     FlightID VARCHAR(10) NOT NULL,
     TotalPrice DECIMAL(10, 2) NOT NULL,
-    FOREIGN KEY (FlightID) REFERENCES Flights(FlightID)
+    PassengerID VARCHAR(100) NOT NULL,
+    FOREIGN KEY (FlightID) REFERENCES Flights(FlightID),
+    FOREIGN KEY (PassengerID) REFERENCES Passengers(SSN)
 );
 
 -- Tickets Table
@@ -94,6 +98,18 @@ CREATE TABLE IF NOT EXISTS Hotels (
     PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0)
 );
 
+-- Guests Table
+CREATE TABLE IF NOT EXISTS Guests (
+    SSN CHAR(9) PRIMARY KEY,
+    HotelBookingID VARCHAR(10) NOT NULL,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
+    UserPhone VARCHAR(20) NOT NULL,
+    FOREIGN KEY (UserPhone) REFERENCES Users(PhoneNumber)
+);
+
 -- Hotel-booking Table
 CREATE TABLE IF NOT EXISTS HotelBookings (
     HotelBookingID VARCHAR(10) PRIMARY KEY,
@@ -103,16 +119,7 @@ CREATE TABLE IF NOT EXISTS HotelBookings (
     NumberOfRooms INT NOT NULL CHECK (NumberOfRooms > 0),
     PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0),
     TotalPrice DECIMAL(10, 2) NOT NULL CHECK (TotalPrice >= 0),
-    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID)
-);
-
--- Guests Table
-CREATE TABLE IF NOT EXISTS Guests (
-    SSN CHAR(9) PRIMARY KEY,
-    HotelBookingID VARCHAR(10) NOT NULL,
-    FirstName VARCHAR(100) NOT NULL,
-    LastName VARCHAR(100) NOT NULL,
-    DateOfBirth DATE NOT NULL,
-    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
-    FOREIGN KEY (HotelBookingID) REFERENCES HotelBookings(HotelBookingID)
+    GuestID CHAR(9) NOT NULL,
+    FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID),
+    FOREIGN KEY (GuestID) REFERENCES Guests(SSN)
 );
