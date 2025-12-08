@@ -27,7 +27,7 @@
   <Hotel id="DL01">
     <hotelName>Omni Dallas Hotel</hotelName>
     <city>Dallas</city>
-    <numAvailableRooms>200</numAvailableRooms>
+    <numAvailableRooms>199</numAvailableRooms>
     <pricePerNight>150</pricePerNight>
   </Hotel>
   <Hotel id="DL02">
@@ -105,7 +105,7 @@
   <Hotel id="LA02">
     <hotelName>Sheraton Gateway Los Angeles Hotel</hotelName>
     <city>Los Angeles</city>
-    <numAvailableRooms>399</numAvailableRooms>
+    <numAvailableRooms>397</numAvailableRooms>
     <pricePerNight>130</pricePerNight>
   </Hotel>
   <Hotel id="OK01">

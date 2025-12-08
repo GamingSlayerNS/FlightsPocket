@@ -141,6 +141,7 @@ if ($action) {
             $city = trim($_GET['city'] ?? '');
             $from = $_GET['from'] ?? '2024-09-01';
             $to = $_GET['to'] ?? '2024-10-31';
+            $cityParam = "%$city%";
 
             if ($city === '') {
                 $adminMessage = 'Provide a Texas city.';

@@ -28,5 +28,84 @@
         "num_rooms_needed": 1,
         "price_per_night": "$130.00",
         "total_price": "$130.00"
+    },
+    {
+        "user_id": "Umioatq55",
+        "booking_number": "BD07FD7",
+        "hotel_id": "LA02",
+        "hotel_city": "Los Angeles",
+        "hotel_name": "Sheraton Gateway Los Angeles Hotel",
+        "checkIn_date": "2024-11-30",
+        "checkOut_date": "2024-12-01",
+        "adult_guests": 2,
+        "children_guests": 0,
+        "infant_guests": 0,
+        "num_rooms_needed": 1,
+        "price_per_night": "$130.00",
+        "total_price": "$130.00",
+        "guests": [
+            {
+                "ssn": "123-45-6789",
+                "firstName": "Naxel",
+                "lastName": "Santiago",
+                "dob": "2001-03-09",
+                "type": "Adult"
+            },
+            {
+                "ssn": "987-65-4321",
+                "firstName": "Dog",
+                "lastName": "Doggo",
+                "dob": "2002-03-09",
+                "type": "Adult"
+            }
+        ]
+    },
+    {
+        "user_id": "Umioatq55",
+        "booking_number": "BESVLSN",
+        "hotel_id": "DL01",
+        "hotel_city": "Dallas",
+        "hotel_name": "Omni Dallas Hotel",
+        "checkIn_date": "2024-11-30",
+        "checkOut_date": "2024-12-01",
+        "adult_guests": 1,
+        "children_guests": 0,
+        "infant_guests": 0,
+        "num_rooms_needed": 1,
+        "price_per_night": "$150.00",
+        "total_price": "$150.00",
+        "guests": [
+            {
+                "ssn": "123-45-6789",
+                "firstName": "Naxel",
+                "lastName": "Santiago",
+                "dob": "2001-03-09",
+                "type": "Adult"
+            }
+        ]
+    },
+    {
+        "user_id": "Umioatq55",
+        "booking_number": "BUWFG2V",
+        "hotel_id": "LA02",
+        "hotel_city": "Los Angeles",
+        "hotel_name": "Sheraton Gateway Los Angeles Hotel",
+        "checkIn_date": "2024-11-30",
+        "checkOut_date": "2024-12-01",
+        "adult_guests": 1,
+        "children_guests": 0,
+        "infant_guests": 0,
+        "num_rooms_needed": 1,
+        "price_per_night": "$130.00",
+        "total_price": "$130.00",
+        "guests": [
+            {
+                "ssn": "123-45-6789",
+                "firstName": "Naxel",
+                "lastName": "Santiago",
+                "dob": "2001-03-09",
+                "type": "Adult"
+            }
+        ]
     }
 ]
