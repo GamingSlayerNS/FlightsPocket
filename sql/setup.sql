@@ -94,25 +94,25 @@ CREATE TABLE IF NOT EXISTS Hotels (
     PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0)
 );
 
--- Guests Table
-CREATE TABLE IF NOT EXISTS Guests (
-    SSN CHAR(9) PRIMARY KEY,
-    HotelBookingID INT NOT NULL,
-    FirstName VARCHAR(100) NOT NULL,
-    LastName VARCHAR(100) NOT NULL,
-    DateOfBirth DATE NOT NULL,
-    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
-    FOREIGN KEY (HotelBookingID) REFERENCES HotelBookings(HotelBookingID)
-);
-
 -- Hotel-booking Table
 CREATE TABLE IF NOT EXISTS HotelBookings (
-    HotelBookingID INT AUTO_INCREMENT PRIMARY KEY,
-    HotelID INT NOT NULL,
+    HotelBookingID VARCHAR(10) PRIMARY KEY,
+    HotelID VARCHAR(10) NOT NULL,
     CheckInDate DATE NOT NULL,
     CheckOutDate DATE NOT NULL,
     NumberOfRooms INT NOT NULL CHECK (NumberOfRooms > 0),
     PricePerNight DECIMAL(10, 2) NOT NULL CHECK (PricePerNight >= 0),
     TotalPrice DECIMAL(10, 2) NOT NULL CHECK (TotalPrice >= 0),
     FOREIGN KEY (HotelID) REFERENCES Hotels(HotelID)
+);
+
+-- Guests Table
+CREATE TABLE IF NOT EXISTS Guests (
+    SSN CHAR(9) PRIMARY KEY,
+    HotelBookingID VARCHAR(10) NOT NULL,
+    FirstName VARCHAR(100) NOT NULL,
+    LastName VARCHAR(100) NOT NULL,
+    DateOfBirth DATE NOT NULL,
+    Category ENUM('Adult', 'Child', 'Infant') NOT NULL,
+    FOREIGN KEY (HotelBookingID) REFERENCES HotelBookings(HotelBookingID)
 );
