@@ -73,19 +73,29 @@ $userBookings = $allFlightBookings;
 $userHotelBookings = $allHotelBookings;
 $adminAllBookings =  array_merge($allFlightBookings, $allHotelBookings);
 
+// Initialize adminResults and adminMessage
+$adminResults = [
+    'columns' => [], // Column names for the frontend
+    'data' => []    // Actual data rows
+];
+$adminMessage = '';
+
 // Handle retrieval actions from query params (GET)
 $action = $_GET['action'] ?? '';
-$searchResults = [];
+$searchResults = [
+    'columns' => [], // Column names for the frontend
+    'data' => []    // Actual data rows
+];
 $searchMessage = '';
 if ($action) {
     switch ($action) {
         // Admin-only actions: verify admin before executing
         case 'admin_flights_tx_range':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             $city = trim($_GET['city'] ?? '');
             $from = $_GET['from'] ?? '2024-09-01';
             $to = $_GET['to'] ?? '2024-10-31';
-            if ($city === '') { $searchMessage = 'Provide a Texas city.'; break; }
+            if ($city === '') { $adminMessage = 'Provide a Texas city.'; break; }
             foreach ($bookings as $fb) {
                 $flights = $fb['flights'] ?? [];
                 foreach (['outbound','return'] as $leg) {
@@ -96,38 +106,38 @@ if ($action) {
                     if ($dts === false) continue;
                     if ($origin !== '' && stripos($origin, $city) !== false) {
                         if ($dts >= strtotime($from) && $dts <= strtotime($to)) {
-                            $searchResults[] = $fb;
+                            $adminResults['data'][] = $fb;
                             break 1;
                         }
                     }
                 }
             }
-            if (empty($searchResults)) $searchMessage = 'No flights found for that city/date range.';
+            if (empty($adminResults['data'])) $adminMessage = 'No flights found for that city/date range.';
             break;
 
         case 'admin_hotels_tx_range':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             $city = trim($_GET['city'] ?? '');
             $from = $_GET['from'] ?? '2024-09-01';
             $to = $_GET['to'] ?? '2024-10-31';
-            if ($city === '') { $searchMessage = 'Provide a Texas city.'; break; }
+            if ($city === '') { $adminMessage = 'Provide a Texas city.'; break; }
             foreach ($hotelBookings as $hb) {
                 $hcity = $hb['hotel_city'] ?? $hb['city'] ?? '';
                 $checkIn = $hb['checkIn_date'] ?? $hb['check_in'] ?? '';
                 $ts = strtotime($checkIn);
                 if ($hcity !== '' && stripos($hcity, $city) !== false) {
                     if ($ts !== false && $ts >= strtotime($from) && $ts <= strtotime($to)) {
-                        $searchResults[] = $hb;
+                        $adminResults['data'][] = $hb;
                     } elseif ($ts === false) {
-                        if (stripos($checkIn, 'Sep') !== false || stripos($checkIn, 'Oct') !== false) $searchResults[] = $hb;
+                        if (stripos($checkIn, 'Sep') !== false || stripos($checkIn, 'Oct') !== false) $adminResults['data'][] = $hb;
                     }
                 }
             }
-            if (empty($searchResults)) $searchMessage = 'No hotel bookings found for that city/date range.';
+            if (empty($adminResults['data'])) $adminMessage = 'No hotel bookings found for that city/date range.';
             break;
 
         case 'admin_top_hotels':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             // return top N most expensive hotel bookings; default N=5
             $n = intval($_GET['n'] ?? 5);
             $list = [];
@@ -135,18 +145,18 @@ if ($action) {
                 $priceRaw = $hb['total_price'] ?? $hb['totalPrice'] ?? '';
                 $num = 0.0;
                 if ($priceRaw !== '') {
-                    $num = floatval(preg_replace('/[^0-9\.\-]/','', $priceRaw));
+                    $num = floatval(preg_replace('/[^0-9\.-]/','', $priceRaw));
                 }
                 $list[] = ['hb'=>$hb,'price'=>$num];
             }
             usort($list, function($a,$b){ return ($b['price'] <=> $a['price']); });
             $top = array_slice($list,0,$n);
-            foreach ($top as $t) $searchResults[] = $t['hb'];
-            if (empty($searchResults)) $searchMessage = 'No hotel bookings available.';
+            foreach ($top as $t) $adminResults['data'][] = $t['hb'];
+            if (empty($adminResults['data'])) $adminMessage = 'No hotel bookings available.';
             break;
 
         case 'admin_flights_with_infant':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             foreach ($bookings as $fb) {
                 $flights = $fb['flights'] ?? [];
                 $hasInfant = false;
@@ -162,13 +172,13 @@ if ($action) {
                         if ($ageDays < 365*2) { $hasInfant = true; break 2; }
                     }
                 }
-                if ($hasInfant) $searchResults[] = $fb;
+                if ($hasInfant) $adminResults['data'][] = $fb;
             }
-            if (empty($searchResults)) $searchMessage = 'No booked flights with infant passengers found.';
+            if (empty($adminResults['data'])) $adminMessage = 'No booked flights with infant passengers found.';
             break;
 
         case 'admin_flights_infant_and_5children':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             foreach ($bookings as $fb) {
                 $flights = $fb['flights'] ?? [];
                 $match = false;
@@ -188,13 +198,13 @@ if ($action) {
                     }
                     if ($infantFound && $childrenCount >= 5) { $match = true; break; }
                 }
-                if ($match) $searchResults[] = $fb;
+                if ($match) $adminResults['data'][] = $fb;
             }
-            if (empty($searchResults)) $searchMessage = 'No booked flights found with infant + >=5 children.';
+            if (empty($adminResults['data'])) $adminMessage = 'No booked flights found with infant + >=5 children.';
             break;
 
         case 'admin_top_flights':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             $n = intval($_GET['n'] ?? 5);
             $list = [];
             foreach ($bookings as $fb) {
@@ -203,14 +213,14 @@ if ($action) {
             }
             usort($list, function($a,$b){ return ($b['price'] <=> $a['price']); });
             $top = array_slice($list,0,$n);
-            foreach ($top as $t) $searchResults[] = $t['b'];
-            if (empty($searchResults)) $searchMessage = 'No flight bookings available.';
+            foreach ($top as $t) $adminResults['data'][] = $t['b'];
+            if (empty($adminResults['data'])) $adminMessage = 'No flight bookings available.';
             break;
 
         case 'admin_flights_tx_no_infant':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             $city = trim($_GET['city'] ?? '');
-            if ($city === '') { $searchMessage = 'Provide a Texas city.'; break; }
+            if ($city === '') { $adminMessage = 'Provide a Texas city.'; break; }
             foreach ($bookings as $fb) {
                 $flights = $fb['flights'] ?? [];
                 foreach (['outbound','return'] as $leg) {
@@ -229,17 +239,17 @@ if ($action) {
                             $ageDays = ($dts - $bd) / 86400.0;
                             if ($ageDays < 365*2) { $hasInfant = true; break; }
                         }
-                        if (!$hasInfant) { $searchResults[] = $fb; break 1; }
+                        if (!$hasInfant) { $adminResults['data'][] = $fb; break 1; }
                     }
                 }
             }
-            if (empty($searchResults)) $searchMessage = 'No matching flights without infants found.';
+            if (empty($adminResults['data'])) $adminMessage = 'No matching flights without infants found.';
             break;
 
         case 'admin_count_flights_arrive_ca_months':
-            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $searchMessage = 'Admin privileges required.'; break; }
+            if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) { $adminMessage = 'Admin privileges required.'; break; }
             $city = trim($_GET['city'] ?? '');
-            if ($city === '') { $searchMessage = 'Provide a California city.'; break; }
+            if ($city === '') { $adminMessage = 'Provide a California city.'; break; }
             $count = 0;
             foreach ($bookings as $fb) {
                 $flights = $fb['flights'] ?? [];
@@ -255,26 +265,27 @@ if ($action) {
                     }
                 }
             }
-            $searchResults = ['count'=>$count];
+            $adminResults['data'] = [['Count' => $count]];
             break;
         case 'flight_by_id':
             $id = $_GET['id'] ?? '';
             if ($id === '') {
-                $searchMessage = 'Please provide a Flight booking id.';
+                $searchMessage = 'Please provide a Flight booking ID.';
                 break;
             }
-            // find in user's flight bookings
-            foreach ($userBookings as $fb) {
-                if (
-                    (isset($fb['FlightBookingID']) && (string)$fb['FlightBookingID'] === (string)$id)
-                ) {
-                    $searchResults[] = $fb;
-                    break;
-                }
+
+            // Fetch flight booking from SQL
+            $stmt = $db->prepare("SELECT * FROM FlightBookings WHERE FlightBookingID = ?");
+            $stmt->bind_param('s', $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $searchResults['columns'] = array_keys($row); // Extract column names
+                $searchResults['data'][] = $row; // Add the result to data
+            } else {
+                $searchMessage = 'No flight booking found with the provided ID.';
             }
-            if (empty($searchResults)) {
-                $searchMessage = 'No flight booking with that id found for your account.';
-            }
+            $stmt->close();
             break;
 
         case 'flight_passengers':
@@ -291,47 +302,56 @@ if ($action) {
 
         case 'hotel_by_id':
             $id = $_GET['id'] ?? '';
-            if ($id === '') { $searchMessage = 'Please provide a Hotel booking id.'; break; }
-            foreach ($userHotelBookings as $hb) {
-                if ((isset($hb['HotelBookingID']) && (string)$hb['HotelBookingID'] === (string)$id)) {
-                    $searchResults[] = $hb;
-                    break;
-                }
+            if ($id === '') {
+                $searchMessage = 'Please provide a Hotel booking id.';
+                break;
             }
-            if (empty($searchResults)) $searchMessage = 'No hotel booking with that id found for your account.';
+            // Fetch hotel booking from SQL
+            $stmt = $db->prepare("SELECT HotelBookingID, HotelID, CheckInDate, CheckOutDate, NumberOfRooms, PricePerNight, TotalPrice FROM HotelBookings WHERE HotelBookingID = ?");
+            $stmt->bind_param('s', $id);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            if ($row = $result->fetch_assoc()) {
+                $searchResults['columns'] = array_keys($row); // Extract column names
+                $searchResults['data'][] = $row; // Add the result to data
+            } else {
+                $searchMessage = 'No hotel booking with that id found.';
+            }
+            $stmt->close();
             break;
 
         case 'sep2024':
-            // flights in Sep 2024
-            foreach ($userBookings as $fb) {
-                $added = false;
-                $flights = $fb['flights'] ?? [];
-                foreach (['outbound', 'return'] as $leg) {
-                    if (isset($flights[$leg]['departureDate']) && str_starts_with($flights[$leg]['departureDate'], '2024-09')) {
-                        $searchResults[] = ['type'=>'flight','booking'=>$fb];
-                        $added = true; break;
-                    }
+            $searchResults = [];
+
+            // Filter flight bookings for September 2024
+            foreach ($allFlightBookings as $flight) {
+                $departureDate = $flight['DepartureDate'] ?? '';
+                if (strtotime($departureDate) >= strtotime('2024-09-01') && strtotime($departureDate) <= strtotime('2024-09-30')) {
+                    $searchResults[] = [
+                        'type' => 'Flight',
+                        'booking' => $flight
+                    ];
                 }
-                if ($added) continue;
             }
-            // hotels in Sep 2024 (checkIn/checkOut strings)
-            foreach ($userHotelBookings as $hb) {
-                $checkIn = $hb['checkIn_date'] ?? $hb['check_in'] ?? '';
-                $checkOut = $hb['checkOut_date'] ?? $hb['check_out'] ?? '';
-                $found = false;
-                foreach ([$checkIn,$checkOut] as $dstr) {
-                    if (!$dstr) continue;
-                    $ts = strtotime($dstr);
-                    if ($ts !== false) {
-                        if (date('Y-m', $ts) === '2024-09') { $found = true; break; }
-                    } else {
-                        // fallback: simple substring check
-                        if (stripos($dstr, 'Sep') !== false && stripos($dstr, '2024') !== false) { $found = true; break; }
-                    }
+
+            // Filter hotel bookings for September 2024
+            foreach ($allHotelBookings as $hotel) {
+                $checkInDate = $hotel['CheckInDate'] ?? '';
+                $checkOutDate = $hotel['CheckOutDate'] ?? '';
+                if (
+                    (strtotime($checkInDate) >= strtotime('2024-09-01') && strtotime($checkInDate) <= strtotime('2024-09-30')) ||
+                    (strtotime($checkOutDate) >= strtotime('2024-09-01') && strtotime($checkOutDate) <= strtotime('2024-09-30'))
+                ) {
+                    $searchResults[] = [
+                        'type' => 'Hotel',
+                        'booking' => $hotel
+                    ];
                 }
-                if ($found) $searchResults[] = ['type'=>'hotel','booking'=>$hb];
             }
-            if (empty($searchResults)) $searchMessage = 'No bookings found for Sep 2024 in your account.';
+
+            if (empty($searchResults)) {
+                $searchMessage = 'No bookings found for September 2024.';
+            }
             break;
 
         case 'flight_by_ssn':
@@ -341,75 +361,90 @@ if ($action) {
                 $pass = $fb['passengers'] ?? [];
                 foreach ($pass as $p) {
                     if (isset($p['ssn']) && (string)$p['ssn'] === (string)$ssn) {
-                        $searchResults[] = $fb;
+                        $searchResults['data'][] = $fb;
                         break 1;
                     }
                 }
             }
-            if (empty($searchResults)) $searchMessage = 'No flight bookings found for that SSN in your account.';
+            if (empty($searchResults['data'])) $searchMessage = 'No flight bookings found for that SSN in your account.';
             break;
 
         case 'bookings_by_month':
-            $month = $_GET['month'] ?? '';
+            $month = str_pad($_GET['month'] ?? '', 2, '0', STR_PAD_LEFT);
             $year = $_GET['year'] ?? '';
-            if ($month === '' || $year === '') {
-                $searchMessage = 'Please provide both month and year.';
-                break;
-            }
+            $searchResults['columns'] = []; // Initialize columns
+            $searchResults['data'] = [];
 
-            // Validate month and year
-            if (!preg_match('/^(0[1-9]|1[0-2])$/', $month) || !preg_match('/^\d{4}$/', $year)) {
-                $searchMessage = 'Invalid month or year format.';
-                break;
-            }
-
-            $targetYm = "$year-$month";
-
-            // Filter flight bookings by month and year
-            foreach ($userBookings as $fb) {
-                $added = false;
-                $flights = $fb['flights'] ?? [];
-                foreach (['outbound', 'return'] as $leg) {
-                    if (isset($flights[$leg]['departureDate']) && str_starts_with($flights[$leg]['departureDate'], $targetYm)) {
-                        $searchResults[] = ['type' => 'flight', 'booking' => $fb];
-                        $added = true;
-                        break;
+            if ($month && $year) {
+                // Fetch flight bookings for the selected month and year
+                $stmt = $db->prepare(
+                    "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.DepartureDate, f.Origin, f.Destination
+                    FROM FlightBookings fb
+                    JOIN Flights f ON fb.FlightID = f.FlightID
+                    WHERE YEAR(f.DepartureDate) = ? AND MONTH(f.DepartureDate) = ?"
+                );
+                $stmt->bind_param('ss', $year, $month);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    if (empty($searchResults['columns'])) {
+                        $searchResults['columns'] = array_keys($row); // Set columns dynamically
                     }
+                    $searchResults['data'][] = $row; // Add row data
                 }
-                if ($added) continue;
-            }
+                $stmt->close();
 
-            // Filter hotel bookings by month and year
-            foreach ($userHotelBookings as $hb) {
-                $checkIn = $hb['checkIn_date'] ?? $hb['check_in'] ?? '';
-                $checkOut = $hb['checkOut_date'] ?? $hb['check_out'] ?? '';
-                $found = false;
-                foreach ([$checkIn, $checkOut] as $dstr) {
-                    if (!$dstr) continue;
-                    $ts = strtotime($dstr);
-                    if ($ts !== false) {
-                        if (date('Y-m', $ts) === $targetYm) {
-                            $found = true;
-                            break;
-                        }
-                    } else {
-                        // Fallback: simple substring check
-                        if (stripos($dstr, date('M', mktime(0, 0, 0, intval($month), 10))) !== false && stripos($dstr, $year) !== false) {
-                            $found = true;
-                            break;
-                        }
+                // Fetch hotel bookings for the selected month and year
+                $stmt = $db->prepare(
+                    "SELECT hb.HotelBookingID, hb.TotalPrice, hb.CheckInDate, hb.CheckOutDate, h.HotelName, h.City
+                    FROM HotelBookings hb
+                    JOIN Hotels h ON hb.HotelID = h.HotelID
+                    WHERE (YEAR(hb.CheckInDate) = ? AND MONTH(hb.CheckInDate) = ?)
+                       OR (YEAR(hb.CheckOutDate) = ? AND MONTH(hb.CheckOutDate) = ?)"
+                );
+                $stmt->bind_param('ssss', $year, $month, $year, $month);
+                $stmt->execute();
+                $result = $stmt->get_result();
+                while ($row = $result->fetch_assoc()) {
+                    if (empty($searchResults['columns'])) {
+                        $searchResults['columns'] = array_keys($row); // Set columns dynamically
                     }
+                    $searchResults['data'][] = $row; // Add row data
                 }
-                if ($found) $searchResults[] = ['type' => 'hotel', 'booking' => $hb];
+                $stmt->close();
             }
 
-            if (empty($searchResults)) {
-                $searchMessage = "No bookings found for $year-$month in your account.";
+            if (empty($searchResults['data'])) {
+                $searchMessage = 'No bookings found for the selected month and year.';
             }
             break;
-        default:
-            $searchMessage = '';
     }
+}
+
+// For admin: provide all bookings (flights + hotels) for a specific user
+if (isset($user['Admin']) && $user['Admin'] == 1 && isset($_GET['user_id'])) {
+    $userId = $_GET['user_id'];
+    $userId = $db->real_escape_string($userId);
+
+    // Fetch flight bookings for the user
+    $stmt = $db->prepare("SELECT * FROM FlightBookings WHERE UserID = ?");
+    $stmt->bind_param('s', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $searchResults[] = $row;
+    }
+    $stmt->close();
+
+    // Fetch hotel bookings for the user
+    $stmt = $db->prepare("SELECT * FROM HotelBookings WHERE UserID = ?");
+    $stmt->bind_param('s', $userId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    while ($row = $result->fetch_assoc()) {
+        $searchResults[] = $row;
+    }
+    $stmt->close();
 }
 
 

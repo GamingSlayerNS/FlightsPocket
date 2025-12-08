@@ -48,7 +48,7 @@ require_once 'php/account.php';
                     <p>No user profile available.</p>
                 <?php endif; ?>
 
-                <section>
+                <section class="User-queries">
                     <h2>Search Bookings By</h2>
                     <form method="get" style="margin-bottom:32px">
                         <input type="hidden" name="action" value="flight_by_id" />
@@ -81,7 +81,7 @@ require_once 'php/account.php';
                                 <option value="06">June</option>
                                 <option value="07">July</option>
                                 <option value="08">August</option>
-                                <option value="09" selected>September</option>
+                                <option value="09">September</option>
                                 <option value="10">October</option>
                                 <option value="11">November</option>
                                 <option value="12">December</option>
@@ -90,69 +90,37 @@ require_once 'php/account.php';
                         <div style="display: flex; flex-direction: row;">
                             <label for="year">Select Year:</label>
                             <select name="year" id="year" style="margin-left: 8px">
-                                <option value="2024" selected>2024</option>
+                                <option value="2024">2024</option>
                                 <option value="2025">2025</option>
                             </select>
                         </div>
                         <button type="submit">Show Bookings</button>
                     </form>
 
-                    <form method="get" style="margin-bottom:32px">
-                        <input type="hidden" name="action" value="flight_by_ssn" />
-                        <label>Search my flights by passenger SSN: <input name="ssn" placeholder="123-45-6789" /></label>
-                        <button type="submit">Search by SSN</button>
-                    </form>
+                    <h3>Search Results:</h3>
+                    <?php if ($searchMessage): ?>
+                        <p><em><?php echo htmlspecialchars($searchMessage); ?></em></p>
+                    <?php endif; ?>
 
-                    <?php if ($searchMessage): ?><p><em><?php echo htmlspecialchars($searchMessage); ?></em></p><?php endif; ?>
-
-                    <?php if (!empty($searchResults)): ?>
-                        <div class="search-results">
-                            <h4>Results</h4>
-                            <?php if ($action === 'flight_passengers'): ?>
-                                <ul>
-                                <?php foreach ($searchResults as $p): ?>
-                                    <li><?php echo htmlspecialchars(($p['ssn'] ?? '') . ' — ' . ($p['firstName'] ?? '') . ' ' . ($p['lastName'] ?? '') . ' (' . ($p['dob'] ?? '') . ')'); ?></li>
+                    <?php if (!empty($searchResults['data'])): ?>
+                        <table border="1" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <?php foreach ($searchResults['columns'] as $header): ?>
+                                        <th><?php echo htmlspecialchars($header); ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($searchResults['data'] as $result): ?>
+                                    <tr>
+                                        <?php foreach ($result as $value): ?>
+                                            <td><?php echo htmlspecialchars($value); ?></td>
+                                        <?php endforeach; ?>
+                                    </tr>
                                 <?php endforeach; ?>
-                                </ul>
-                            <?php elseif ($action === 'sep2024'): ?>
-                                <?php foreach ($searchResults as $entry): ?>
-                                    <?php if ($entry['type'] === 'flight'): $fb = $entry['booking']; ?>
-                                        <div class="booking">
-                                            <h5>Flight Booking #: <?php echo htmlspecialchars($fb['bookingNumber'] ?? ''); ?></h5>
-                                            <p><strong>Price:</strong> $<?php echo htmlspecialchars(number_format($fb['totalPrice'] ?? 0,2)); ?></p>
-                                        </div>
-                                    <?php else: $hb = $entry['booking']; ?>
-                                        <div class="booking">
-                                            <h5>Hotel Booking #: <?php echo htmlspecialchars($hb['booking_number'] ?? $hb['bookingNumber'] ?? ''); ?></h5>
-                                            <p><strong>Hotel city:</strong> <?php echo htmlspecialchars($hb['hotel_city'] ?? $hb['city'] ?? ''); ?></p>
-                                            <p><strong>Check-in:</strong> <?php echo htmlspecialchars($hb['checkIn_date'] ?? $hb['check_in'] ?? ''); ?></p>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            <?php elseif ($action === 'admin_count_flights_arrive_ca_months' && isset($searchResults['count'])): ?>
-                                <p><strong>Count:</strong> <?php echo (int)$searchResults['count']; ?></p>
-                            <?php else: ?>
-                                <?php foreach ($searchResults as $res): ?>
-                                    <?php if (isset($res['flights']) || isset($res['passengers'])): ?>
-                                        <div class="booking">
-                                            <h5>Booking #: <?php echo htmlspecialchars($res['bookingNumber'] ?? $res['booking_number'] ?? ''); ?></h5>
-                                            <p><strong>Total:</strong> $<?php echo htmlspecialchars(number_format($res['totalPrice'] ?? $res['total_price'] ?? 0,2)); ?></p>
-                                            <?php if (!empty($res['flights'])): ?>
-                                                <?php if (isset($res['flights']['outbound'])): $out = $res['flights']['outbound']; ?>
-                                                    <div><strong>Outbound:</strong> <?php echo htmlspecialchars($out['flightId'] ?? ''); ?> — <?php echo htmlspecialchars(($out['origin'] ?? '') . ' → ' . ($out['destination'] ?? '')); ?></div>
-                                                <?php endif; ?>
-                                            <?php endif; ?>
-                                        </div>
-                                    <?php else: /* hotel booking object */ ?>
-                                        <div class="booking">
-                                            <h5>Hotel Booking #: <?php echo htmlspecialchars($res['booking_number'] ?? $res['bookingNumber'] ?? ''); ?></h5>
-                                            <p><strong>City:</strong> <?php echo htmlspecialchars($res['hotel_city'] ?? $res['city'] ?? ''); ?></p>
-                                            <p><strong>Check-in:</strong> <?php echo htmlspecialchars($res['checkIn_date'] ?? $res['check_in'] ?? ''); ?></p>
-                                        </div>
-                                    <?php endif; ?>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </div>
+                            </tbody>
+                        </table>
                     <?php endif; ?>
                 </section>
 
@@ -273,6 +241,32 @@ require_once 'php/account.php';
                             <label>California City: <input name="city" placeholder="e.g. Los Angeles" /></label>
                             <button type="submit">Count flights arriving CA (Sep/Oct 2024)</button>
                         </form>
+
+                        <h3>Search Results:</h3>
+                    <?php if ($adminMessage): ?>
+                        <p><em><?php echo htmlspecialchars($adminMessage); ?></em></p>
+                    <?php endif; ?>
+
+                    <?php if (!empty($adminResults['data'])): ?>
+                        <table border="1" style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr>
+                                    <?php foreach ($adminResults['columns'] as $header): ?>
+                                        <th><?php echo htmlspecialchars($header); ?></th>
+                                    <?php endforeach; ?>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <?php foreach ($adminResults['data'] as $result): ?>
+                                    <tr>
+                                        <?php foreach ($result as $value): ?>
+                                            <td><?php echo htmlspecialchars($value); ?></td>
+                                        <?php endforeach; ?>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
                     </section>
                 <?php endif; ?>
 
