@@ -448,16 +448,45 @@ if ($action) {
             break;
 
         case 'flight_passengers':
-            $id = $_GET['id'] ?? '';
-            if ($id === '') { $searchMessage = 'Please provide a Flight booking id.'; break; }
-            foreach ($userBookings as $fb) {
-                if (isset($fb['bookingNumber']) && (string)$fb['bookingNumber'] === (string)$id) {
-                    $searchResults = $fb['passengers'] ?? [];
-                    break;
-                }
-            }
-            if (empty($searchResults)) $searchMessage = 'No passengers found for that flight booking id in your account.';
-            break;
+            $bookingId = $_GET['id'] ?? '';
+    if ($bookingId === '') {
+        $searchMessage = 'Please provide a FlightBookingID.';
+        break;
+    }
+
+    // Prepare SQL query: join FlightBookings, Tickets, and Passengers
+    $stmt = $db->prepare(
+        "SELECT p.SSN,
+                p.FirstName,
+                p.LastName,
+                p.DateOfBirth,
+                p.Category,
+                t.Price AS TicketPrice,
+                fb.FlightBookingID,
+                fb.TotalPrice
+         FROM FlightBookings fb
+         JOIN Tickets t ON fb.FlightBookingID = t.FlightBookingID
+         JOIN Passengers p ON t.SSN = p.SSN
+         WHERE fb.FlightBookingID = ?"
+    );
+
+    $stmt->bind_param('s', $bookingId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        if (empty($searchResults['columns'])) {
+            $searchResults['columns'] = array_keys($row); // set columns dynamically
+        }
+        $searchResults['data'][] = $row;
+    }
+
+    $stmt->close();
+
+    if (empty($searchResults['data'])) {
+        $searchMessage = 'No passengers found for the provided FlightBookingID.';
+    }
+    break;
 
         case 'hotel_by_id':
             $id = $_GET['id'] ?? '';
@@ -515,18 +544,52 @@ if ($action) {
 
         case 'flight_by_ssn':
             $ssn = $_GET['ssn'] ?? '';
-            if ($ssn === '') { $searchMessage = 'Please provide an SSN.'; break; }
-            foreach ($userBookings as $fb) {
-                $pass = $fb['passengers'] ?? [];
-                foreach ($pass as $p) {
-                    if (isset($p['ssn']) && (string)$p['ssn'] === (string)$ssn) {
-                        $searchResults['data'][] = $fb;
-                        break 1;
-                    }
-                }
-            }
-            if (empty($searchResults['data'])) $searchMessage = 'No flight bookings found for that SSN in your account.';
-            break;
+    if ($ssn === '') {
+        $searchMessage = 'Please provide an SSN.';
+        break;
+    }
+
+    // Prepare SQL query: join FlightBookings, Flights, Tickets, and Passengers
+    $stmt = $db->prepare(
+        "SELECT fb.FlightBookingID,
+                fb.TotalPrice,
+                f.FlightID,
+                f.Origin,
+                f.Destination,
+                f.DepartureDate,
+                f.ArrivalDate,
+                f.DepartureTime,
+                f.ArrivalTime,
+                p.SSN,
+                p.FirstName,
+                p.LastName,
+                p.DateOfBirth,
+                p.Category,
+                t.Price AS TicketPrice
+         FROM FlightBookings fb
+         JOIN Flights f ON fb.FlightID = f.FlightID
+         JOIN Tickets t ON fb.FlightBookingID = t.FlightBookingID
+         JOIN Passengers p ON t.SSN = p.SSN
+         WHERE p.SSN = ?"
+    );
+
+    $stmt->bind_param('s', $ssn);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    while ($row = $result->fetch_assoc()) {
+        if (empty($searchResults['columns'])) {
+            $searchResults['columns'] = array_keys($row); // set columns dynamically
+        }
+        $searchResults['data'][] = $row;
+    }
+
+    $stmt->close();
+
+    if (empty($searchResults['data'])) {
+        $searchMessage = 'No flight bookings found for the provided SSN.';
+    }
+    break;
 
         case 'bookings_by_month':
             $month = str_pad($_GET['month'] ?? '', 2, '0', STR_PAD_LEFT);

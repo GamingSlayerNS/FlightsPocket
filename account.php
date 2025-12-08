@@ -125,6 +125,12 @@ require_once 'php/account.php';
                     </form>
 
                     <form method="get" style="margin-bottom:32px">
+                        <input type="hidden" name="action" value="flight_by_ssn" />
+                        <label>SSN: <input name="ssn" pattern="[0-9]{3}-[0-9]{2}-[0-9]{4}" oninvalid="this.setCustomValidity('Please enter in the format xxx-xx-xxxx.')" placeholder="e.g. 123-45-6789" /></label>
+                        <button type="submit">Show Flight Bookings</button>
+                    </form>
+
+                    <form method="get" style="margin-bottom:32px">
                         <input type="hidden" name="action" value="bookings_by_month" />
                         <div style="display: flex; flex-direction: row;">
                             <label for="month">Select Month:</label>
@@ -250,58 +256,62 @@ require_once 'php/account.php';
                         <h3>Admin Queries:</h3>
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_flights_tx_range" />
-                            <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
-                            <label>From: <input type="date" name="from" value="2024-09-01" /></label>
-                            <label>To: <input type="date" name="to" value="2024-10-31" /></label>
-                            <button type="submit">Flights departing TX (Sep-Oct)</button>
-                        </form>
-
+                            <span style="display: inline-block;">
+                                <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
+                                &emsp;<label>From: <input type="date" name="from" value="2024-09-01" /></label>
+                                &emsp;<label>To: <input type="date" name="to" value="2024-10-31" /></label>
+                            </span>
+                            <button type="submit">Flights Departing TX (Sep-Oct)</button>
+                        </form><br>
+                        
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_hotels_tx_range" />
-                            <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
-                            <label>From: <input type="date" name="from" value="2024-09-01" /></label>
-                            <label>To: <input type="date" name="to" value="2024-10-31" /></label>
+                            <span style="display: inline-block;">
+                                <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
+                                &emsp;<label>From: <input type="date" name="from" value="2024-09-01" /></label>
+                                &emsp;<label>To: <input type="date" name="to" value="2024-10-31" /></label>
+                            </span>
                             <button type="submit">Hotels in TX (Sep-Oct)</button>
-                        </form>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_top_hotels" />
                             <label>Top N: <input name="n" type="number" min="1" max="50" value="5" /></label>
-                            <button type="submit">Most expensive booked hotels</button>
-                        </form>
+                            <button type="submit">Most Expensive Booked Hotels</button>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_flights_with_infant" />
-                            <button type="submit">All booked flights with an infant passenger</button>
-                        </form>
+                            <button type="submit">All Booked Flights with an Infant Passenger</button>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_flights_infant_and_5children" />
-                            <button type="submit">Flights with infant and ≥5 children</button>
-                        </form>
+                            <button type="submit">Flights with Infant and ≥5 children</button>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_top_flights" />
                             <label>Top N: <input name="n" type="number" min="1" max="50" value="5" /></label>
-                            <button type="submit">Most expensive booked flights</button>
-                        </form>
+                            <button type="submit">Most Expensive Booked Flights</button>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_flights_tx_no_infant" />
                             <label>Texas City: <input name="city" placeholder="e.g. Dallas" /></label>
-                            <button type="submit">Flights from TX with no infant passenger</button>
-                        </form>
+                            <button type="submit">Flights from TX with No Infant Passenger</button>
+                        </form><br>
 
                         <form method="get" style="margin-bottom:6px">
                             <input type="hidden" name="action" value="admin_count_flights_arrive_ca_months" />
                             <label>California City: <input name="city" placeholder="e.g. Los Angeles" /></label>
-                            <button type="submit">Count flights arriving CA (Sep/Oct 2024)</button>
+                            <button type="submit">Count Flights Arriving CA (Sep/Oct 2024)</button>
                         </form>
 
                         <h3>Search Results:</h3>
-                    <?php if ($adminMessage): ?>
-                        <p><em><?php echo htmlspecialchars($adminMessage); ?></em></p>
-                    <?php endif; ?>
+                        <?php if ($adminMessage): ?>
+                            <p><em><?php echo htmlspecialchars($adminMessage); ?></em></p>
+                        <?php endif; ?>
 
                     <?php if (!empty($adminResults['data'])): ?>
                         <table border="1" style="width: 100%; border-collapse: collapse;">
