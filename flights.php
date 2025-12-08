@@ -137,7 +137,7 @@ $user = $GLOBALS['user'];
                         <label for="adults">Adults:</label>
                         <input type="number" id="adults" min="0" max="4" value="1" />
                         <label for="children">Children:</label>
-                        <input type="number" id="children" min="0" max="4" value="0" />
+                        <input type="number" id="children" min="0" max="10" value="0" />
                         <label for="infants">Infants:</label>
                         <input type="number" id="infants" min="0" max="4" value="0" />
                     </div>

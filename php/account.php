@@ -211,17 +211,20 @@ if ($action) {
             break;
 
         case 'admin_flights_with_infant':
+            // Verify admin privileges
             if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) {
                 $adminMessage = 'Admin privileges required.';
                 break;
             }
 
+            // Prepare SQL query: join FlightBookings, Flights, Tickets, and Passengers
             $stmt = $db->prepare(
-                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.DepartureDate, f.Origin, f.Destination
+                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.Origin, f.Destination, f.DepartureDate, f.ArrivalDate
                 FROM FlightBookings fb
                 JOIN Flights f ON fb.FlightID = f.FlightID
-                JOIN Passengers p ON fb.FlightBookingID = p.FlightBookingID
-                WHERE TIMESTAMPDIFF(YEAR, p.DateOfBirth, f.DepartureDate) < 2"
+                JOIN Tickets t ON fb.FlightBookingID = t.FlightBookingID
+                JOIN Passengers p ON t.SSN = p.SSN
+                WHERE p.Category = 'Infant'"
             );
 
             $stmt->execute();
@@ -229,7 +232,7 @@ if ($action) {
 
             while ($row = $result->fetch_assoc()) {
                 if (empty($adminResults['columns'])) {
-                    $adminResults['columns'] = array_keys($row);
+                    $adminResults['columns'] = array_keys($row); // set columns dynamically
                 }
                 $adminResults['data'][] = $row;
             }
@@ -242,19 +245,22 @@ if ($action) {
             break;
 
         case 'admin_flights_infant_and_5children':
+            // Verify admin privileges
             if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) {
                 $adminMessage = 'Admin privileges required.';
                 break;
             }
 
+            // Prepare SQL query: join FlightBookings, Flights, Tickets, and Passengers
             $stmt = $db->prepare(
-                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.DepartureDate, f.Origin, f.Destination
+                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.Origin, f.Destination, f.DepartureDate, f.ArrivalDate
                 FROM FlightBookings fb
                 JOIN Flights f ON fb.FlightID = f.FlightID
-                JOIN Passengers p ON fb.FlightBookingID = p.FlightBookingID
+                JOIN Tickets t ON fb.FlightBookingID = t.FlightBookingID
+                JOIN Passengers p ON t.SSN = p.SSN
                 GROUP BY fb.FlightBookingID
-                HAVING SUM(TIMESTAMPDIFF(YEAR, p.DateOfBirth, f.DepartureDate) < 2) > 0
-                   AND SUM(TIMESTAMPDIFF(YEAR, p.DateOfBirth, f.DepartureDate) BETWEEN 2 AND 12) >= 5"
+                HAVING SUM(p.Category = 'Infant') >= 1
+                AND SUM(p.Category = 'Child') >= 5"
             );
 
             $stmt->execute();
@@ -262,7 +268,7 @@ if ($action) {
 
             while ($row = $result->fetch_assoc()) {
                 if (empty($adminResults['columns'])) {
-                    $adminResults['columns'] = array_keys($row);
+                    $adminResults['columns'] = array_keys($row); // set columns dynamically
                 }
                 $adminResults['data'][] = $row;
             }
@@ -270,7 +276,7 @@ if ($action) {
             $stmt->close();
 
             if (empty($adminResults['data'])) {
-                $adminMessage = 'No booked flights found with infant + >=5 children.';
+                $adminMessage = 'No booked flights found with at least one infant and five children.';
             }
             break;
 
@@ -309,6 +315,7 @@ if ($action) {
             break;
 
         case 'admin_flights_tx_no_infant':
+            // Verify admin privileges
             if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) {
                 $adminMessage = 'Admin privileges required.';
                 break;
@@ -321,17 +328,20 @@ if ($action) {
                 break;
             }
 
+            // Prepare SQL query: join FlightBookings, Flights, Tickets, and Passengers
+            // Exclude bookings that have at least one infant passenger
             $stmt = $db->prepare(
-                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.DepartureDate, f.Origin, f.Destination
+                "SELECT fb.FlightBookingID, fb.TotalPrice, f.FlightID, f.Origin, f.Destination, f.DepartureDate, f.ArrivalDate
                 FROM FlightBookings fb
                 JOIN Flights f ON fb.FlightID = f.FlightID
                 WHERE f.Origin LIKE ?
-                  AND fb.FlightBookingID NOT IN (
-                      SELECT fb.FlightBookingID
-                      FROM FlightBookings fb
-                      JOIN Passengers p ON fb.FlightBookingID = p.FlightBookingID
-                      WHERE TIMESTAMPDIFF(YEAR, p.DateOfBirth, f.DepartureDate) < 2
-                  )"
+                AND fb.FlightBookingID NOT IN (
+                SELECT fb.FlightBookingID
+                FROM FlightBookings fb
+                JOIN Tickets t ON fb.FlightBookingID = t.FlightBookingID
+                JOIN Passengers p ON t.SSN = p.SSN
+                WHERE p.Category = 'Infant'
+           )"
             );
 
             $cityParam = "%$city%";
@@ -341,7 +351,7 @@ if ($action) {
 
             while ($row = $result->fetch_assoc()) {
                 if (empty($adminResults['columns'])) {
-                    $adminResults['columns'] = array_keys($row);
+                    $adminResults['columns'] = array_keys($row); // set columns dynamically
                 }
                 $adminResults['data'][] = $row;
             }
@@ -354,6 +364,7 @@ if ($action) {
             break;
 
         case 'admin_count_flights_arrive_ca_months':
+            // Verify admin privileges
             if (!isset($user['Admin']) || ($user['Admin'] != 1 && $user['Admin'] !== '1')) {
                 $adminMessage = 'Admin privileges required.';
                 break;
@@ -366,12 +377,14 @@ if ($action) {
                 break;
             }
 
+            // Prepare SQL query: count booked flights arriving in the given city during Sept or Oct 2024
             $stmt = $db->prepare(
                 "SELECT COUNT(*) AS FlightCount
                 FROM FlightBookings fb
                 JOIN Flights f ON fb.FlightID = f.FlightID
                 WHERE f.Destination LIKE ?
-                  AND (MONTH(f.ArrivalDate) IN (9, 10) AND YEAR(f.ArrivalDate) = 2024)"
+                AND YEAR(f.ArrivalDate) = 2024
+                AND MONTH(f.ArrivalDate) IN (9, 10)"
             );
 
             $cityParam = "%$city%";
@@ -380,16 +393,17 @@ if ($action) {
             $result = $stmt->get_result();
 
             if ($row = $result->fetch_assoc()) {
-                $adminResults['columns'] = array_keys($row);
+                $adminResults['columns'] = array_keys($row); // set columns dynamically
                 $adminResults['data'][] = $row;
             }
 
             $stmt->close();
 
             if (empty($adminResults['data'])) {
-                $adminMessage = 'No flights found arriving in the specified city during the given months.';
+                $adminMessage = 'No flights found arriving in the specified city during September or October 2024.';
             }
             break;
+            
         case 'flight_by_id':
             $id = $_GET['id'] ?? '';
             if ($id === '') {

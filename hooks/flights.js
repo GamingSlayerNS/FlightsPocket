@@ -106,8 +106,8 @@ document.addEventListener("DOMContentLoaded", () => {
             if (isNaN(adults) || adults < 0 || adults > 4) {
                 errors.push("Adults must be between 0 and 4.");
             }
-            if (isNaN(children) || children < 0 || children > 4) {
-                errors.push("Children must be between 0 and 4.");
+            if (isNaN(children) || children < 0 || children > 10) {
+                errors.push("Children must be between 0 and 10.");
             }
             if (isNaN(infants) || infants < 0 || infants > 4) {
                 errors.push("Infants must be between 0 and 4.");
