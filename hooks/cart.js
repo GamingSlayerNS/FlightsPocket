@@ -33,11 +33,11 @@ document.addEventListener("DOMContentLoaded", () => {
         if (hotel_cart) {
             run_HotelCart(userId, hotel_cart, container, false);
 
-            document.addEventListener('click', function (event) {
+            /* document.addEventListener('click', function (event) {
                 if (event.target.matches('#hotel-submit')) {
                     run_HotelCart(userId, hotel_cart, container, true);
                 }
-            });
+            }); */
 
             if (flight_cart || rental_cart) {
                 const border = document.createElement('p');
@@ -120,7 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 const group = document.createElement("div");
                 group.className = "flex-row";
                 group.innerHTML = `
-                <label>Passenger ${i + 1} (${paxType})</label>
+                <label>Passenger ${i + 1} (${paxType})&nbsp;</label>
                 <div style="display:flex;flex-direction:column;gap:0.5rem;min-width:14rem;">
                     <input type="text" placeholder="First Name" required pattern="[A-Za-z]+" class="p-first" />
                     <input type="text" placeholder="Last Name" required pattern="[A-Za-z]+" class="p-last" />
@@ -500,103 +500,173 @@ async function run_HotelCart(userId, cart, container, clicked) {
     const adults = Number(passengers?.adults || 0);
     const children = Number(passengers?.children || 0);
     const infants = Number(passengers?.infants || 0);
+    const totalGuests = adults + children + infants;
     const numRoomsNeeded = Number(hotel.num_rooms_needed);
     const price = Number(hotel.pricePerNight);
     const numNights = (new Date(checkOut_date) - new Date(checkIn_date)) / (1000 * 60 * 60 * 24);
     const totalPrice = numRoomsNeeded * price * numNights;
 
-    if (!clicked) {
-        const headerHtml = `
-            <div id="hotel-container">
-                <div class="hotel-summary">
-                    <h3>Selected Hotel</h3>
-                    <p><strong>Hotel Name: ${hotel.name}</strong></p>
-                    <p>Hotel-ID: ${hotel.id}</p>
-                    <p>City: ${hotel.city}</p>
-                    <p>Guests: Adults ${adults}, Children ${children}, Infants ${infants}</p>
-                    <p>Check-In Date: ${checkIn_date}</p>
-                    <p>Check-Out Date: ${checkOut_date}</p>
-                    <p>Rooms Needed: ${numRoomsNeeded}</p>
-                    <p>Price Per Night: $${price.toFixed(2)}</p>
-                    <h4>Total: $${totalPrice.toFixed(2)}</h4>
-                </div>
+    const headerHtml = `
+        <div id="hotel-container">
+            <div class="hotel-summary">
+                <h3>Selected Hotel</h3>
+                <p><strong>Hotel Name: ${hotel.name}</strong></p>
+                <p>Hotel-ID: ${hotel.id}</p>
+                <p>City: ${hotel.city}</p>
+                <p>Guests: Adults ${adults}, Children ${children}, Infants ${infants}</p>
+                <p>Check-In Date: ${checkIn_date}</p>
+                <p>Check-Out Date: ${checkOut_date}</p>
+                <p>Rooms Needed: ${numRoomsNeeded}</p>
+                <p>Price Per Night: $${price.toFixed(2)}</p>
+                <h4>Total: $${totalPrice.toFixed(2)}</h4>
             </div>
-        `;
-        container.innerHTML += headerHtml;
-        const hotelContainer = document.getElementById('hotel-container');
+        </div>
+    `;
+    container.innerHTML += headerHtml;
+    const hotelContainer = document.getElementById('hotel-container');
 
-        const submit = document.createElement("button");
-        submit.id = "hotel-submit";
-        submit.type = "submit";
-        submit.textContent = "Book Hotel";
-        hotelContainer.appendChild(submit);
-    } else {
-        // create hotel-booking.json file
-        const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
-        const hotel_booking = {
-            user_id: userId,
-            booking_number: bookingNumber,
-            hotel_id: hotel.id,
-            hotel_city: hotel.city,
-            hotel_name: hotel.name,
-            checkIn_date: checkIn_date,
-            checkOut_date: checkOut_date,
-            adult_guests: adults,
-            children_guests: children,
-            infant_guests: infants,
-            num_rooms_needed: numRoomsNeeded,
-            price_per_night: "$" + price.toFixed(2),
-            total_price: "$" + totalPrice.toFixed(2),
-        };
+    const form = document.createElement("form");
+    form.id = "hotel-booking-form";
+    form.className = "hotel-booking-form";
 
-        const usedPhp = await postPhpOrDownload({
-            body: JSON.stringify(hotel_booking),
-            url: '/php/book-hotel.php',
-            fallback: JSON.stringify(hotel_booking, null, 2),
-            fallbackType: 'application/json',
-            fetchContentType: 'application/json',
-            fallbackName: 'hotel-booking.json',
-        })
+    for (let i = 0; i < totalGuests; i++) {
+        const paxType = i < adults ? "Adult" : i < adults + children ? "Child" : "Infant";
+        const group = document.createElement("div");
+        group.className = "flex-row";
+        group.innerHTML = `
+            <label>Guest ${i + 1} (${paxType})&nbsp;</label>
+            <div style="display:flex;flex-direction:column;gap:0.5rem;min-width:14rem;">
+                <input type="text" placeholder="First Name" required pattern="[A-Za-z]+" class="guest-first" />
+                <input type="text" placeholder="Last Name" required pattern="[A-Za-z]+" class="guest-last" />
+                <input type="date" placeholder="Date of Birth" required class="guest-dob" />
+                <input type="text" placeholder="SSN (ddd-dd-dddd)" required class="guest-ssn" />
+            </div>`;
+        form.appendChild(group);
+    }
+    hotelContainer.appendChild(form);
 
-        // update hotels.xml file
-        const newSeats = Math.max(0, Number(hotel.num_rooms_available) - numRoomsNeeded);
-        var xml = new XMLHttpRequest();
-        xml.open("GET", "db/hotels.xml", false);
-        xml.send();
-        var hotelData = xml.responseXML;
-        if (hotelData) {
-            if (!usedPhp) {
-                hotelData = new DOMParser().parseFromString(xml.responseText, "text/xml");
-                var hotelList = hotelData.getElementsByTagName("Hotel");
-                for (const hotels of hotelList) {
-                    if (hotels.getAttribute("id") === hotel.id) {
-                        hotels.getElementsByTagName("numAvailableRooms")[0].textContent = newSeats;
-                        break;
-                    }
-                }
-                const serializer = new XMLSerializer();
-                const updatedXMLString = serializer.serializeToString(hotelData);
+    const submit = document.createElement("button");
+    submit.id = "hotel-submit";
+    submit.type = "submit";
+    submit.textContent = "Book Hotel";
+    form.appendChild(submit);
 
-                const blob = new Blob([updatedXMLString], { type: "application/xml" });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement("a");
-                a.href = url;
-                a.download = "hotels.xml";
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-                URL.revokeObjectURL(url);
-                console.log("Successfully updated 'hotels.xml' file.");
-            }
-        } else {
-            console.log("Could not find 'hotels.xml'!");
+    // ssn input formatter to enforce ddd-dd-dddd as user types
+    const ssnInput = document.querySelectorAll(".guest-ssn");
+    document.addEventListener("input", function (e) {
+        if (e.target.matches(".guest-ssn")) {
+            ssnInput.forEach(element => {
+                const digits = element.value.replace(/\D/g, "").slice(0, 9);
+                const parts = [];
+                if (digits.length > 0) parts.push(digits.slice(0, Math.min(3, digits.length)));
+                if (digits.length >= 3) parts[0] += "-";
+                if (digits.length > 3) parts.push(digits.slice(3, Math.min(5, digits.length)));
+                if (digits.length >= 5) parts[1] += "-";
+                if (digits.length > 5) parts.push(digits.slice(5));
+                element.value = parts.join("");
+            })
         }
-        try {
-            sessionStorage.removeItem("hotels_cart");
-        } catch { }
-        
-        // Show confirmation
-        const details = `
+    });
+
+    // create hotel-booking.json file
+    document.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (e.submitter.matches('#hotel-submit')) {
+            const ssnRe = /^\d{3}-\d{2}-\d{4}$/;
+            const guestsList = [];
+            let hasError = false;
+
+            const groups = document.querySelector("#hotel-booking-form").querySelectorAll(".flex-row");
+            groups.forEach((g, idx) => {
+                const first = g.querySelector(".guest-first").value.trim();
+                const last = g.querySelector(".guest-last").value.trim();
+                const dob = g.querySelector(".guest-dob").value.trim();
+                const ssn = g.querySelector(".guest-ssn").value.trim();
+                if (!first || !last || !dob || !ssnRe.test(ssn)) {
+                    hasError = true;
+                }
+                guestsList.push({ ssn, firstName: first, lastName: last, dob });
+            });
+
+            if (hasError) {
+                alert("Please complete all guest details. SSN must be in the format ddd-dd-dddd.");
+                return;
+            }
+
+            const bookingNumber = `B${Math.random().toString(36).slice(2, 8).toUpperCase()}`;
+            const hotel_booking = {
+                user_id: userId,
+                booking_number: bookingNumber,
+                hotel_id: hotel.id,
+                hotel_city: hotel.city,
+                hotel_name: hotel.name,
+                checkIn_date: checkIn_date,
+                checkOut_date: checkOut_date,
+                adult_guests: adults,
+                children_guests: children,
+                infant_guests: infants,
+                num_rooms_needed: numRoomsNeeded,
+                price_per_night: "$" + price.toFixed(2),
+                total_price: "$" + totalPrice.toFixed(2),
+            };
+            var hotelBookingCopy = hotel_booking;
+
+            for (let i = 0; i < totalGuests; i++) {
+                const passengerType = i < adults ? "Adult" : i < adults + children ? "Child" : "Infant";
+                guestsList[i].type = passengerType;
+            }
+            hotelBookingCopy.guests = guestsList;
+            hotelBookingCopy.checkIn_date = formatDateToSQL(checkIn_date);
+            hotelBookingCopy.checkOut_date = formatDateToSQL(checkOut_date);
+
+            const usedPhp = await postPhpOrDownload({
+                body: JSON.stringify(hotelBookingCopy),
+                url: '/php/book-hotel.php',
+                fallback: JSON.stringify(hotelBookingCopy, null, 2),
+                fallbackType: 'application/json',
+                fetchContentType: 'application/json',
+                fallbackName: 'hotel-booking.json',
+            })
+
+            // update hotels.xml file
+            const newSeats = Math.max(0, Number(hotel.num_rooms_available) - numRoomsNeeded);
+            var xml = new XMLHttpRequest();
+            xml.open("GET", "db/hotels.xml", false);
+            xml.send();
+            var hotelData = xml.responseXML;
+            if (hotelData) {
+                if (!usedPhp) {
+                    hotelData = new DOMParser().parseFromString(xml.responseText, "text/xml");
+                    var hotelList = hotelData.getElementsByTagName("Hotel");
+                    for (const hotels of hotelList) {
+                        if (hotels.getAttribute("id") === hotel.id) {
+                            hotels.getElementsByTagName("numAvailableRooms")[0].textContent = newSeats;
+                            break;
+                        }
+                    }
+                    const serializer = new XMLSerializer();
+                    const updatedXMLString = serializer.serializeToString(hotelData);
+
+                    const blob = new Blob([updatedXMLString], { type: "application/xml" });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = "hotels.xml";
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    console.log("Successfully updated 'hotels.xml' file.");
+                }
+            } else {
+                console.log("Could not find 'hotels.xml'!");
+            }
+            try {
+                sessionStorage.removeItem("hotels_cart");
+            } catch { }
+
+            // Show confirmation
+            const details = `
             <h3>Hotel Booking Confirmed!</h3>
             <p><strong>User ID:</strong> ${hotel_booking.user_id}</p>
             <p><strong>Booking #:</strong> ${hotel_booking.booking_number}</p>
@@ -609,23 +679,29 @@ async function run_HotelCart(userId, cart, container, clicked) {
             <h4 id="hotelCountdownDisplay"></h4>
         `;
 
-        document.getElementById('hotel-container').innerHTML = details;
-        
-        let count = 15;
-        const countdownElement = document.getElementById('hotelCountdownDisplay');
-        countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+            document.getElementById('hotel-container').innerHTML = details;
 
-        const countdownInterval = setInterval(() => {
-            count--;
+            let count = 15;
+            const countdownElement = document.getElementById('hotelCountdownDisplay');
             countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
 
-            if (count <= 0) {
-                clearInterval(countdownInterval);
+            const countdownInterval = setInterval(() => {
+                count--;
                 countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
-                location.reload();
-            }
-        }, 1000);
-    }
+
+                if (count <= 0) {
+                    clearInterval(countdownInterval);
+                    countdownElement.textContent = "This page will automatically refresh after " + count + " seconds. You can refresh the page before if needed.";
+                    location.reload();
+                }
+            }, 1000);
+        }
+    });
+}
+
+function formatDateToSQL(date) {
+    const d = new Date(date);
+    return d.toISOString().split("T")[0]; // "2024-09-02"
 }
 
 async function postPhpOrDownload({ body, fetchContentType, fallback, fallbackType, fallbackName, url, successText }) {

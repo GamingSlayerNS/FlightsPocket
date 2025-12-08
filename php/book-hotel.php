@@ -134,18 +134,99 @@ if (file_put_contents($bookingFile, $bookingJsonData) === false) {
     exit;
 }
 
-http_response_code(200);
-echo json_encode([
-    'success' => true,
-    'message' => 'Hotel booked successfully',
-    'booking' => $jsonInput,
-    'hotel' => [
-        'hotel_id' => (string)$hotelFound['id'],
-        'hotel_name' => (string)$hotelFound->hotelName,
-        'city' => (string)$hotelFound->city,
-        'rooms_booked' => $numRoomsNeeded,
-        'remaining_rooms' => $newAvailableRooms
-    ]
-]);
-?>
+$mysqli = createMysqli();
+$mysqli->begin_transaction();
 
+try {
+    // --- PREP DATA ---
+    $hotelId = $jsonInput['hotel_id'];
+    $bookingId = $jsonInput['booking_number']; // JS already generates it
+    $checkIn  = $jsonInput['checkIn_date'];
+    $checkOut = $jsonInput['checkOut_date'];
+    $numRooms = (int)$jsonInput['num_rooms_needed'];
+
+    // Strip "$" from JS formatted prices, convert to decimal
+    $pricePerNight = floatval(str_replace('$','', $jsonInput['price_per_night']));
+    $totalPrice    = floatval(str_replace('$','', $jsonInput['total_price']));
+
+    // ------------------------------
+    // 1. INSERT INTO HotelBookings
+    // ------------------------------
+    $stmt = $mysqli->prepare("
+        INSERT INTO HotelBookings 
+            (HotelBookingID, HotelID, CheckInDate, CheckOutDate, NumberOfRooms, PricePerNight, TotalPrice)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+    ");
+    $stmt->bind_param(
+        "ssssidd",
+        $bookingId,
+        $hotelId,
+        $checkIn,
+        $checkOut,
+        $numRooms,
+        $pricePerNight,
+        $totalPrice
+    );
+    $stmt->execute();
+    $stmt->close();
+
+    // -------------------------------------
+    // 2. INSERT GUESTS BASED ON COUNT
+    // -------------------------------------
+    $stmt = $mysqli->prepare("
+        INSERT INTO Guests (SSN, HotelBookingID, FirstName, LastName, DateOfBirth, Category)
+        VALUES (?, ?, ?, ?, ?, ?)
+    ");
+
+    // Your JS payload does NOT include guest details like SSN, names, DOB.
+    // So here is an example of how guests *should* be sent:
+    //
+    // data["guests"] = [
+    //   { ssn:"123456789", firstName:"John", lastName:"Doe", dob:"2000-01-01", category:"Adult" }
+    // ]
+    //
+    // If your frontend does NOT send this, you MUST modify JS to include per-guest data.
+    //
+    if (isset($jsonInput['guests']) && is_array($jsonInput['guests'])) {
+        foreach ($jsonInput['guests'] as $g) {
+            $stmt->bind_param(
+                "ssssss",
+                $g['ssn'],
+                $bookingId,
+                $g['firstName'],
+                $g['lastName'],
+                $g['dob'],
+                $g['type']
+            );
+            $stmt->execute();
+        }
+    } else {
+        // If no guest details provided — return an error
+        throw new Exception("No guests provided");
+    }
+
+    $stmt->close();
+
+    // Commit
+    $mysqli->commit();
+    http_response_code(200);
+    echo json_encode([
+        'success' => true,
+        'message' => 'Hotel booked successfully',
+        'booking' => $jsonInput,
+        'hotel' => [
+            'hotel_id' => (string)$hotelFound['id'],
+            'hotel_name' => (string)$hotelFound->hotelName,
+            'city' => (string)$hotelFound->city,
+            'rooms_booked' => $numRoomsNeeded,
+            'remaining_rooms' => $newAvailableRooms
+        ]
+        // 'bookingId' => $bookingId
+    ]);
+} catch (Exception $ex) {
+    $mysqli->rollback();
+    error_log("BOOKING ERROR: " . $ex->getMessage());
+    http_response_code(500);
+    echo json_encode(['error' => $ex->getMessage()]);
+}
+?>
