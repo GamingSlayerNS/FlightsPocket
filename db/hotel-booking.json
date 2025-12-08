@@ -1,15 +1,32 @@
-{
-  "user_id": "Umhnw1u0h",
-  "booking_number": "B3372J6",
-  "hotel_id": "DL43751",
-  "hotel_city": "Dallas",
-  "hotel_name": "Sheraton Dallas Hotel",
-  "checkIn_date": "Mon Sep 30 2024",
-  "checkOut_date": "Wed Oct 02 2024",
-  "adult_guests": 1,
-  "children_guests": 2,
-  "infant_guests": 1,
-  "num_rooms_needed": 2,
-  "price_per_night": "$85.00",
-  "total_price": "$340.00"
-}
+[
+    {
+        "user_id": "Umhnw1u0h",
+        "booking_number": "B3372J6",
+        "hotel_id": "DL43751",
+        "hotel_city": "Dallas",
+        "hotel_name": "Sheraton Dallas Hotel",
+        "checkIn_date": "Mon Sep 30 2024",
+        "checkOut_date": "Wed Oct 02 2024",
+        "adult_guests": 1,
+        "children_guests": 2,
+        "infant_guests": 1,
+        "num_rooms_needed": 2,
+        "price_per_night": "$85.00",
+        "total_price": "$340.00"
+    },
+    {
+        "user_id": "Umioatq55",
+        "booking_number": "BTL09OP",
+        "hotel_id": "LA02",
+        "hotel_city": "Los Angeles",
+        "hotel_name": "Sheraton Gateway Los Angeles Hotel",
+        "checkIn_date": "Sat Nov 30 2024",
+        "checkOut_date": "Sun Dec 01 2024",
+        "adult_guests": 2,
+        "children_guests": 0,
+        "infant_guests": 0,
+        "num_rooms_needed": 1,
+        "price_per_night": "$130.00",
+        "total_price": "$130.00"
+    }
+]

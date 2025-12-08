@@ -1,56 +1,77 @@
 <?php
 require_once __DIR__ . '/util/authentication.php';
 requireAuth();
+require_once __DIR__ . '/util/db.php'; // Include database connection
+
+$db = createMysqli(); // Initialize the database connection
 
 // expose $user for the including page
 $user = $GLOBALS['user'] ?? null;
 
-// Read flight bookings
+// Read flight bookings from JSON
 $bookingFile = __DIR__ . '/../db/flight-booking.json';
-$bookings = [];
+$jsonBookings = [];
 if (file_exists($bookingFile)) {
     $content = file_get_contents($bookingFile);
     if ($content !== false) {
         $decoded = json_decode($content, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             if (is_array($decoded) && isset($decoded[0])) {
-                $bookings = $decoded;
+                $jsonBookings = $decoded;
             } elseif (is_array($decoded)) {
-                $bookings = [$decoded];
+                $jsonBookings = [$decoded];
             }
         }
     }
 }
 
-// Filter bookings for this user. In our server-side booking flow we store userId as the phone number.
-$userPhone = $user['PhoneNumber'] ?? '';
-$userBookings = array_filter($bookings, function($b) use ($userPhone) {
-    if (!isset($b['userId'])) return false;
-    return (string)$b['userId'] === (string)$userPhone;
-});
+// Fetch flight bookings from SQL
+$sqlBookings = [];
+$stmt = $db->prepare("SELECT * FROM FlightBookings");
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $sqlBookings[] = $row;
+}
+$stmt->close();
 
-// Read hotel bookings (may be a single object or array)
+// Combine JSON and SQL flight bookings
+$allFlightBookings = array_merge($jsonBookings, $sqlBookings);
+
+// Read hotel bookings from JSON
 $hotelFile = __DIR__ . '/../db/hotel-booking.json';
-$hotelBookings = [];
+$jsonHotelBookings = [];
 if (file_exists($hotelFile)) {
     $cont = file_get_contents($hotelFile);
     if ($cont !== false) {
         $decodedH = json_decode($cont, true);
         if (json_last_error() === JSON_ERROR_NONE) {
             if (is_array($decodedH) && isset($decodedH[0])) {
-                $hotelBookings = $decodedH;
+                $jsonHotelBookings = $decodedH;
             } elseif (is_array($decodedH)) {
-                $hotelBookings = [$decodedH];
+                $jsonHotelBookings = [$decodedH];
             }
         }
     }
 }
 
-// Filter hotel bookings for this user; hotel bookings may use 'user_id'
-$userHotelBookings = array_filter($hotelBookings, function($hb) use ($userPhone) {
-    if (!isset($hb['user_id'])) return false;
-    return (string)$hb['user_id'] === (string)$userPhone;
-});
+// Fetch hotel bookings from SQL
+$sqlHotelBookings = [];
+$stmt = $db->prepare("SELECT * FROM HotelBookings");
+$stmt->execute();
+$result = $stmt->get_result();
+while ($row = $result->fetch_assoc()) {
+    $sqlHotelBookings[] = $row;
+}
+$stmt->close();
+
+// Combine JSON and SQL hotel bookings
+$allHotelBookings = array_merge($jsonHotelBookings, $sqlHotelBookings);
+
+// Display all bookings without filtering by user
+$userBookings = $allFlightBookings;
+$userHotelBookings = $allHotelBookings;
+$adminAllBookings =  array_merge($allFlightBookings, $allHotelBookings);
 
 // Handle retrieval actions from query params (GET)
 $action = $_GET['action'] ?? '';
@@ -238,16 +259,24 @@ if ($action) {
             break;
         case 'flight_by_id':
             $id = $_GET['id'] ?? '';
-            if ($id === '') { $searchMessage = 'Please provide a Flight booking id.'; break; }
+            if ($id === '') {
+                $searchMessage = 'Please provide a Flight booking id.';
+                break;
+            }
             // find in user's flight bookings
             foreach ($userBookings as $fb) {
-                if (isset($fb['bookingNumber']) && (string)$fb['bookingNumber'] === (string)$id) {
+                if (
+                    (isset($fb['FlightBookingID']) && (string)$fb['FlightBookingID'] === (string)$id)
+                ) {
                     $searchResults[] = $fb;
                     break;
                 }
             }
-            if (empty($searchResults)) $searchMessage = 'No flight booking with that id found for your account.';
+            if (empty($searchResults)) {
+                $searchMessage = 'No flight booking with that id found for your account.';
+            }
             break;
+
         case 'flight_passengers':
             $id = $_GET['id'] ?? '';
             if ($id === '') { $searchMessage = 'Please provide a Flight booking id.'; break; }
@@ -259,17 +288,19 @@ if ($action) {
             }
             if (empty($searchResults)) $searchMessage = 'No passengers found for that flight booking id in your account.';
             break;
+
         case 'hotel_by_id':
             $id = $_GET['id'] ?? '';
             if ($id === '') { $searchMessage = 'Please provide a Hotel booking id.'; break; }
             foreach ($userHotelBookings as $hb) {
-                if ((isset($hb['booking_number']) && (string)$hb['booking_number'] === (string)$id) || (isset($hb['bookingNumber']) && (string)$hb['bookingNumber'] === (string)$id)) {
+                if ((isset($hb['HotelBookingID']) && (string)$hb['HotelBookingID'] === (string)$id)) {
                     $searchResults[] = $hb;
                     break;
                 }
             }
             if (empty($searchResults)) $searchMessage = 'No hotel booking with that id found for your account.';
             break;
+
         case 'sep2024':
             // flights in Sep 2024
             foreach ($userBookings as $fb) {
@@ -302,6 +333,7 @@ if ($action) {
             }
             if (empty($searchResults)) $searchMessage = 'No bookings found for Sep 2024 in your account.';
             break;
+
         case 'flight_by_ssn':
             $ssn = $_GET['ssn'] ?? '';
             if ($ssn === '') { $searchMessage = 'Please provide an SSN.'; break; }
@@ -316,6 +348,7 @@ if ($action) {
             }
             if (empty($searchResults)) $searchMessage = 'No flight bookings found for that SSN in your account.';
             break;
+
         case 'bookings_by_month':
             $month = $_GET['month'] ?? '';
             $year = $_GET['year'] ?? '';
